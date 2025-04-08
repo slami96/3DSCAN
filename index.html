@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+/html><!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -7,22 +7,24 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Roboto:wght@300;400;500&display=swap">
   
-  <script src="https://unpkg.com/react@17/umd/react.development.js" defer></script>
-  <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js" defer></script>
-  <script src="https://unpkg.com/@babel/standalone/babel.min.js" defer></script>
+  <!-- Load THREE.js and its dependencies first -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/DRACOLoader.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/EffectComposer.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/RenderPass.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/ShaderPass.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/FXAAShader.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/UnrealBloomPass.min.js"></script>
   
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" defer></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js" defer></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js" defer></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/DRACOLoader.js" defer></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/EffectComposer.js" defer></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/RenderPass.js" defer></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/ShaderPass.js" defer></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/FXAAShader.js" defer></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/UnrealBloomPass.js" defer></script>
+  <!-- After THREE.js, load React -->
+  <script src="https://unpkg.com/react@17/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@17/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
   <style>
-    /* --- CSS Styles (Unchanged) --- */
+    /* --- CSS Styles --- */
     :root {
       --primary: #3b82f6; 
       --primary-hover: #2563eb; 
@@ -423,23 +425,10 @@
     </div>
   </div>
 
-  <audio id="sound-click" preload="auto">
-    <source src="https://assets.mixkit.co/sfx/preview/mixkit-modern-technology-select-3124.mp3" type="audio/mpeg"> 
-  </audio>
-  <audio id="sound-hover" preload="auto">
-    <source src="https://assets.mixkit.co/sfx/preview/mixkit-interface-hint-notification-911.mp3" type="audio/mpeg"> 
-  </audio>
-  <audio id="sound-scan" preload="auto">
-    <source src="https://assets.mixkit.co/sfx/preview/mixkit-sci-fi-interface-zoom-890.mp3" type="audio/mpeg"> 
-  </audio>
-
-
-  <script defer>
+  <script>
     // --- Global Variables ---
     let scene, camera, renderer, model, controls, composer;
-    // Use window.THREE explicitly
-    let raycaster = new window.THREE.Raycaster();
-    let mouse = new window.THREE.Vector2();
+    let raycaster, mouse;
     let INTERSECTED;
     let bodyParts = {}; // To store interactable body parts
     let arLabels = {}; // To store AR label elements
@@ -451,7 +440,6 @@
     let loadingText;
     let ambientLight, hemiLight, dirLight;
     let bloomPass;
-    let soundClick, soundHover, soundScan;
     let windowHalfX = window.innerWidth / 2;
     let windowHalfY = window.innerHeight / 2;
     let currentIntersectedPart = null; // Track hovered part
@@ -462,7 +450,7 @@
     // --- Initialization ---
     function init() {
       // Ensure THREE is loaded before proceeding
-      if (typeof window.THREE === 'undefined') {
+      if (typeof THREE === 'undefined') {
           console.error("THREE.js core not loaded yet. Retrying...");
           // Retry initialization after a short delay
           setTimeout(init, 100); 
@@ -470,32 +458,33 @@
       }
       console.log("THREE object found. Initializing...");
 
+      // Initialize basic THREE objects
+      raycaster = new THREE.Raycaster();
+      mouse = new THREE.Vector2();
+
       canvasContainer = document.getElementById('canvas-container');
       progressBar = document.getElementById('progress-bar');
       loadingText = document.getElementById('loading-text');
       trackerElement = document.getElementById('body-tracker');
-      soundClick = document.getElementById('sound-click');
-      soundHover = document.getElementById('sound-hover');
-      soundScan = document.getElementById('sound-scan');
 
       // Loading Manager
       setupLoadingManager();
 
       // Scene
-      scene = new window.THREE.Scene();
-      scene.background = new window.THREE.Color(0x1e293b); // Match dark-bg
+      scene = new THREE.Scene();
+      scene.background = new THREE.Color(0x1e293b); // Match dark-bg
 
       // Camera
-      camera = new window.THREE.PerspectiveCamera(45, canvasContainer.clientWidth / canvasContainer.clientHeight, 0.1, 100);
+      camera = new THREE.PerspectiveCamera(45, canvasContainer.clientWidth / canvasContainer.clientHeight, 0.1, 100);
       camera.position.set(0, 1, 5);
 
       // Renderer
-      renderer = new window.THREE.WebGLRenderer({ antialias: true, alpha: true });
+      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
       renderer.setSize(canvasContainer.clientWidth, canvasContainer.clientHeight);
       renderer.setPixelRatio(window.devicePixelRatio);
-      renderer.outputEncoding = window.THREE.sRGBEncoding;
+      renderer.outputEncoding = THREE.sRGBEncoding;
       renderer.shadowMap.enabled = true;
-      renderer.shadowMap.type = window.THREE.PCFSoftShadowMap;
+      renderer.shadowMap.type = THREE.PCFSoftShadowMap;
       canvasContainer.appendChild(renderer.domElement);
 
       // Lights
@@ -526,11 +515,11 @@
     // --- Setup Functions ---
     function setupLoadingManager() {
       // Ensure THREE is loaded before creating LoadingManager
-      if (typeof window.THREE === 'undefined') {
+      if (typeof THREE === 'undefined') {
           console.error("THREE not defined in setupLoadingManager");
           return;
       }
-      loadingManager = new window.THREE.LoadingManager();
+      loadingManager = new THREE.LoadingManager();
       const loadingOverlay = document.getElementById('loading-overlay');
 
       loadingManager.onStart = function (url, itemsLoaded, itemsTotal) {
@@ -547,7 +536,6 @@
           document.getElementById('system-status').classList.remove('text-yellow-400'); 
           document.getElementById('system-status').classList.add('text-green-400');
         }, 500); // Delay hiding to allow fade out
-        playScanSound(); // Play sound on load complete
       };
 
       loadingManager.onProgress = function (url, itemsLoaded, itemsTotal) {
@@ -563,14 +551,13 @@
     }
 
     function setupLights() {
-      // Use window.THREE
-      ambientLight = new window.THREE.AmbientLight(0xffffff, 0.3); // Soft ambient light
+      ambientLight = new THREE.AmbientLight(0xffffff, 0.3); // Soft ambient light
       scene.add(ambientLight);
 
-      hemiLight = new window.THREE.HemisphereLight(0xadd8e6, 0x404040, 0.6); // Light blue sky, brown ground
+      hemiLight = new THREE.HemisphereLight(0xadd8e6, 0x404040, 0.6); // Light blue sky, brown ground
       scene.add(hemiLight);
 
-      dirLight = new window.THREE.DirectionalLight(0xffffff, 0.8);
+      dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
       dirLight.position.set(5, 10, 7.5);
       dirLight.castShadow = true;
       dirLight.shadow.mapSize.width = 1024;
@@ -585,8 +572,7 @@
     }
 
     function setupControls() {
-      // Use window.THREE
-      controls = new window.THREE.OrbitControls(camera, renderer.domElement);
+      controls = new THREE.OrbitControls(camera, renderer.domElement);
       controls.enableDamping = true;
       controls.dampingFactor = 0.1;
       controls.screenSpacePanning = false;
@@ -599,17 +585,16 @@
     }
 
     function setupPostProcessing() {
-      // Use window.THREE
-      composer = new window.THREE.EffectComposer(renderer);
-      const renderPass = new window.THREE.RenderPass(scene, camera);
+      composer = new THREE.EffectComposer(renderer);
+      const renderPass = new THREE.RenderPass(scene, camera);
       composer.addPass(renderPass);
 
       // Bloom pass
-      bloomPass = new window.THREE.UnrealBloomPass(new window.THREE.Vector2(window.innerWidth, window.innerHeight), 1.0, 0.3, 0.85);
+      bloomPass = new THREE.UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 1.0, 0.3, 0.85);
       composer.addPass(bloomPass);
 
       // FXAA Pass
-      const fxaaPass = new window.THREE.ShaderPass(window.THREE.FXAAShader);
+      const fxaaPass = new THREE.ShaderPass(THREE.FXAAShader);
       fxaaPass.material.uniforms['resolution'].value.x = 1 / (canvasContainer.clientWidth * renderer.getPixelRatio());
       fxaaPass.material.uniforms['resolution'].value.y = 1 / (canvasContainer.clientHeight * renderer.getPixelRatio());
       composer.addPass(fxaaPass);
@@ -630,11 +615,11 @@
       canvasContainer.appendChild(logoContainer);
       
       // Create a separate scene, camera and renderer for the logo
-      logoScene = new window.THREE.Scene();
-      logoCamera = new window.THREE.PerspectiveCamera(60, 1, 0.1, 1000);
+      logoScene = new THREE.Scene();
+      logoCamera = new THREE.PerspectiveCamera(60, 1, 0.1, 1000);
       logoCamera.position.set(0, 0, 5);
       
-      logoRenderer = new window.THREE.WebGLRenderer({ 
+      logoRenderer = new THREE.WebGLRenderer({ 
         antialias: true, 
         alpha: true,
         powerPreference: "high-performance" 
@@ -647,441 +632,143 @@
       document.getElementById('logo-container').appendChild(logoRenderer.domElement);
       
       // Add lighting to the logo scene
-      const logoAmbientLight = new window.THREE.AmbientLight(0xffffff, 0.5);
+      const logoAmbientLight = new THREE.AmbientLight(0xffffff, 0.5);
       logoScene.add(logoAmbientLight);
       
-      const logoDirectionalLight = new window.THREE.DirectionalLight(0x3b82f6, 1.0);
+      const logoDirectionalLight = new THREE.DirectionalLight(0x3b82f6, 1.0);
       logoDirectionalLight.position.set(5, 5, 5);
       logoScene.add(logoDirectionalLight);
       
-      // Load the logo model independently
-      loadLogoModel();
-    }
-
-    // --- Load Logo Model Function ---
-    function loadLogoModel() {
-      const logoLoader = new window.THREE.GLTFLoader();
+      // Create a simple geometry for the logo instead of loading a model
+      const geometry = new THREE.TorusKnotGeometry(1.5, 0.5, 64, 8, 2, 3);
+      const material = new THREE.MeshStandardMaterial({
+        color: 0x3b82f6,
+        metalness: 0.8,
+        roughness: 0.2,
+        emissive: 0x1e40af,
+        emissiveIntensity: 0.5
+      });
       
-      // Log the path for debugging
-      console.log("Attempting to load logo from: logo.glb");
+      myLogoModel = new THREE.Mesh(geometry, material);
+      logoScene.add(myLogoModel);
       
-      logoLoader.load(
-        'logo.glb', // Make sure this file exists in the same directory as your HTML
-        function (gltf) {
-          myLogoModel = gltf.scene;
-          
-          // Scale down the logo to fit in the corner
-          myLogoModel.scale.set(0.8, 0.8, 0.8);
-          
-          // Position the logo in the center of the logo scene
-          myLogoModel.position.set(0, 0, 0);
-          
-          // Apply special material to the logo for a futuristic feel
-          myLogoModel.traverse((node) => {
-            if (node.isMesh) {
-              // Create a shiny material with subtle glow
-              const material = new window.THREE.MeshStandardMaterial({
-                color: 0x3b82f6, // Blue color matching the UI theme
-                metalness: 0.8,
-                roughness: 0.2,
-                emissive: 0x1e40af, // Dark blue emissive color
-                emissiveIntensity: 0.5,
-              });
-              
-              // Apply the material
-              node.material = material;
-            }
-          });
-          
-          // Add the logo to the logo scene
-          logoScene.add(myLogoModel);
-          
-          console.log('Logo loaded successfully');
-        },
-        function (xhr) {
-          console.log('Logo loading: ' + (xhr.loaded / xhr.total * 100) + '%');
-        },
-        function (error) {
-          console.error('Error loading logo:', error);
-          console.error('Make sure the logo.glb file is in the correct location');
-        }
-      );
+      console.log('Logo created successfully');
     }
-
-    function loadMainModel() {
-      // Use window.THREE
-      const dracoLoader = new window.THREE.DRACOLoader();
-      dracoLoader.setDecoderPath('https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/libs/draco/gltf/');
-
-      const loader = new window.THREE.GLTFLoader(loadingManager);
-      loader.setDRACOLoader(dracoLoader);
-
-      loader.load(
-        'https://raw.githubusercontent.com/GanyuHail/humanglbfiles/main/human.glb',
-        function (gltf) {
-          model = gltf.scene;
-          model.scale.set(1.0, 1.0, 1.0);
-          model.position.y = -1;
-
-          model.traverse(function (node) {
-            if (node.isMesh) {
-              node.castShadow = true;
-              node.receiveShadow = true;
-              if (node.material) {
-                node.material.metalness = 0.1;
-                node.material.roughness = 0.8;
-              }
-            }
-          });
-
-          scene.add(model);
-          console.log("Main model loaded.");
-
-          setupBodyPartInteraction();
-          calculateLabelPositions();
-        },
-        undefined,
-        function (error) {
-          console.error('An error happened loading the main model:', error);
-          loadingText.textContent = 'Error loading model data.';
-        }
-      );
-    }
-
-    function loadARLabels() {
-      arLabels = {
-        head: document.getElementById('head-label'),
-        torso: document.getElementById('torso-label'),
-        arm: document.getElementById('arm-label'),
-        leg: document.getElementById('leg-label'),
-        abdomen: document.getElementById('abdomen-label'),
-      };
-    }
-
-    function setupBodyPartInteraction() {
-      if (!model) return;
-      bodyParts = {
-        head: model.getObjectByName('Head'),
-        chest: model.getObjectByName('Spine2'),
-        leftArm: model.getObjectByName('LeftArm'),
-        rightArm: model.getObjectByName('RightArm'),
-        abdomen: model.getObjectByName('Spine'),
-        leftLeg: model.getObjectByName('LeftUpLeg'),
-        rightLeg: model.getObjectByName('RightUpLeg')
-      };
-      bodyParts = Object.fromEntries(Object.entries(bodyParts).filter(([_, value]) => value));
-      console.log("Identified body parts for interaction:", Object.keys(bodyParts));
-    }
-
-    function calculateLabelPositions() {
-      if (!model) return;
-      // Use window.THREE
-      labelPositions = {
-        head: new window.THREE.Vector3(0, 1.7, 0.3),
-        torso: new window.THREE.Vector3(0.4, 1.1, 0.2),
-        arm: new window.THREE.Vector3(-0.6, 1.2, 0.1),
-        leg: new window.THREE.Vector3(0.3, 0.2, 0.3),
-        abdomen: new window.THREE.Vector3(0.3, 0.8, 0.3)
-      };
-    }
-
-    function setupEventListeners() {
-      window.addEventListener('resize', onWindowResize, false);
-      canvasContainer.addEventListener('mousemove', onMouseMove, false);
-      canvasContainer.addEventListener('click', onClick, false);
-      canvasContainer.addEventListener('dblclick', onDoubleClick, false);
-
-      // Mobile Panel Toggle
-      const panelToggle = document.getElementById('panel-toggle');
-      const infoPanel = document.getElementById('info-panel');
-      if (panelToggle && infoPanel) {
-        panelToggle.addEventListener('click', () => {
-          infoPanel.classList.toggle('collapsed');
-        });
-      }
-    }
-
-    // --- Event Handlers ---
-    function onWindowResize() {
-      windowHalfX = window.innerWidth / 2;
-      windowHalfY = window.innerHeight / 2;
-
-      camera.aspect = canvasContainer.clientWidth / canvasContainer.clientHeight;
-      camera.updateProjectionMatrix();
-
-      renderer.setSize(canvasContainer.clientWidth, canvasContainer.clientHeight);
-      composer.setSize(canvasContainer.clientWidth, canvasContainer.clientHeight);
-
-      // Update FXAA resolution (Use window.THREE)
-      const fxaaPass = composer.passes.find(pass => pass.shader === window.THREE.FXAAShader);
-      if (fxaaPass) {
-        fxaaPass.material.uniforms['resolution'].value.x = 1 / (canvasContainer.clientWidth * renderer.getPixelRatio());
-        fxaaPass.material.uniforms['resolution'].value.y = 1 / (canvasContainer.clientHeight * renderer.getPixelRatio());
-      }
-    }
-
-    function onMouseMove(event) {
-      const rect = canvasContainer.getBoundingClientRect();
-      mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
-      mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
-
-      trackerElement.style.left = (event.clientX - rect.left) + 'px';
-      trackerElement.style.top = (event.clientY - rect.top) + 'px';
-      trackerElement.style.opacity = '1';
-    }
-
-    function onClick(event) {
-      event.preventDefault();
-      if (currentIntersectedPart && currentIntersectedPart.partName) {
-        console.log(`Clicked on: ${currentIntersectedPart.partName}`);
-        selectedPart = currentIntersectedPart.partName;
-        if (window.loadTest) {
-          window.loadTest(selectedPart);
-        }
-        playClickSound();
-      }
-    }
-
-    function onDoubleClick() {
-        controls.reset();
-        camera.position.set(0, 1, 5);
-        controls.target.set(0, 0.9, 0);
-        controls.update();
-        console.log("View Reset");
-    }
-
-    // --- Core Logic ---
-    function checkIntersection() {
-      if (!model) return;
-
-      raycaster.setFromCamera(mouse, camera);
-      const intersects = raycaster.intersectObject(model, true);
-
-      if (intersects.length > 0) {
-        const intersectedObject = intersects[0].object;
-        let partName = null;
-        for (const [name, part] of Object.entries(bodyParts)) {
-          if (part && (intersectedObject === part || intersectedObject.parent === part || intersectedObject.parent?.parent === part)) {
-            partName = name;
-            break;
-          }
-        }
-
-        if (partName && partName !== currentIntersectedPart?.partName) {
-          currentIntersectedPart = { object: intersectedObject, partName: partName };
-          playHoverSound();
-          canvasContainer.style.cursor = 'pointer';
-           const vector = intersects[0].point.clone().project(camera);
-           const x = (vector.x * 0.5 + 0.5) * canvasContainer.clientWidth;
-           const y = (-(vector.y * 0.5) + 0.5) * canvasContainer.clientHeight;
-           trackerElement.style.left = x + 'px';
-           trackerElement.style.top = y + 'px';
-           trackerElement.style.opacity = '1';
-
-        } else if (!partName && currentIntersectedPart) {
-           canvasContainer.style.cursor = 'grab';
-           currentIntersectedPart = null;
-           trackerElement.style.opacity = '0';
-        }
-      } else {
-        if (currentIntersectedPart) {
-          canvasContainer.style.cursor = 'grab';
-          currentIntersectedPart = null;
-          trackerElement.style.opacity = '0';
-        }
-      }
-    }
-
-    function updateARLabels() {
-        if (!model || !canvasContainer || !camera) return;
-        for (const label in arLabels) {
-            const element = arLabels[label];
-            if (element && labelPositions[label]) {
-                const position = labelPositions[label].clone();
-                const vector = position.project(camera);
-                const x = (vector.x * 0.5 + 0.5) * canvasContainer.clientWidth;
-                const y = (-(vector.y * 0.5) + 0.5) * canvasContainer.clientHeight;
-                let offset = element.offsetWidth / 2;
-                if (element.classList.contains('ar-label-left')) {
-                    offset = element.offsetWidth + 10;
-                     element.style.left = (x - offset) + 'px';
-                } else if (element.classList.contains('ar-label-right')) {
-                     offset = -10;
-                     element.style.left = (x + offset) + 'px';
-                } else {
-                     element.style.left = (x - offset) + 'px';
-                }
-                element.style.top = (y - element.offsetHeight / 2) + 'px';
-                element.style.opacity = vector.z < 1 ? '0.7' : '0';
-            }
-        }
-    }
-
-    // --- Audio ---
-    function playClickSound() {
-      if (soundClick) {
-        soundClick.currentTime = 0;
-        soundClick.volume = 0.3;
-        soundClick.play().catch(e => console.warn("Audio play prevented by browser:", e));
-      }
-    }
-    
-    function playHoverSound() {
-      if (soundHover && Math.random() > 0.7) { // Only play sometimes to avoid spam
-        soundHover.currentTime = 0;
-        soundHover.volume = 0.1;
-        soundHover.play().catch(e => console.warn("Audio play prevented by browser:", e));
-      }
-    }
-    
-    function playScanSound() {
-      if (soundScan) {
-        soundScan.currentTime = 0;
-        soundScan.volume = 0.2;
-        soundScan.play().catch(e => console.warn("Audio play prevented by browser:", e));
-      }
-    }
-
-    // --- Animation Loop ---
-    function animate() {
-      requestAnimationFrame(animate);
-      if (controls) { controls.update(); }
-      checkIntersection();
-      updateARLabels();
-      
-      // Animate and render the main scene
-      if (composer && scene && camera) { 
-        composer.render(); 
-      }
-      
-      // Animate and render the logo
-      if (myLogoModel) { 
-        myLogoModel.rotation.y += 0.01; // Rotate around Y axis
+    const CardiovascularTest = () => (
+      <div className="sci-panel p-6 info-card show">
+        <h2 className="text-xl font-bold mb-3 text-blue-400">Cardiovascular Assessment</h2>
+        <div className="mb-4 p-3 bg-blue-900 bg-opacity-20 rounded border border-blue-800">
+          <p className="text-sm text-blue-200">This test evaluates heart rate, blood pressure, and cardiovascular capacity.</p>
+        </div>
         
-        // Add a subtle floating motion
-        const time = Date.now() * 0.001;
-        myLogoModel.position.y = Math.sin(time) * 0.1; // Gentle floating up and down
-      }
-      
-      // Render the logo scene separately
-      if (logoRenderer && logoScene && logoCamera) {
-        logoRenderer.render(logoScene, logoCamera);
-      }
-    }
-
-    // --- Start ---
-    // Use DOMContentLoaded to wait for HTML, then call init which checks for THREE
-    document.addEventListener('DOMContentLoaded', init);
-  </script>
-
-  <script type="text/babel">
-    // Component to manage which test is shown
-    const TestManager = () => {
-      const [activeTest, setActiveTest] = React.useState(null); 
-      // Function to be exposed globally - defined in the main script now
-      // Make sure window.loadTest is ready before React renders
-      React.useEffect(() => {
-        window.loadTest = (testId) => { 
-          setActiveTest(testId); 
-        };
-        // Cleanup function (optional)
-        return () => { window.loadTest = null; };
-      }, []); // Empty dependency array ensures this runs once on mount
-      
-      // Render the appropriate test component based on the active test
-      const renderTest = () => { 
-        switch(activeTest) {
-          case 'head': return <CognitiveTest />; 
-          case 'chest': return <CardiovascularTest />; 
-          case 'abdomen': return <BodyCompositionTest />; 
-          case 'leftArm': 
-          case 'rightArm': return <ReactionTest />; 
-          case 'leftLeg':
-          case 'rightLeg': return <StabilityTest />; 
-          default: return <WelcomeScreen />; 
-        }
-      };
-      
-      return (
-        <div className="test-panel">
-          {renderTest()}
+        <div className="mb-4">
+          <h3 className="text-lg font-medium text-blue-300 mb-2">Current Vitals</h3>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="p-3 bg-blue-900 bg-opacity-20 rounded border border-blue-800">
+              <div className="text-xs text-gray-400">Heart Rate</div>
+              <div className="text-xl text-blue-300 font-medium">72 <span className="text-sm">BPM</span></div>
+            </div>
+            <div className="p-3 bg-blue-900 bg-opacity-20 rounded border border-blue-800">
+              <div className="text-xs text-gray-400">Blood Pressure</div>
+              <div className="text-xl text-blue-300 font-medium">120/80 <span className="text-sm">mmHg</span></div>
+            </div>
+          </div>
         </div>
-      ); 
-    };
-
-    // Welcome screen shown initially with personalized message
-    const WelcomeScreen = () => ( 
-      <div className="sci-panel p-6 info-card show text-gray-200">
-        {/* --- Welcome content (Unchanged) --- */}
-        <h2 className="text-xl font-bold mb-4 text-blue-400">Bioscan Complete</h2>       
-        <p className="mb-4">
-          Our advanced AI diagnostic system has completed your biometric scan and identified specific areas that require assessment to evaluate your overall health status. 
-        </p> 
-        <p className="mb-4">
-          Based on your unique physical profile, we've customized a series of non-invasive diagnostic tests to measure your physiological and cognitive functions. These assessments will provide valuable data about your current health condition. 
-        </p>
-        <div className="my-5 p-4 bg-blue-900 bg-opacity-30 rounded-lg border border-blue-700">
-          <h3 className="font-medium text-lg mb-2 text-blue-300">Required Assessments:</h3> 
-          <ul className="space-y-2">
-            <li className="flex items-start">
-              <span className="text-blue-400 mr-2">•</span> 
-              <div>
-                <span className="font-medium text-blue-300">Cognitive Assessment</span> 
-                <p className="text-sm text-gray-400">Analysis indicates potential for memory optimization</p> 
+        
+        <div className="space-y-6">
+          <div>
+            <h3 className="text-lg font-medium text-blue-300 mb-2">Cardiovascular Capacity</h3>
+            <p className="text-sm mb-3">Measures how effectively your heart pumps blood during physical activity.</p>
+            <div className="w-full h-24 bg-blue-900 bg-opacity-20 rounded border border-blue-800 p-3">
+              <div className="text-xs text-gray-400 mb-1">VO2 Max Estimate</div>
+              <div className="relative h-4 bg-blue-900 bg-opacity-40 rounded-full overflow-hidden">
+                <div className="absolute top-0 left-0 h-full w-3/5 bg-gradient-to-r from-blue-500 to-green-400 rounded-full"></div>
               </div>
-            </li>
-            <li className="flex items-start">
-              <span className="text-blue-400 mr-2">•</span> 
-              <div>
-                <span className="font-medium text-blue-300">Cardiovascular Test</span> 
-                <p className="text-sm text-gray-400">Heart rate patterns require further evaluation</p> 
+              <div className="flex justify-between text-xs text-gray-400 mt-1">
+                <span>Low</span>
+                <span>Average</span>
+                <span>High</span>
               </div>
-            </li>
-            <li className="flex items-start">
-              <span className="text-blue-400 mr-2">•</span> 
-              <div>
-                <span className="font-medium text-blue-300">Body Composition</span> 
-                <p className="text-sm text-gray-400">Tissue density scanning indicates BMI assessment needed</p> 
-              </div>
-            </li>
-            <li className="flex items-start">
-              <span className="text-blue-400 mr-2">•</span> 
-              <div>
-                <span className="font-medium text-blue-300">Reaction Assessment</span> 
-                <p className="text-sm text-gray-400">Neural pathway response measurement recommended</p> 
-              </div>
-            </li>
-            <li className="flex items-start">
-              <span className="text-blue-400 mr-2">•</span> 
-              <div>
-                <span className="font-medium text-blue-300">Stability Assessment</span> 
-                <p className="text-sm text-gray-400">Vestibular system calibration check suggested</p> 
-              </div>
-            </li>
-          </ul>
+            </div>
+          </div>
+          
+          <div>
+            <h3 className="text-lg font-medium text-blue-300 mb-2">Recovery Test</h3>
+            <p className="text-sm mb-3">Measures how quickly your heart rate returns to normal after exertion.</p>
+            <button className="w-full py-3 bg-blue-900 hover:bg-blue-800 bg-opacity-40 border border-blue-700 rounded-md text-blue-400 font-medium">
+              Start Recovery Test
+            </button>
+          </div>
         </div>
-        <p className="mb-2">
-          Please select any highlighted area on your biometric model to begin the corresponding assessment. 
-          Your results will be analyzed to create a comprehensive health profile. 
-        </p>
-        <p className="text-xs text-gray-400 mt-4">
-          <strong>Note:</strong> This medical assessment system is for educational and demonstration purposes only. 
-          For accurate health diagnostics, please consult licensed healthcare professionals. 
-        </p>
+        
+        <div className="mt-6 pt-4 border-t border-blue-900">
+          <button className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-md text-white text-sm font-medium transition-colors">
+            Begin Full Assessment
+          </button>
+        </div>
       </div>
     );
 
-    // --- PLACEHOLDER REACT COMPONENTS (Keep your actual components here) ---
-    const CognitiveTest = () => <div>Cognitive Test Component</div>; 
-    const CardiovascularTest = () => <div>Cardiovascular Test Component</div>; 
-    const BodyCompositionTest = () => <div>Body Composition Test Component</div>;
-    const ReactionTest = () => <div>Reaction Test Component</div>;
-    const StabilityTest = () => <div>Stability Test Component</div>;
-    // --- END PLACEHOLDER COMPONENTS ---
+    const StabilityTest = () => (
+      <div className="sci-panel p-6 info-card show">
+        <h2 className="text-xl font-bold mb-3 text-blue-400">Stability Assessment</h2>
+        <div className="mb-4 p-3 bg-blue-900 bg-opacity-20 rounded border border-blue-800">
+          <p className="text-sm text-blue-200">This test evaluates balance, stability, and posture control.</p>
+        </div>
+        
+        <div className="mb-6">
+          <h3 className="text-lg font-medium text-blue-300 mb-2">Balance Analysis</h3>
+          <div className="w-full aspect-square bg-blue-900 bg-opacity-20 rounded-md border border-blue-700 p-4 flex items-center justify-center">
+            <div className="relative w-full h-full">
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="w-24 h-24 border-2 border-dashed border-blue-500 rounded-full"></div>
+                <div className="absolute w-3 h-3 bg-green-400 rounded-full shadow-lg shadow-green-400/50"></div>
+              </div>
+              <div className="absolute bottom-0 left-0 right-0 h-1/3 flex items-end justify-between px-4 text-xs text-gray-400">
+                <span>Left</span>
+                <span>Stability Distribution</span>
+                <span>Right</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div className="space-y-6">
+          <div>
+            <h3 className="text-lg font-medium text-blue-300 mb-2">Posture Assessment</h3>
+            <div className="grid grid-cols-3 gap-4 mb-2">
+              <div className="p-2 bg-blue-900 bg-opacity-20 rounded border border-blue-800 text-center">
+                <div className="text-xs text-gray-400">Alignment</div>
+                <div className="text-sm text-blue-300 font-medium">94%</div>
+              </div>
+              <div className="p-2 bg-blue-900 bg-opacity-20 rounded border border-blue-800 text-center">
+                <div className="text-xs text-gray-400">Symmetry</div>
+                <div className="text-sm text-blue-300 font-medium">88%</div>
+              </div>
+              <div className="p-2 bg-blue-900 bg-opacity-20 rounded border border-blue-800 text-center">
+                <div className="text-xs text-gray-400">Stability</div>
+                <div className="text-sm text-blue-300 font-medium">91%</div>
+              </div>
+            </div>
+          </div>
+          
+          <div>
+            <h3 className="text-lg font-medium text-blue-300 mb-2">Dynamic Tests</h3>
+            <p className="text-sm mb-3">Follow on-screen prompts to complete movement challenges.</p>
+            <button className="w-full py-3 bg-blue-900 hover:bg-blue-800 bg-opacity-40 border border-blue-700 rounded-md text-blue-400 font-medium">
+              Start Dynamic Assessment
+            </button>
+          </div>
+        </div>
+        
+        <div className="mt-6 pt-4 border-t border-blue-900">
+          <button className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-md text-white text-sm font-medium transition-colors">
+            Complete Assessment
+          </button>
+        </div>
+      </div>
+    );
 
     // Ensure React DOM render happens after the container element exists
-    // and potentially after other scripts (defer helps here)
     ReactDOM.render(<TestManager />, document.getElementById('test-container'));
   </script>
-</body>
-</html>
