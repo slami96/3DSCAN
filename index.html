@@ -12,7 +12,7 @@
   <script src="https://unpkg.com/@babel/standalone/babel.min.js" defer></script>
   
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" defer></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js" defer></script> 
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/DRACOLoader.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/EffectComposer.js" defer></script>
@@ -23,60 +23,452 @@
 
   <style>
     /* --- CSS Styles (Unchanged) --- */
-    :root { --primary: #3b82f6; --primary-hover: #2563eb; --secondary: #10B981; --accent: #06B6D4; --dark-bg: #1e293b; --panel-bg: #0f172a; --text-primary: #F9FAFB; --text-secondary: #D1D5DB; --glow-primary: 0 0 15px rgba(59, 130, 246, 0.5); --glow-secondary: 0 0 15px rgba(16, 185, 129, 0.5); } body { font-family: 'Roboto', sans-serif; margin: 0; overflow: hidden; background-color: var(--dark-bg); color: var(--text-primary); } h1, h2, h3, h4, h5, h6 { font-family: 'Rajdhani', sans-serif; font-weight: 600; } .sci-panel { background-color: rgba(15, 23, 42, 0.85); backdrop-filter: blur(10px); border: 1px solid rgba(59, 130, 246, 0.2); border-radius: 0.5rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06), var(--glow-primary); } .sci-title { position: relative; overflow: hidden; } .sci-title::before { content: ''; position: absolute; top: 0; left: 0; width: 5px; height: 100%; background: linear-gradient(180deg, var(--primary), var(--secondary)); } .sci-badge { background: linear-gradient(45deg, var(--primary), var(--accent)); color: white; padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 500; } .sci-highlight { color: var(--secondary); font-weight: 500; } .glow-text { text-shadow: 0 0 8px rgba(59, 130, 246, 0.6); } #canvas-container { flex-grow: 1; height: 100vh; position: relative; } #canvas-container canvas { display: block; width: 100%; height: 100%; cursor: grab; } #canvas-container canvas:active { cursor: grabbing; } #info-panel { width: 375px; height: 100vh; overflow-y: auto; flex-shrink: 0; background-color: var(--panel-bg); transition: transform 0.3s ease; scrollbar-width: thin; scrollbar-color: var(--primary) var(--panel-bg); } #info-panel::-webkit-scrollbar { width: 8px; } #info-panel::-webkit-scrollbar-track { background: var(--panel-bg); } #info-panel::-webkit-scrollbar-thumb { background-color: var(--primary); border-radius: 20px; } #loading-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(15, 23, 42, 0.95); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 50; } .progress-bar { width: 300px; height: 8px; background-color: rgba(255, 255, 255, 0.1); border-radius: 4px; overflow: hidden; margin-top: 2rem; } .progress-fill { height: 100%; background: linear-gradient(90deg, var(--primary), var(--secondary)); width: 0%; transition: width 0.3s ease; box-shadow: var(--glow-primary); } #controls-guide { position: absolute; bottom: 1rem; right: 1rem; background-color: rgba(15, 23, 42, 0.8); color: white; font-size: 0.75rem; line-height: 1.25rem; padding: 0.75rem; border-radius: 0.5rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); z-index: 10; max-width: 250px; backdrop-filter: blur(8px); border: 1px solid rgba(59, 130, 246, 0.15); transition: opacity 0.3s; opacity: 0.7; } #controls-guide:hover { opacity: 1; } .hud-element { position: absolute; pointer-events: none; z-index: 5; font-family: 'Rajdhani', sans-serif; } .body-stat { top: 1rem; left: 1rem; font-size: 0.8rem; padding: 0.75rem; color: var(--text-secondary); max-width: 250px; } .body-scan-line { position: absolute; width: 100%; height: 4px; background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.2), rgba(59, 130, 246, 0.5), rgba(59, 130, 246, 0.2), transparent); z-index: 10; pointer-events: none; box-shadow: 0 0 15px rgba(59, 130, 246, 0.4); opacity: 0; animation: scanAnimation 8s infinite; } @keyframes scanAnimation { 0% { top: 0%; opacity: 1; } 90% { top: 100%; opacity: 1; } 91% { opacity: 0; } 100% { top: 0%; opacity: 0; } } .tracker { position: absolute; width: 80px; height: 80px; pointer-events: none; z-index: 5; border: 1px solid rgba(59, 130, 246, 0.5); border-radius: 50%; transform: translate(-50%, -50%); background: radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, rgba(16, 185, 129, 0.05) 70%, transparent 100%); box-shadow: 0 0 15px rgba(59, 130, 246, 0.3); opacity: 0; transition: opacity 0.5s; } .tracker::before, .tracker::after { content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); border-radius: 50%; } .tracker::before { width: 60px; height: 60px; border: 1px dashed rgba(59, 130, 246, 0.5); animation: rotate 10s linear infinite; } .tracker::after { width: 10px; height: 10px; background-color: rgba(16, 185, 129, 0.8); box-shadow: 0 0 8px rgba(16, 185, 129, 0.8); } @keyframes rotate { from { transform: translate(-50%, -50%) rotate(0deg); } to { transform: translate(-50%, -50%) rotate(360deg); } } .ar-label { position: absolute; color: var(--secondary); font-size: 0.7rem; letter-spacing: 0.05em; pointer-events: none; z-index: 5; transition: opacity 0.5s; opacity: 0; text-shadow: 0 0 5px var(--secondary); } .ar-label::after { content: ''; position: absolute; top: 50%; width: 30px; height: 1px; background-color: var(--secondary); opacity: 0.5; } .ar-label-left { text-align: right; } .ar-label-left::after { right: -35px; } .ar-label-right { text-align: left; } .ar-label-right::after { left: -35px; } .info-card { opacity: 0; transform: translateY(20px); transition: opacity 0.5s, transform 0.5s; } .info-card.show { opacity: 1; transform: translateY(0); } @media (max-width: 768px) { .flex-col-reverse { flex-direction: column-reverse; } #info-panel { width: 100%; height: 40%; min-height: 250px; max-height: 50%; } #canvas-container { height: 60%; } .panel-toggle { display: block !important; } #info-panel.collapsed { transform: translateY(calc(100% - 40px)); } #toggle-panel-icon { transform: rotate(0deg); transition: transform 0.3s; } #info-panel.collapsed #toggle-panel-icon { transform: rotate(180deg); } } .test-panel { max-width: 100%; height: 100%; overflow-y: auto; padding: 1rem; } .blink-animation { animation: blink 1.5s infinite; } @keyframes blink { 0% { opacity: 0.3; } 50% { opacity: 1; } 100% { opacity: 0.3; } } .pulse-animation { animation: pulse 2s infinite; } @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } } .glow { box-shadow: 0 0 15px white; animation: glow 1.5s infinite alternate; } @keyframes glow { from { box-shadow: 0 0 5px rgba(59, 130, 246, 0.6); } to { box-shadow: 0 0 20px rgba(59, 130, 246, 0.9); } }
+    :root {
+      --primary: #3b82f6; 
+      --primary-hover: #2563eb; 
+      --secondary: #10B981; 
+      --accent: #06B6D4; 
+      --dark-bg: #1e293b; 
+      --panel-bg: #0f172a; 
+      --text-primary: #F9FAFB; 
+      --text-secondary: #D1D5DB; 
+      --glow-primary: 0 0 15px rgba(59, 130, 246, 0.5); 
+      --glow-secondary: 0 0 15px rgba(16, 185, 129, 0.5); 
+    }
+    body {
+      font-family: 'Roboto', sans-serif; 
+      margin: 0; 
+      overflow: hidden; 
+      background-color: var(--dark-bg); 
+      color: var(--text-primary); 
+    }
+    h1, h2, h3, h4, h5, h6 {
+      font-family: 'Rajdhani', sans-serif; 
+      font-weight: 600; 
+    }
+    .sci-panel {
+      background-color: rgba(15, 23, 42, 0.85); 
+      backdrop-filter: blur(10px); 
+      border: 1px solid rgba(59, 130, 246, 0.2); 
+      border-radius: 0.5rem; 
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06), var(--glow-primary); 
+    }
+    .sci-title {
+      position: relative; 
+      overflow: hidden; 
+    }
+    .sci-title::before {
+      content: ''; 
+      position: absolute; 
+      top: 0; 
+      left: 0; 
+      width: 5px; 
+      height: 100%; 
+      background: linear-gradient(180deg, var(--primary), var(--secondary)); 
+    }
+    .sci-badge {
+      background: linear-gradient(45deg, var(--primary), var(--accent)); 
+      color: white; 
+      padding: 0.25rem 0.75rem; 
+      border-radius: 9999px; 
+      font-size: 0.75rem; 
+      font-weight: 500; 
+    }
+    .sci-highlight {
+      color: var(--secondary); 
+      font-weight: 500; 
+    }
+    .glow-text {
+      text-shadow: 0 0 8px rgba(59, 130, 246, 0.6); 
+    }
+    /* Canvas Styling */
+    #canvas-container {
+      flex-grow: 1; 
+      height: 100vh; 
+      position: relative; 
+    }
+    #canvas-container canvas {
+      display: block; 
+      width: 100%; 
+      height: 100%; 
+      cursor: grab; 
+    }
+    #canvas-container canvas:active {
+      cursor: grabbing; 
+    }
+    /* Sidebar Panel */
+    #info-panel {
+      width: 375px; 
+      height: 100vh; 
+      overflow-y: auto; 
+      flex-shrink: 0; 
+      background-color: var(--panel-bg); 
+      transition: transform 0.3s ease; 
+      scrollbar-width: thin; 
+      scrollbar-color: var(--primary) var(--panel-bg); 
+    }
+    #info-panel::-webkit-scrollbar {
+      width: 8px; 
+    }
+    #info-panel::-webkit-scrollbar-track {
+      background: var(--panel-bg); 
+    }
+    #info-panel::-webkit-scrollbar-thumb {
+      background-color: var(--primary); 
+      border-radius: 20px; 
+    }
+    /* Loading Overlay */
+    #loading-overlay {
+      position: fixed; 
+      top: 0; 
+      left: 0; 
+      right: 0; 
+      bottom: 0; 
+      background-color: rgba(15, 23, 42, 0.95); 
+      display: flex; 
+      flex-direction: column; 
+      justify-content: center; 
+      align-items: center; 
+      z-index: 50; 
+    }
+    .progress-bar {
+      width: 300px; 
+      height: 8px; 
+      background-color: rgba(255, 255, 255, 0.1); 
+      border-radius: 4px; 
+      overflow: hidden; 
+      margin-top: 2rem; 
+    }
+    .progress-fill {
+      height: 100%; 
+      background: linear-gradient(90deg, var(--primary), var(--secondary)); 
+      width: 0%; 
+      transition: width 0.3s ease; 
+      box-shadow: var(--glow-primary); 
+    }
+    /* Controls Guide */
+    #controls-guide {
+      position: absolute; 
+      bottom: 1rem; 
+      right: 1rem; 
+      background-color: rgba(15, 23, 42, 0.8); 
+      color: white; 
+      font-size: 0.75rem; 
+      line-height: 1.25rem; 
+      padding: 0.75rem; 
+      border-radius: 0.5rem; 
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); 
+      z-index: 10; 
+      max-width: 250px; 
+      backdrop-filter: blur(8px); 
+      border: 1px solid rgba(59, 130, 246, 0.15); 
+      transition: opacity 0.3s; 
+      opacity: 0.7; 
+    }
+    #controls-guide:hover {
+      opacity: 1; 
+    }
+    /* HUD Elements */
+    .hud-element {
+      position: absolute; 
+      pointer-events: none; 
+      z-index: 5; 
+      font-family: 'Rajdhani', sans-serif; 
+    }
+    .body-stat {
+      top: 1rem; 
+      left: 1rem; 
+      font-size: 0.8rem; 
+      padding: 0.75rem; 
+      color: var(--text-secondary); 
+      max-width: 250px; 
+    }
+    .body-scan-line {
+      position: absolute; 
+      width: 100%; 
+      height: 4px; 
+      background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.2), rgba(59, 130, 246, 0.5), rgba(59, 130, 246, 0.2), transparent); 
+      z-index: 10; 
+      pointer-events: none; 
+      box-shadow: 0 0 15px rgba(59, 130, 246, 0.4); 
+      opacity: 0; 
+      animation: scanAnimation 8s infinite; 
+    }
+    @keyframes scanAnimation {
+      0% { top: 0%; opacity: 1; } 
+      90% { top: 100%; opacity: 1; } 
+      91% { opacity: 0; } 
+      100% { top: 0%; opacity: 0; } 
+    }
+    /* HUD Trackers */
+    .tracker {
+      position: absolute; 
+      width: 80px; 
+      height: 80px; 
+      pointer-events: none; 
+      z-index: 5; 
+      border: 1px solid rgba(59, 130, 246, 0.5); 
+      border-radius: 50%; 
+      transform: translate(-50%, -50%); 
+      background: radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, rgba(16, 185, 129, 0.05) 70%, transparent 100%); 
+      box-shadow: 0 0 15px rgba(59, 130, 246, 0.3); 
+      opacity: 0; 
+      transition: opacity 0.5s; 
+    }
+    .tracker::before, .tracker::after {
+      content: ''; 
+      position: absolute; 
+      top: 50%; 
+      left: 50%; 
+      transform: translate(-50%, -50%); 
+      border-radius: 50%; 
+    }
+    .tracker::before {
+      width: 60px; 
+      height: 60px; 
+      border: 1px dashed rgba(59, 130, 246, 0.5); 
+      animation: rotate 10s linear infinite; 
+    }
+    .tracker::after {
+      width: 10px; 
+      height: 10px; 
+      background-color: rgba(16, 185, 129, 0.8); 
+      box-shadow: 0 0 8px rgba(16, 185, 129, 0.8); 
+    }
+    @keyframes rotate {
+      from { transform: translate(-50%, -50%) rotate(0deg); } 
+      to { transform: translate(-50%, -50%) rotate(360deg); } 
+    }
+    /* Augmented Reality Styled Labels */
+    .ar-label {
+      position: absolute; 
+      color: var(--secondary); 
+      font-size: 0.7rem; 
+      letter-spacing: 0.05em; 
+      pointer-events: none; 
+      z-index: 5; 
+      transition: opacity 0.5s; 
+      opacity: 0; 
+      text-shadow: 0 0 5px var(--secondary); 
+    }
+    .ar-label::after {
+      content: ''; 
+      position: absolute; 
+      top: 50%; 
+      width: 30px; 
+      height: 1px; 
+      background-color: var(--secondary); 
+      opacity: 0.5; 
+    }
+    .ar-label-left {
+      text-align: right; 
+    }
+    .ar-label-left::after {
+      right: -35px; 
+    }
+    .ar-label-right {
+      text-align: left; 
+    }
+    .ar-label-right::after {
+      left: -35px; 
+    }
+    .info-card {
+      opacity: 0; 
+      transform: translateY(20px); 
+      transition: opacity 0.5s, transform 0.5s; 
+    }
+    .info-card.show {
+      opacity: 1; 
+      transform: translateY(0); 
+    }
+    /* Responsive Styles */
+    @media (max-width: 768px) {
+      .flex-col-reverse { flex-direction: column-reverse; } 
+      #info-panel {
+        width: 100%; 
+        height: 40%; 
+        min-height: 250px; 
+        max-height: 50%; 
+      }
+      #canvas-container {
+        height: 60%; 
+      }
+      .panel-toggle {
+        display: block !important; 
+      }
+      #info-panel.collapsed {
+        transform: translateY(calc(100% - 40px)); 
+      }
+      #toggle-panel-icon {
+        transform: rotate(0deg); 
+        transition: transform 0.3s; 
+      }
+      #info-panel.collapsed #toggle-panel-icon {
+        transform: rotate(180deg); 
+      }
+    }
+    /* Additional styles for assessment tests */
+    .test-panel {
+      max-width: 100%; 
+      height: 100%; 
+      overflow-y: auto; 
+      padding: 1rem; 
+    }
+
+    .blink-animation {
+      animation: blink 1.5s infinite; 
+    }
+
+    @keyframes blink {
+      0% { opacity: 0.3; } 
+      50% { opacity: 1; } 
+      100% { opacity: 0.3; } 
+    }
+
+    .pulse-animation {
+      animation: pulse 2s infinite; 
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); } 
+      50% { transform: scale(1.05); } 
+      100% { transform: scale(1); } 
+    }
+
+    .glow {
+      box-shadow: 0 0 15px white; 
+      animation: glow 1.5s infinite alternate; 
+    }
+
+    @keyframes glow {
+      from { box-shadow: 0 0 5px rgba(59, 130, 246, 0.6); } 
+      to { box-shadow: 0 0 20px rgba(59, 130, 246, 0.9); } 
+    }
+    
+    /* Logo container styling */
+    #logo-container {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      width: 100px;
+      height: 100px;
+      z-index: 10;
+      pointer-events: none;
+    }
   </style>
 </head>
 <body>
-  <div id="loading-overlay"> <h2 class="text-4xl font-bold text-center mb-2 glow-text">BIOCARE ASSESSMENT SYSTEM</h2> <p class="text-blue-400 mb-2">Biometric scanning in progress...</p> <p class="text-gray-400 mb-6">Please remain still while we analyze your health parameters</p> <div class="progress-bar"> <div class="progress-fill" id="progress-bar"></div> </div> <p id="loading-text" class="mt-4 text-sm text-gray-300 blink-animation">Initializing bioscan...</p> </div>
+  <div id="loading-overlay">
+    <h2 class="text-4xl font-bold text-center mb-2 glow-text">BIOCARE ASSESSMENT SYSTEM</h2> 
+    <p class="text-blue-400 mb-2">Biometric scanning in progress...</p> 
+    <p class="text-gray-400 mb-6">Please remain still while we analyze your health parameters</p> 
+    <div class="progress-bar"> 
+      <div class="progress-fill" id="progress-bar"></div> 
+    </div>
+    <p id="loading-text" class="mt-4 text-sm text-gray-300 blink-animation">Initializing bioscan...</p> 
+  </div>
 
   <div class="flex h-screen md:flex-row flex-col-reverse">
     <div id="info-panel" class="relative">
-      <button id="panel-toggle" class="panel-toggle hidden absolute top-4 right-4 md:hidden bg-gray-700 p-2 rounded-md hover:bg-gray-600 focus:outline-none"> <svg id="toggle-panel-icon" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"> <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" /> </svg> </button>
+      <button id="panel-toggle" class="panel-toggle hidden absolute top-4 right-4 md:hidden bg-gray-700 p-2 rounded-md hover:bg-gray-600 focus:outline-none">
+        <svg id="toggle-panel-icon" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"> 
+          <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" /> 
+        </svg>
+      </button>
       <div class="p-6">
-        <div class="sci-title pl-6 mb-4"> <h1 class="text-2xl font-bold">BioCare Assessment System</h1> <p class="text-sm text-gray-400">Personalized Health Diagnostics</p> </div>
-        <div class="flex items-center space-x-2 mb-4"> <div class="sci-badge bg-blue-700 text-blue-50"> <span class="opacity-60">BIO</span><span>METRICS</span> </div> <div class="h-2 w-2 rounded-full bg-green-400 animate-pulse"></div> <div class="text-xs text-green-400">ASSESSMENT ACTIVE</div> </div>
+        <div class="sci-title pl-6 mb-4">
+          <h1 class="text-2xl font-bold">BioCare Assessment System</h1> 
+          <p class="text-sm text-gray-400">Personalized Health Diagnostics</p> 
+        </div>
+        <div class="flex items-center space-x-2 mb-4">
+          <div class="sci-badge bg-blue-700 text-blue-50">
+            <span class="opacity-60">BIO</span><span>METRICS</span> 
+          </div>
+          <div class="h-2 w-2 rounded-full bg-green-400 animate-pulse"></div> 
+          <div class="text-xs text-green-400">ASSESSMENT ACTIVE</div> 
+        </div>
       </div>
-      <div id="test-container" class="px-6 pb-6"> </div>
+      <div id="test-container" class="px-6 pb-6">
+        <!-- React content will be rendered here -->
+      </div>
     </div>
 
     <div id="canvas-container" class="relative">
-      <div class="hud-element body-stat sci-panel"> <div class="text-xs text-blue-300 mb-1">DIAGNOSTIC STATUS</div> <div class="text-xs"> <span>SYSTEM</span>: <span id="system-status" class="text-green-400">STANDBY</span> </div> <div class="text-xs"> <span>RECOMMENDED TESTS</span>: <span class="text-yellow-400">5</span> </div> </div>
-      <div class="body-scan-line"></div>
-      <div id="body-tracker" class="tracker"></div>
-      <div id="head-label" class="ar-label ar-label-left">COGNITIVE ASSESSMENT</div> <div id="torso-label" class="ar-label ar-label-right">CARDIOVASCULAR TEST</div> <div id="arm-label" class="ar-label ar-label-left">REACTION ASSESSMENT</div> <div id="leg-label" class="ar-label ar-label-right">STABILITY ASSESSMENT</div> <div id="abdomen-label" class="ar-label ar-label-right">BODY COMPOSITION</div>
-      <div id="controls-guide" class="sci-panel"> <div class="text-xs text-blue-300 mb-1 font-semibold">INTERFACE CONTROLS</div> <div class="grid grid-cols-2 gap-x-3 gap-y-1 text-xs"> <span>ROTATE VIEW</span><span class="text-gray-300">Left Mouse / Drag</span> <span>ZOOM</span><span class="text-gray-300">Mouse Wheel</span> <span>PAN</span><span class="text-gray-300">Right Mouse / Drag</span> <span>RESET VIEW</span><span class="text-gray-300">Double Click</span> <span>SELECT TEST</span><span class="text-gray-300">Click Body Area</span> </div> </div>
+      <div class="hud-element body-stat sci-panel">
+        <div class="text-xs text-blue-300 mb-1">DIAGNOSTIC STATUS</div> 
+        <div class="text-xs">
+          <span>SYSTEM</span>: <span id="system-status" class="text-green-400">STANDBY</span> 
+        </div>
+        <div class="text-xs">
+          <span>RECOMMENDED TESTS</span>: <span class="text-yellow-400">5</span> 
+        </div>
+      </div>
+      <div class="body-scan-line"></div> 
+      <div id="body-tracker" class="tracker"></div> 
+      <div id="head-label" class="ar-label ar-label-left">COGNITIVE ASSESSMENT</div> 
+      <div id="torso-label" class="ar-label ar-label-right">CARDIOVASCULAR TEST</div> 
+      <div id="arm-label" class="ar-label ar-label-left">REACTION ASSESSMENT</div> 
+      <div id="leg-label" class="ar-label ar-label-right">STABILITY ASSESSMENT</div> 
+      <div id="abdomen-label" class="ar-label ar-label-right">BODY COMPOSITION</div> 
+      <div id="controls-guide" class="sci-panel">
+        <div class="text-xs text-blue-300 mb-1 font-semibold">INTERFACE CONTROLS</div> 
+        <div class="grid grid-cols-2 gap-x-3 gap-y-1 text-xs">
+          <span>ROTATE VIEW</span><span class="text-gray-300">Left Mouse / Drag</span> 
+          <span>ZOOM</span><span class="text-gray-300">Mouse Wheel</span> 
+          <span>PAN</span><span class="text-gray-300">Right Mouse / Drag</span> 
+          <span>RESET VIEW</span><span class="text-gray-300">Double Click</span> 
+          <span>SELECT TEST</span><span class="text-gray-300">Click Body Area</span> 
+        </div>
+      </div>
     </div>
   </div>
 
-  <audio id="sound-click" preload="auto"> <source src="https://assets.mixkit.co/sfx/preview/mixkit-modern-technology-select-3124.mp3" type="audio/mpeg"> </audio> <audio id="sound-hover" preload="auto"> <source src="https://assets.mixkit.co/sfx/preview/mixkit-interface-hint-notification-911.mp3" type="audio/mpeg"> </audio> <audio id="sound-scan" preload="auto"> <source src="https://assets.mixkit.co/sfx/preview/mixkit-sci-fi-interface-zoom-890.mp3" type="audio/mpeg"> </audio>
+  <audio id="sound-click" preload="auto">
+    <source src="https://assets.mixkit.co/sfx/preview/mixkit-modern-technology-select-3124.mp3" type="audio/mpeg"> 
+  </audio>
+  <audio id="sound-hover" preload="auto">
+    <source src="https://assets.mixkit.co/sfx/preview/mixkit-interface-hint-notification-911.mp3" type="audio/mpeg"> 
+  </audio>
+  <audio id="sound-scan" preload="auto">
+    <source src="https://assets.mixkit.co/sfx/preview/mixkit-sci-fi-interface-zoom-890.mp3" type="audio/mpeg"> 
+  </audio>
 
 
   <script defer>
     // --- Global Variables ---
     let scene, camera, renderer, model, controls, composer;
-    let raycaster, mouse; // Initialize later after THREE is confirmed
+    // Use window.THREE explicitly
+    let raycaster = new window.THREE.Raycaster();
+    let mouse = new window.THREE.Vector2();
     let INTERSECTED;
-    let bodyParts = {}; let arLabels = {}; let labelPositions = {};
-    let trackerElement; let canvasContainer; let loadingManager; let progressBar; let loadingText;
-    let ambientLight, hemiLight, dirLight; let bloomPass;
+    let bodyParts = {}; // To store interactable body parts
+    let arLabels = {}; // To store AR label elements
+    let labelPositions = {}; // To store 3D positions for labels
+    let trackerElement;
+    let canvasContainer;
+    let loadingManager;
+    let progressBar;
+    let loadingText;
+    let ambientLight, hemiLight, dirLight;
+    let bloomPass;
     let soundClick, soundHover, soundScan;
-    let windowHalfX = window.innerWidth / 2; let windowHalfY = window.innerHeight / 2;
-    let currentIntersectedPart = null; let selectedPart = null;
-    let myLogoModel = null; // Logo model kept null for now
-
+    let windowHalfX = window.innerWidth / 2;
+    let windowHalfY = window.innerHeight / 2;
+    let currentIntersectedPart = null; // Track hovered part
+    let selectedPart = null; // Track clicked part
+    let myLogoModel = null;
+    let logoScene, logoCamera, logoRenderer;
 
     // --- Initialization ---
     function init() {
+      // Ensure THREE is loaded before proceeding
       if (typeof window.THREE === 'undefined') {
           console.error("THREE.js core not loaded yet. Retrying...");
+          // Retry initialization after a short delay
           setTimeout(init, 100); 
           return; 
       }
       console.log("THREE object found. Initializing...");
-
-      // Initialize THREE related globals now
-      raycaster = new window.THREE.Raycaster();
-      mouse = new window.THREE.Vector2();
 
       canvasContainer = document.getElementById('canvas-container');
       progressBar = document.getElementById('progress-bar');
@@ -86,56 +478,18 @@
       soundHover = document.getElementById('sound-hover');
       soundScan = document.getElementById('sound-scan');
 
-      setupLoadingManager(); // Depends on THREE
-      setupScene();          // Depends on THREE
-      setupCamera();         // Depends on THREE
-      setupRenderer();       // Depends on THREE
-      setupLights();         // Depends on THREE
-      setupControls();       // Depends on THREE, camera, renderer
-      setupPostProcessing(); // Depends on THREE, scene, camera, renderer
+      // Loading Manager
+      setupLoadingManager();
 
-      loadMainModel();       // Depends on THREE, manager, scene etc.
-      loadARLabels();        // DOM elements
-      setupEventListeners(); // DOM elements
-      animate();             // Depends on most THREE objects
-    }
-
-    // --- Setup Functions ---
-    // Broke down setup into smaller functions for clarity
-    function setupLoadingManager() {
-      // Check if GLTFLoader is available *before* trying to use it later
-      if (typeof window.THREE.GLTFLoader === 'undefined') {
-          console.warn("THREE.GLTFLoader is not defined yet. Logo loading will fail if uncommented.");
-          // You might want to prevent logo loading attempt entirely here
-      }
-      loadingManager = new window.THREE.LoadingManager();
-      const loadingOverlay = document.getElementById('loading-overlay');
-      loadingManager.onStart = function (url, itemsLoaded, itemsTotal) { /*...*/ loadingText.textContent = 'Initializing bioscan...'; };
-      loadingManager.onLoad = function () {
-        loadingOverlay.style.opacity = '0';
-        setTimeout(() => {
-          loadingOverlay.style.display = 'none';
-          Object.values(arLabels).forEach(el => el.style.opacity = '0.7');
-          document.getElementById('system-status').textContent = 'ONLINE';
-          document.getElementById('system-status').classList.add('text-green-400');
-        }, 500);
-        playScanSound();
-      };
-      loadingManager.onProgress = function (url, itemsLoaded, itemsTotal) { /*...*/ const progress = (itemsLoaded / itemsTotal) * 100; progressBar.style.width = progress + '%'; loadingText.textContent = `Analyzing biometric data... ${Math.round(progress)}%`; };
-      loadingManager.onError = function (url) { /*...*/ console.error('Loading manager error for ' + url); loadingText.textContent = 'Error initializing system.'; };
-    }
-
-    function setupScene() {
+      // Scene
       scene = new window.THREE.Scene();
-      scene.background = new window.THREE.Color(0x1e293b);
-    }
+      scene.background = new window.THREE.Color(0x1e293b); // Match dark-bg
 
-    function setupCamera() {
+      // Camera
       camera = new window.THREE.PerspectiveCamera(45, canvasContainer.clientWidth / canvasContainer.clientHeight, 0.1, 100);
       camera.position.set(0, 1, 5);
-    }
 
-     function setupRenderer() {
+      // Renderer
       renderer = new window.THREE.WebGLRenderer({ antialias: true, alpha: true });
       renderer.setSize(canvasContainer.clientWidth, canvasContainer.clientHeight);
       renderer.setPixelRatio(window.devicePixelRatio);
@@ -143,40 +497,219 @@
       renderer.shadowMap.enabled = true;
       renderer.shadowMap.type = window.THREE.PCFSoftShadowMap;
       canvasContainer.appendChild(renderer.domElement);
+
+      // Lights
+      setupLights();
+
+      // Controls
+      setupControls();
+
+      // Post-processing
+      setupPostProcessing();
+      
+      // Set up the logo
+      setupLogo();
+
+      // Load Model
+      loadMainModel();
+
+      // Load AR Labels
+      loadARLabels();
+
+      // Event Listeners
+      setupEventListeners();
+
+      // Start Animation
+      animate();
+    }
+
+    // --- Setup Functions ---
+    function setupLoadingManager() {
+      // Ensure THREE is loaded before creating LoadingManager
+      if (typeof window.THREE === 'undefined') {
+          console.error("THREE not defined in setupLoadingManager");
+          return;
+      }
+      loadingManager = new window.THREE.LoadingManager();
+      const loadingOverlay = document.getElementById('loading-overlay');
+
+      loadingManager.onStart = function (url, itemsLoaded, itemsTotal) {
+        loadingText.textContent = 'Initializing bioscan...';
+      };
+
+      loadingManager.onLoad = function () {
+        loadingOverlay.style.opacity = '0';
+        setTimeout(() => {
+          loadingOverlay.style.display = 'none';
+          // Fade in labels after load
+          Object.values(arLabels).forEach(el => el.style.opacity = '0.7');
+          document.getElementById('system-status').textContent = 'ONLINE';
+          document.getElementById('system-status').classList.remove('text-yellow-400'); 
+          document.getElementById('system-status').classList.add('text-green-400');
+        }, 500); // Delay hiding to allow fade out
+        playScanSound(); // Play sound on load complete
+      };
+
+      loadingManager.onProgress = function (url, itemsLoaded, itemsTotal) {
+        const progress = (itemsLoaded / itemsTotal) * 100;
+        progressBar.style.width = progress + '%';
+        loadingText.textContent = `Analyzing biometric data... ${Math.round(progress)}%`;
+      };
+
+      loadingManager.onError = function (url) {
+        console.error('There was an error loading ' + url);
+        loadingText.textContent = 'Error initializing system. Please refresh.';
+      };
     }
 
     function setupLights() {
-      ambientLight = new window.THREE.AmbientLight(0xffffff, 0.3); scene.add(ambientLight);
-      hemiLight = new window.THREE.HemisphereLight(0xadd8e6, 0x404040, 0.6); scene.add(hemiLight);
-      dirLight = new window.THREE.DirectionalLight(0xffffff, 0.8); dirLight.position.set(5, 10, 7.5); dirLight.castShadow = true; /*... shadow map settings ...*/ scene.add(dirLight);
+      // Use window.THREE
+      ambientLight = new window.THREE.AmbientLight(0xffffff, 0.3); // Soft ambient light
+      scene.add(ambientLight);
+
+      hemiLight = new window.THREE.HemisphereLight(0xadd8e6, 0x404040, 0.6); // Light blue sky, brown ground
+      scene.add(hemiLight);
+
+      dirLight = new window.THREE.DirectionalLight(0xffffff, 0.8);
+      dirLight.position.set(5, 10, 7.5);
+      dirLight.castShadow = true;
+      dirLight.shadow.mapSize.width = 1024;
+      dirLight.shadow.mapSize.height = 1024;
+      dirLight.shadow.camera.near = 0.5;
+      dirLight.shadow.camera.far = 50;
+      dirLight.shadow.camera.left = -10;
+      dirLight.shadow.camera.right = 10;
+      dirLight.shadow.camera.top = 10;
+      dirLight.shadow.camera.bottom = -10;
+      scene.add(dirLight);
     }
 
     function setupControls() {
+      // Use window.THREE
       controls = new window.THREE.OrbitControls(camera, renderer.domElement);
-      controls.enableDamping = true; controls.dampingFactor = 0.1; controls.screenSpacePanning = false; controls.minDistance = 2; controls.maxDistance = 15; controls.target.set(0, 0.9, 0); controls.maxPolarAngle = Math.PI / 1.8; controls.minPolarAngle = Math.PI / 4; controls.update();
+      controls.enableDamping = true;
+      controls.dampingFactor = 0.1;
+      controls.screenSpacePanning = false;
+      controls.minDistance = 2;
+      controls.maxDistance = 15;
+      controls.target.set(0, 0.9, 0); // Center around the model's torso
+      controls.maxPolarAngle = Math.PI / 1.8; // Prevent looking directly from top/bottom
+      controls.minPolarAngle = Math.PI / 4; // Prevent looking from too low
+      controls.update();
     }
 
     function setupPostProcessing() {
+      // Use window.THREE
       composer = new window.THREE.EffectComposer(renderer);
-      const renderPass = new window.THREE.RenderPass(scene, camera); composer.addPass(renderPass);
-      bloomPass = new window.THREE.UnrealBloomPass(new window.THREE.Vector2(window.innerWidth, window.innerHeight), 1.0, 0.3, 0.85); composer.addPass(bloomPass);
-      const fxaaPass = new window.THREE.ShaderPass(window.THREE.FXAAShader); fxaaPass.material.uniforms['resolution'].value.x = 1 / (canvasContainer.clientWidth * renderer.getPixelRatio()); fxaaPass.material.uniforms['resolution'].value.y = 1 / (canvasContainer.clientHeight * renderer.getPixelRatio()); composer.addPass(fxaaPass);
+      const renderPass = new window.THREE.RenderPass(scene, camera);
+      composer.addPass(renderPass);
+
+      // Bloom pass
+      bloomPass = new window.THREE.UnrealBloomPass(new window.THREE.Vector2(window.innerWidth, window.innerHeight), 1.0, 0.3, 0.85);
+      composer.addPass(bloomPass);
+
+      // FXAA Pass
+      const fxaaPass = new window.THREE.ShaderPass(window.THREE.FXAAShader);
+      fxaaPass.material.uniforms['resolution'].value.x = 1 / (canvasContainer.clientWidth * renderer.getPixelRatio());
+      fxaaPass.material.uniforms['resolution'].value.y = 1 / (canvasContainer.clientHeight * renderer.getPixelRatio());
+      composer.addPass(fxaaPass);
+    }
+
+    // --- Logo Setup Function ---
+    function setupLogo() {
+      // Create a dedicated container for the logo
+      const logoContainer = document.createElement('div');
+      logoContainer.id = 'logo-container';
+      logoContainer.style.position = 'absolute';
+      logoContainer.style.top = '20px';
+      logoContainer.style.right = '20px';
+      logoContainer.style.width = '100px';
+      logoContainer.style.height = '100px';
+      logoContainer.style.zIndex = '10';
+      logoContainer.style.pointerEvents = 'none';
+      canvasContainer.appendChild(logoContainer);
+      
+      // Create a separate scene, camera and renderer for the logo
+      logoScene = new window.THREE.Scene();
+      logoCamera = new window.THREE.PerspectiveCamera(60, 1, 0.1, 1000);
+      logoCamera.position.set(0, 0, 5);
+      
+      logoRenderer = new window.THREE.WebGLRenderer({ 
+        antialias: true, 
+        alpha: true,
+        powerPreference: "high-performance" 
+      });
+      logoRenderer.setSize(100, 100);
+      logoRenderer.setClearColor(0x000000, 0); // Transparent background
+      logoRenderer.setPixelRatio(window.devicePixelRatio);
+      
+      // Add to the logo container
+      document.getElementById('logo-container').appendChild(logoRenderer.domElement);
+      
+      // Add lighting to the logo scene
+      const logoAmbientLight = new window.THREE.AmbientLight(0xffffff, 0.5);
+      logoScene.add(logoAmbientLight);
+      
+      const logoDirectionalLight = new window.THREE.DirectionalLight(0x3b82f6, 1.0);
+      logoDirectionalLight.position.set(5, 5, 5);
+      logoScene.add(logoDirectionalLight);
+      
+      // Load the logo model independently
+      loadLogoModel();
+    }
+
+    // --- Load Logo Model Function ---
+    function loadLogoModel() {
+      const logoLoader = new window.THREE.GLTFLoader();
+      
+      // Log the path for debugging
+      console.log("Attempting to load logo from: logo.glb");
+      
+      logoLoader.load(
+        'logo.glb', // Make sure this file exists in the same directory as your HTML
+        function (gltf) {
+          myLogoModel = gltf.scene;
+          
+          // Scale down the logo to fit in the corner
+          myLogoModel.scale.set(0.8, 0.8, 0.8);
+          
+          // Position the logo in the center of the logo scene
+          myLogoModel.position.set(0, 0, 0);
+          
+          // Apply special material to the logo for a futuristic feel
+          myLogoModel.traverse((node) => {
+            if (node.isMesh) {
+              // Create a shiny material with subtle glow
+              const material = new window.THREE.MeshStandardMaterial({
+                color: 0x3b82f6, // Blue color matching the UI theme
+                metalness: 0.8,
+                roughness: 0.2,
+                emissive: 0x1e40af, // Dark blue emissive color
+                emissiveIntensity: 0.5,
+              });
+              
+              // Apply the material
+              node.material = material;
+            }
+          });
+          
+          // Add the logo to the logo scene
+          logoScene.add(myLogoModel);
+          
+          console.log('Logo loaded successfully');
+        },
+        function (xhr) {
+          console.log('Logo loading: ' + (xhr.loaded / xhr.total * 100) + '%');
+        },
+        function (error) {
+          console.error('Error loading logo:', error);
+          console.error('Make sure the logo.glb file is in the correct location');
+        }
+      );
     }
 
     function loadMainModel() {
-      // Check for DRACOLoader as well, since it's a dependency for this model load
-      if (typeof window.THREE.DRACOLoader === 'undefined') {
-          console.error("THREE.DRACOLoader is not defined. Cannot load main model.");
-          loadingText.textContent = 'Error: DRACOLoader failed to load.';
-          return; // Stop if DRACO is missing
-      }
-       if (typeof window.THREE.GLTFLoader === 'undefined') {
-          console.error("THREE.GLTFLoader is not defined. Cannot load main model.");
-           loadingText.textContent = 'Error: GLTFLoader failed to load.';
-           return; // Stop if GLTF loader is missing
-       }
-
-
+      // Use window.THREE
       const dracoLoader = new window.THREE.DRACOLoader();
       dracoLoader.setDecoderPath('https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/libs/draco/gltf/');
 
@@ -185,98 +718,370 @@
 
       loader.load(
         'https://raw.githubusercontent.com/GanyuHail/humanglbfiles/main/human.glb',
-        function (gltf) { // --- Success Callback ---
+        function (gltf) {
           model = gltf.scene;
           model.scale.set(1.0, 1.0, 1.0);
           model.position.y = -1;
-          model.traverse(function (node) { if (node.isMesh) { node.castShadow = true; node.receiveShadow = true; if (node.material) { node.material.metalness = 0.1; node.material.roughness = 0.8; } } });
+
+          model.traverse(function (node) {
+            if (node.isMesh) {
+              node.castShadow = true;
+              node.receiveShadow = true;
+              if (node.material) {
+                node.material.metalness = 0.1;
+                node.material.roughness = 0.8;
+              }
+            }
+          });
+
           scene.add(model);
           console.log("Main model loaded.");
+
           setupBodyPartInteraction();
           calculateLabelPositions();
-
-          // --- LOGO LOADING IS COMMENTED OUT ---
-          /*
-          console.log("Attempting to load logo...");
-          // Check GLTFLoader exists *just before* using it
-          if (typeof window.THREE.GLTFLoader === 'undefined') {
-              console.error("GLTFLoader not available when trying to load logo!");
-              return;
-          }
-          const logoLoader = new window.THREE.GLTFLoader(loadingManager);
-          logoLoader.load(
-              'logo.glb', // <<< MAKE SURE THIS PATH IS CORRECT!
-              function (logoGltf) {
-                  myLogoModel = logoGltf.scene;
-                  camera.add(myLogoModel); // Attach to camera
-                  myLogoModel.scale.set(0.05, 0.05, 0.05); // Adjust scale
-                  myLogoModel.position.set(1.5, 1, -3);    // Adjust position
-                  console.log("Logo loaded and added.");
-              },
-              undefined, // Progress
-              function (error) {
-                  console.error('Error loading logo:', error);
-              }
-          );
-          */
-          // --- END OF COMMENTED OUT LOGO LOADING ---
-
-        }, // --- End Success Callback ---
-        undefined, // Progress handled by manager
-        function (error) { // --- Error Callback ---
+        },
+        undefined,
+        function (error) {
           console.error('An error happened loading the main model:', error);
           loadingText.textContent = 'Error loading model data.';
         }
       );
     }
 
+    function loadARLabels() {
+      arLabels = {
+        head: document.getElementById('head-label'),
+        torso: document.getElementById('torso-label'),
+        arm: document.getElementById('arm-label'),
+        leg: document.getElementById('leg-label'),
+        abdomen: document.getElementById('abdomen-label'),
+      };
+    }
 
-    function loadARLabels() { /* ... (unchanged, uses DOM IDs) ... */ arLabels = { head: document.getElementById('head-label'), torso: document.getElementById('torso-label'), arm: document.getElementById('arm-label'), leg: document.getElementById('leg-label'), abdomen: document.getElementById('abdomen-label'), }; }
-    function setupBodyPartInteraction() { /* ... (unchanged, uses model names) ... */ if (!model) return; bodyParts = { head: model.getObjectByName('Head'), chest: model.getObjectByName('Spine2'), leftArm: model.getObjectByName('LeftArm'), rightArm: model.getObjectByName('RightArm'), abdomen: model.getObjectByName('Spine'), leftLeg: model.getObjectByName('LeftUpLeg'), rightLeg: model.getObjectByName('RightUpLeg') }; bodyParts = Object.fromEntries(Object.entries(bodyParts).filter(([_, value]) => value)); console.log("Identified body parts:", Object.keys(bodyParts)); }
-    function calculateLabelPositions() { /* ... (unchanged, uses THREE.Vector3) ... */ if (!model) return; labelPositions = { head: new window.THREE.Vector3(0, 1.7, 0.3), torso: new window.THREE.Vector3(0.4, 1.1, 0.2), arm: new window.THREE.Vector3(-0.6, 1.2, 0.1), leg: new window.THREE.Vector3(0.3, 0.2, 0.3), abdomen: new window.THREE.Vector3(0.3, 0.8, 0.3) }; }
-    function setupEventListeners() { /* ... (unchanged, uses DOM elements) ... */ window.addEventListener('resize', onWindowResize, false); canvasContainer.addEventListener('mousemove', onMouseMove, false); canvasContainer.addEventListener('click', onClick, false); canvasContainer.addEventListener('dblclick', onDoubleClick, false); const panelToggle = document.getElementById('panel-toggle'); const infoPanel = document.getElementById('info-panel'); if (panelToggle && infoPanel) { panelToggle.addEventListener('click', () => { infoPanel.classList.toggle('collapsed'); }); } }
+    function setupBodyPartInteraction() {
+      if (!model) return;
+      bodyParts = {
+        head: model.getObjectByName('Head'),
+        chest: model.getObjectByName('Spine2'),
+        leftArm: model.getObjectByName('LeftArm'),
+        rightArm: model.getObjectByName('RightArm'),
+        abdomen: model.getObjectByName('Spine'),
+        leftLeg: model.getObjectByName('LeftUpLeg'),
+        rightLeg: model.getObjectByName('RightUpLeg')
+      };
+      bodyParts = Object.fromEntries(Object.entries(bodyParts).filter(([_, value]) => value));
+      console.log("Identified body parts for interaction:", Object.keys(bodyParts));
+    }
+
+    function calculateLabelPositions() {
+      if (!model) return;
+      // Use window.THREE
+      labelPositions = {
+        head: new window.THREE.Vector3(0, 1.7, 0.3),
+        torso: new window.THREE.Vector3(0.4, 1.1, 0.2),
+        arm: new window.THREE.Vector3(-0.6, 1.2, 0.1),
+        leg: new window.THREE.Vector3(0.3, 0.2, 0.3),
+        abdomen: new window.THREE.Vector3(0.3, 0.8, 0.3)
+      };
+    }
+
+    function setupEventListeners() {
+      window.addEventListener('resize', onWindowResize, false);
+      canvasContainer.addEventListener('mousemove', onMouseMove, false);
+      canvasContainer.addEventListener('click', onClick, false);
+      canvasContainer.addEventListener('dblclick', onDoubleClick, false);
+
+      // Mobile Panel Toggle
+      const panelToggle = document.getElementById('panel-toggle');
+      const infoPanel = document.getElementById('info-panel');
+      if (panelToggle && infoPanel) {
+        panelToggle.addEventListener('click', () => {
+          infoPanel.classList.toggle('collapsed');
+        });
+      }
+    }
 
     // --- Event Handlers ---
-    function onWindowResize() { /* ... (unchanged, uses camera, renderer, composer) ... */ windowHalfX = window.innerWidth / 2; windowHalfY = window.innerHeight / 2; camera.aspect = canvasContainer.clientWidth / canvasContainer.clientHeight; camera.updateProjectionMatrix(); renderer.setSize(canvasContainer.clientWidth, canvasContainer.clientHeight); composer.setSize(canvasContainer.clientWidth, canvasContainer.clientHeight); const fxaaPass = composer.passes.find(pass => pass.shader === window.THREE.FXAAShader); if (fxaaPass) { fxaaPass.material.uniforms['resolution'].value.x = 1 / (canvasContainer.clientWidth * renderer.getPixelRatio()); fxaaPass.material.uniforms['resolution'].value.y = 1 / (canvasContainer.clientHeight * renderer.getPixelRatio()); } }
-    function onMouseMove(event) { /* ... (unchanged, uses mouse, trackerElement) ... */ const rect = canvasContainer.getBoundingClientRect(); mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1; mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1; trackerElement.style.left = (event.clientX - rect.left) + 'px'; trackerElement.style.top = (event.clientY - rect.top) + 'px'; trackerElement.style.opacity = '1'; }
-    function onClick(event) { /* ... (unchanged, uses currentIntersectedPart, window.loadTest) ... */ event.preventDefault(); if (currentIntersectedPart && currentIntersectedPart.partName) { console.log(`Clicked on: ${currentIntersectedPart.partName}`); selectedPart = currentIntersectedPart.partName; if (window.loadTest) { window.loadTest(selectedPart); } playClickSound(); } }
-    function onDoubleClick() { /* ... (unchanged, uses controls, camera) ... */ controls.reset(); camera.position.set(0, 1, 5); controls.target.set(0, 0.9, 0); controls.update(); console.log("View Reset"); }
+    function onWindowResize() {
+      windowHalfX = window.innerWidth / 2;
+      windowHalfY = window.innerHeight / 2;
+
+      camera.aspect = canvasContainer.clientWidth / canvasContainer.clientHeight;
+      camera.updateProjectionMatrix();
+
+      renderer.setSize(canvasContainer.clientWidth, canvasContainer.clientHeight);
+      composer.setSize(canvasContainer.clientWidth, canvasContainer.clientHeight);
+
+      // Update FXAA resolution (Use window.THREE)
+      const fxaaPass = composer.passes.find(pass => pass.shader === window.THREE.FXAAShader);
+      if (fxaaPass) {
+        fxaaPass.material.uniforms['resolution'].value.x = 1 / (canvasContainer.clientWidth * renderer.getPixelRatio());
+        fxaaPass.material.uniforms['resolution'].value.y = 1 / (canvasContainer.clientHeight * renderer.getPixelRatio());
+      }
+    }
+
+    function onMouseMove(event) {
+      const rect = canvasContainer.getBoundingClientRect();
+      mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+      mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+
+      trackerElement.style.left = (event.clientX - rect.left) + 'px';
+      trackerElement.style.top = (event.clientY - rect.top) + 'px';
+      trackerElement.style.opacity = '1';
+    }
+
+    function onClick(event) {
+      event.preventDefault();
+      if (currentIntersectedPart && currentIntersectedPart.partName) {
+        console.log(`Clicked on: ${currentIntersectedPart.partName}`);
+        selectedPart = currentIntersectedPart.partName;
+        if (window.loadTest) {
+          window.loadTest(selectedPart);
+        }
+        playClickSound();
+      }
+    }
+
+    function onDoubleClick() {
+        controls.reset();
+        camera.position.set(0, 1, 5);
+        controls.target.set(0, 0.9, 0);
+        controls.update();
+        console.log("View Reset");
+    }
 
     // --- Core Logic ---
-    function checkIntersection() { /* ... (unchanged, uses raycaster, mouse, camera, model, bodyParts) ... */ if (!model || !raycaster) return; raycaster.setFromCamera(mouse, camera); const intersects = raycaster.intersectObject(model, true); if (intersects.length > 0) { const intersectedObject = intersects[0].object; let partName = null; for (const [name, part] of Object.entries(bodyParts)) { if (part && (intersectedObject === part || intersectedObject.parent === part || intersectedObject.parent?.parent === part)) { partName = name; break; } } if (partName && partName !== currentIntersectedPart?.partName) { currentIntersectedPart = { object: intersectedObject, partName: partName }; playHoverSound(); canvasContainer.style.cursor = 'pointer'; const vector = intersects[0].point.clone().project(camera); const x = (vector.x * 0.5 + 0.5) * canvasContainer.clientWidth; const y = (-(vector.y * 0.5) + 0.5) * canvasContainer.clientHeight; trackerElement.style.left = x + 'px'; trackerElement.style.top = y + 'px'; trackerElement.style.opacity = '1'; } else if (!partName && currentIntersectedPart) { canvasContainer.style.cursor = 'grab'; currentIntersectedPart = null; trackerElement.style.opacity = '0'; } } else { if (currentIntersectedPart) { canvasContainer.style.cursor = 'grab'; currentIntersectedPart = null; trackerElement.style.opacity = '0'; } } }
-    function updateARLabels() { /* ... (unchanged, uses model, camera, arLabels, labelPositions) ... */ if (!model || !canvasContainer || !camera) return; for (const label in arLabels) { const element = arLabels[label]; if (element && labelPositions[label]) { const position = labelPositions[label].clone(); const vector = position.project(camera); const x = (vector.x * 0.5 + 0.5) * canvasContainer.clientWidth; const y = (-(vector.y * 0.5) + 0.5) * canvasContainer.clientHeight; let offset = element.offsetWidth / 2; if (element.classList.contains('ar-label-left')) { offset = element.offsetWidth + 10; element.style.left = (x - offset) + 'px'; } else if (element.classList.contains('ar-label-right')) { offset = -10; element.style.left = (x + offset) + 'px'; } else { element.style.left = (x - offset) + 'px'; } element.style.top = (y - element.offsetHeight / 2) + 'px'; element.style.opacity = vector.z < 1 ? '0.7' : '0'; } } }
+    function checkIntersection() {
+      if (!model) return;
+
+      raycaster.setFromCamera(mouse, camera);
+      const intersects = raycaster.intersectObject(model, true);
+
+      if (intersects.length > 0) {
+        const intersectedObject = intersects[0].object;
+        let partName = null;
+        for (const [name, part] of Object.entries(bodyParts)) {
+          if (part && (intersectedObject === part || intersectedObject.parent === part || intersectedObject.parent?.parent === part)) {
+            partName = name;
+            break;
+          }
+        }
+
+        if (partName && partName !== currentIntersectedPart?.partName) {
+          currentIntersectedPart = { object: intersectedObject, partName: partName };
+          playHoverSound();
+          canvasContainer.style.cursor = 'pointer';
+           const vector = intersects[0].point.clone().project(camera);
+           const x = (vector.x * 0.5 + 0.5) * canvasContainer.clientWidth;
+           const y = (-(vector.y * 0.5) + 0.5) * canvasContainer.clientHeight;
+           trackerElement.style.left = x + 'px';
+           trackerElement.style.top = y + 'px';
+           trackerElement.style.opacity = '1';
+
+        } else if (!partName && currentIntersectedPart) {
+           canvasContainer.style.cursor = 'grab';
+           currentIntersectedPart = null;
+           trackerElement.style.opacity = '0';
+        }
+      } else {
+        if (currentIntersectedPart) {
+          canvasContainer.style.cursor = 'grab';
+          currentIntersectedPart = null;
+          trackerElement.style.opacity = '0';
+        }
+      }
+    }
+
+    function updateARLabels() {
+        if (!model || !canvasContainer || !camera) return;
+        for (const label in arLabels) {
+            const element = arLabels[label];
+            if (element && labelPositions[label]) {
+                const position = labelPositions[label].clone();
+                const vector = position.project(camera);
+                const x = (vector.x * 0.5 + 0.5) * canvasContainer.clientWidth;
+                const y = (-(vector.y * 0.5) + 0.5) * canvasContainer.clientHeight;
+                let offset = element.offsetWidth / 2;
+                if (element.classList.contains('ar-label-left')) {
+                    offset = element.offsetWidth + 10;
+                     element.style.left = (x - offset) + 'px';
+                } else if (element.classList.contains('ar-label-right')) {
+                     offset = -10;
+                     element.style.left = (x + offset) + 'px';
+                } else {
+                     element.style.left = (x - offset) + 'px';
+                }
+                element.style.top = (y - element.offsetHeight / 2) + 'px';
+                element.style.opacity = vector.z < 1 ? '0.7' : '0';
+            }
+        }
+    }
 
     // --- Audio ---
-    function playClickSound() { if (soundClick) { soundClick.currentTime = 0; soundClick.play().catch(e => console.log("Audio play failed:", e)); } }
-    function playHoverSound() { if (soundHover) { soundHover.currentTime = 0; soundHover.volume = 0.3; soundHover.play().catch(e => console.log("Audio play failed:", e)); } }
-    function playScanSound() { if (soundScan) { soundScan.currentTime = 0; soundScan.play().catch(e => console.log("Audio play failed:", e)); } }
+    function playClickSound() {
+      if (soundClick) {
+        soundClick.currentTime = 0;
+        soundClick.volume = 0.3;
+        soundClick.play().catch(e => console.warn("Audio play prevented by browser:", e));
+      }
+    }
+    
+    function playHoverSound() {
+      if (soundHover && Math.random() > 0.7) { // Only play sometimes to avoid spam
+        soundHover.currentTime = 0;
+        soundHover.volume = 0.1;
+        soundHover.play().catch(e => console.warn("Audio play prevented by browser:", e));
+      }
+    }
+    
+    function playScanSound() {
+      if (soundScan) {
+        soundScan.currentTime = 0;
+        soundScan.volume = 0.2;
+        soundScan.play().catch(e => console.warn("Audio play prevented by browser:", e));
+      }
+    }
 
     // --- Animation Loop ---
     function animate() {
       requestAnimationFrame(animate);
       if (controls) { controls.update(); }
-      checkIntersection(); // Check mouse intersection
-      updateARLabels();    // Update label positions
-
-      // Only animate logo if it exists (it shouldn't in this commented-out version)
-      // if (myLogoModel) { myLogoModel.rotation.y += 0.01; }
-
-      if (composer && scene && camera) { composer.render(); }
+      checkIntersection();
+      updateARLabels();
+      
+      // Animate and render the main scene
+      if (composer && scene && camera) { 
+        composer.render(); 
+      }
+      
+      // Animate and render the logo
+      if (myLogoModel) { 
+        myLogoModel.rotation.y += 0.01; // Rotate around Y axis
+        
+        // Add a subtle floating motion
+        const time = Date.now() * 0.001;
+        myLogoModel.position.y = Math.sin(time) * 0.1; // Gentle floating up and down
+      }
+      
+      // Render the logo scene separately
+      if (logoRenderer && logoScene && logoCamera) {
+        logoRenderer.render(logoScene, logoCamera);
+      }
     }
 
     // --- Start ---
+    // Use DOMContentLoaded to wait for HTML, then call init which checks for THREE
     document.addEventListener('DOMContentLoaded', init);
-
   </script>
 
   <script type="text/babel">
-    // --- React Components (Unchanged) ---
-    const TestManager = () => { const [activeTest, setActiveTest] = React.useState(null); React.useEffect(() => { window.loadTest = (testId) => { setActiveTest(testId); }; return () => { window.loadTest = null; }; }, []); const renderTest = () => { switch(activeTest) { case 'head': return <CognitiveTest />; case 'chest': return <CardiovascularTest />; case 'abdomen': return <BodyCompositionTest />; case 'leftArm': case 'rightArm': return <ReactionTest />; case 'leftLeg': case 'rightLeg': return <StabilityTest />; default: return <WelcomeScreen />; } }; return ( <div className="test-panel"> {renderTest()} </div> ); };
-    const WelcomeScreen = () => ( <div className="sci-panel p-6 info-card show text-gray-200"> <h2 className="text-xl font-bold mb-4 text-blue-400">Bioscan Complete</h2> <p className="mb-4"> Our advanced AI diagnostic system has completed your biometric scan and identified specific areas that require assessment to evaluate your overall health status. </p> <p className="mb-4"> Based on your unique physical profile, we've customized a series of non-invasive diagnostic tests to measure your physiological and cognitive functions. These assessments will provide valuable data about your current health condition. </p> <div className="my-5 p-4 bg-blue-900 bg-opacity-30 rounded-lg border border-blue-700"> <h3 className="font-medium text-lg mb-2 text-blue-300">Required Assessments:</h3> <ul className="space-y-2"> <li className="flex items-start"> <span className="text-blue-400 mr-2">•</span> <div> <span className="font-medium text-blue-300">Cognitive Assessment</span> <p className="text-sm text-gray-400">Analysis indicates potential for memory optimization</p> </div> </li> <li className="flex items-start"> <span className="text-blue-400 mr-2">•</span> <div> <span className="font-medium text-blue-300">Cardiovascular Test</span> <p className="text-sm text-gray-400">Heart rate patterns require further evaluation</p> </div> </li> <li className="flex items-start"> <span className="text-blue-400 mr-2">•</span> <div> <span className="font-medium text-blue-300">Body Composition</span> <p className="text-sm text-gray-400">Tissue density scanning indicates BMI assessment needed</p> </div> </li> <li className="flex items-start"> <span className="text-blue-400 mr-2">•</span> <div> <span className="font-medium text-blue-300">Reaction Assessment</span> <p className="text-sm text-gray-400">Neural pathway response measurement recommended</p> </div> </li> <li className="flex items-start"> <span className="text-blue-400 mr-2">•</span> <div> <span className="font-medium text-blue-300">Stability Assessment</span> <p className="text-sm text-gray-400">Vestibular system calibration check suggested</p> </div> </li> </ul> </div> <p className="mb-2"> Please select any highlighted area on your biometric model to begin the corresponding assessment. Your results will be analyzed to create a comprehensive health profile. </p> <p className="text-xs text-gray-400 mt-4"> <strong>Note:</strong> This medical assessment system is for educational and demonstration purposes only. For accurate health diagnostics, please consult licensed healthcare professionals. </p> </div> );
-    const CognitiveTest = () => <div>Cognitive Test Component</div>; const CardiovascularTest = () => <div>Cardiovascular Test Component</div>; const BodyCompositionTest = () => <div>Body Composition Test Component</div>; const ReactionTest = () => <div>Reaction Test Component</div>; const StabilityTest = () => <div>Stability Test Component</div>;
+    // Component to manage which test is shown
+    const TestManager = () => {
+      const [activeTest, setActiveTest] = React.useState(null); 
+      // Function to be exposed globally - defined in the main script now
+      // Make sure window.loadTest is ready before React renders
+      React.useEffect(() => {
+        window.loadTest = (testId) => { 
+          setActiveTest(testId); 
+        };
+        // Cleanup function (optional)
+        return () => { window.loadTest = null; };
+      }, []); // Empty dependency array ensures this runs once on mount
+      
+      // Render the appropriate test component based on the active test
+      const renderTest = () => { 
+        switch(activeTest) {
+          case 'head': return <CognitiveTest />; 
+          case 'chest': return <CardiovascularTest />; 
+          case 'abdomen': return <BodyCompositionTest />; 
+          case 'leftArm': 
+          case 'rightArm': return <ReactionTest />; 
+          case 'leftLeg':
+          case 'rightLeg': return <StabilityTest />; 
+          default: return <WelcomeScreen />; 
+        }
+      };
+      
+      return (
+        <div className="test-panel">
+          {renderTest()}
+        </div>
+      ); 
+    };
 
+    // Welcome screen shown initially with personalized message
+    const WelcomeScreen = () => ( 
+      <div className="sci-panel p-6 info-card show text-gray-200">
+        {/* --- Welcome content (Unchanged) --- */}
+        <h2 className="text-xl font-bold mb-4 text-blue-400">Bioscan Complete</h2>       
+        <p className="mb-4">
+          Our advanced AI diagnostic system has completed your biometric scan and identified specific areas that require assessment to evaluate your overall health status. 
+        </p> 
+        <p className="mb-4">
+          Based on your unique physical profile, we've customized a series of non-invasive diagnostic tests to measure your physiological and cognitive functions. These assessments will provide valuable data about your current health condition. 
+        </p>
+        <div className="my-5 p-4 bg-blue-900 bg-opacity-30 rounded-lg border border-blue-700">
+          <h3 className="font-medium text-lg mb-2 text-blue-300">Required Assessments:</h3> 
+          <ul className="space-y-2">
+            <li className="flex items-start">
+              <span className="text-blue-400 mr-2">•</span> 
+              <div>
+                <span className="font-medium text-blue-300">Cognitive Assessment</span> 
+                <p className="text-sm text-gray-400">Analysis indicates potential for memory optimization</p> 
+              </div>
+            </li>
+            <li className="flex items-start">
+              <span className="text-blue-400 mr-2">•</span> 
+              <div>
+                <span className="font-medium text-blue-300">Cardiovascular Test</span> 
+                <p className="text-sm text-gray-400">Heart rate patterns require further evaluation</p> 
+              </div>
+            </li>
+            <li className="flex items-start">
+              <span className="text-blue-400 mr-2">•</span> 
+              <div>
+                <span className="font-medium text-blue-300">Body Composition</span> 
+                <p className="text-sm text-gray-400">Tissue density scanning indicates BMI assessment needed</p> 
+              </div>
+            </li>
+            <li className="flex items-start">
+              <span className="text-blue-400 mr-2">•</span> 
+              <div>
+                <span className="font-medium text-blue-300">Reaction Assessment</span> 
+                <p className="text-sm text-gray-400">Neural pathway response measurement recommended</p> 
+              </div>
+            </li>
+            <li className="flex items-start">
+              <span className="text-blue-400 mr-2">•</span> 
+              <div>
+                <span className="font-medium text-blue-300">Stability Assessment</span> 
+                <p className="text-sm text-gray-400">Vestibular system calibration check suggested</p> 
+              </div>
+            </li>
+          </ul>
+        </div>
+        <p className="mb-2">
+          Please select any highlighted area on your biometric model to begin the corresponding assessment. 
+          Your results will be analyzed to create a comprehensive health profile. 
+        </p>
+        <p className="text-xs text-gray-400 mt-4">
+          <strong>Note:</strong> This medical assessment system is for educational and demonstration purposes only. 
+          For accurate health diagnostics, please consult licensed healthcare professionals. 
+        </p>
+      </div>
+    );
+
+    // --- PLACEHOLDER REACT COMPONENTS (Keep your actual components here) ---
+    const CognitiveTest = () => <div>Cognitive Test Component</div>; 
+    const CardiovascularTest = () => <div>Cardiovascular Test Component</div>; 
+    const BodyCompositionTest = () => <div>Body Composition Test Component</div>;
+    const ReactionTest = () => <div>Reaction Test Component</div>;
+    const StabilityTest = () => <div>Stability Test Component</div>;
+    // --- END PLACEHOLDER COMPONENTS ---
+
+    // Ensure React DOM render happens after the container element exists
+    // and potentially after other scripts (defer helps here)
     ReactDOM.render(<TestManager />, document.getElementById('test-container'));
   </script>
-
 </body>
 </html>
