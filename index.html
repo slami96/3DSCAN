@@ -342,6 +342,17 @@
       from { box-shadow: 0 0 5px rgba(59, 130, 246, 0.6); }
       to { box-shadow: 0 0 20px rgba(59, 130, 246, 0.9); }
     }
+    
+    /* Logo container styling */
+    #logo-container {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      width: 100px;
+      height: 100px;
+      z-index: 10;
+      pointer-events: none; /* Let user interact with what's behind the logo */
+    }
   </style>
 </head>
 <body>
@@ -387,6 +398,9 @@
 
     <!-- 3D Canvas Container -->
     <div id="canvas-container" class="relative">
+      <!-- Logo Container -->
+      <div id="logo-container"></div>
+      
       <!-- HUD Elements -->
       <div class="hud-element body-stat sci-panel">
         <div class="text-xs text-blue-300 mb-1">DIAGNOSTIC STATUS</div>
@@ -431,7 +445,6 @@
   <audio id="sound-scan" preload="auto">
     <source src="https://assets.mixkit.co/sfx/preview/mixkit-sci-fi-interface-zoom-890.mp3" type="audio/mpeg">
   </audio>
-
   <!-- React components -->
   <script type="text/babel">
     // Component to manage which test is shown
@@ -833,9 +846,261 @@
           )}
         </div>
       );
+    };<!-- React components -->
+  <script type="text/babel">
+    // Component to manage which test is shown
+    const TestManager = () => {
+      const [activeTest, setActiveTest] = React.useState(null);
+      
+      // Function to be exposed globally
+      window.loadTest = (testId) => {
+        setActiveTest(testId);
+      };
+      
+      // Render the appropriate test component based on the active test
+      const renderTest = () => {
+        switch(activeTest) {
+          case 'head': return <CognitiveTest />;
+          case 'chest': return <CardiovascularTest />;
+          case 'abdomen': return <BodyCompositionTest />;
+          case 'leftArm': 
+          case 'rightArm': return <ReactionTest />;
+          case 'leftLeg':
+          case 'rightLeg': return <StabilityTest />;
+          default: return <WelcomeScreen />;
+        }
+      };
+      
+      return (
+        <div className="test-panel">
+          {renderTest()}
+        </div>
+      );
     };
 
-    // ABDOMEN: Body Composition Test
+    // Welcome screen shown initially with personalized message
+    const WelcomeScreen = () => (
+      <div className="sci-panel p-6 info-card show text-gray-200">
+        <h2 className="text-xl font-bold mb-4 text-blue-400">Bioscan Complete</h2>
+        
+        <p className="mb-4">
+          Our advanced AI diagnostic system has completed your biometric scan and identified specific areas that require assessment to evaluate your overall health status.
+        </p>
+        
+        <p className="mb-4">
+          Based on your unique physical profile, we've customized a series of non-invasive diagnostic tests to measure your physiological and cognitive functions. These assessments will provide valuable data about your current health condition.
+        </p>
+        
+        <div className="my-5 p-4 bg-blue-900 bg-opacity-30 rounded-lg border border-blue-700">
+          <h3 className="font-medium text-lg mb-2 text-blue-300">Required Assessments:</h3>
+          <ul className="space-y-2">
+            <li className="flex items-start">
+              <span className="text-blue-400 mr-2">•</span>
+              <div>
+                <span className="font-medium text-blue-300">Cognitive Assessment</span>
+                <p className="text-sm text-gray-400">Analysis indicates potential for memory optimization</p>
+              </div>
+            </li>
+            <li className="flex items-start">
+              <span className="text-blue-400 mr-2">•</span>
+              <div>
+                <span className="font-medium text-blue-300">Cardiovascular Test</span>
+                <p className="text-sm text-gray-400">Heart rate patterns require further evaluation</p>
+              </div>
+            </li>
+            <li className="flex items-start">
+              <span className="text-blue-400 mr-2">•</span>
+              <div>
+                <span className="font-medium text-blue-300">Body Composition</span>
+                <p className="text-sm text-gray-400">Tissue density scanning indicates BMI assessment needed</p>
+              </div>
+            </li>
+            <li className="flex items-start">
+              <span className="text-blue-400 mr-2">•</span>
+              <div>
+                <span className="font-medium text-blue-300">Reaction Assessment</span>
+                <p className="text-sm text-gray-400">Neural pathway response measurement recommended</p>
+              </div>
+            </li>
+            <li className="flex items-start">
+              <span className="text-blue-400 mr-2">•</span>
+              <div>
+                <span className="font-medium text-blue-300">Stability Assessment</span>
+                <p className="text-sm text-gray-400">Vestibular system calibration check suggested</p>
+              </div>
+            </li>
+          </ul>
+        </div>
+        
+        <p className="mb-2">
+          Please select any highlighted area on your biometric model to begin the corresponding assessment. Your results will be analyzed to create a comprehensive health profile.
+        </p>
+        
+        <p className="text-xs text-gray-400 mt-4">
+          <strong>Note:</strong> This medical assessment system is for educational and demonstration purposes only. For accurate health diagnostics, please consult licensed healthcare professionals.
+        </p>
+      </div>
+    );
+
+    // HEAD: Cognitive (Memory) Test
+    const CognitiveTest = () => {
+      const [gameState, setGameState] = React.useState('intro'); // intro, showing, playing, success, failure
+      const [sequence, setSequence] = React.useState([]);
+      const [userSequence, setUserSequence] = React.useState([]);
+      const [level, setLevel] = React.useState(1);
+      const [currentShowIndex, setCurrentShowIndex] = React.useState(0);
+      
+      // Colors for the memory game
+      const colors = ['red', 'blue', 'green', 'yellow'];
+      
+      // Start a new test
+      const startTest = () => {
+        // Generate random sequence based on level (level + 2 items)
+        const newSequence = Array.from({ length: level + 2 }, () => 
+          colors[Math.floor(Math.random() * colors.length)]
+        );
+        setSequence(newSequence);
+        setUserSequence([]);
+        setGameState('showing');
+        setCurrentShowIndex(0);
+        
+        // Start showing the sequence
+        showNextColor(newSequence, 0);
+      };
+      
+      // Function to display the sequence one color at a time
+      const showNextColor = (seq, index) => {
+        setCurrentShowIndex(index);
+        
+        // If we've shown all colors, move to playing state
+        if (index >= seq.length) {
+          setTimeout(() => {
+            setGameState('playing');
+            setCurrentShowIndex(-1);
+          }, 300);
+          return;
+        }
+        
+        // Show the next color after a delay
+        setTimeout(() => {
+          showNextColor(seq, index + 1);
+        }, 800); // Show each color for 800ms
+      };
+      
+      // Handle user selection
+      const handleColorClick = (color) => {
+        if (gameState !== 'playing') return;
+        
+        const newUserSequence = [...userSequence, color];
+        setUserSequence(newUserSequence);
+        
+        // Check if selection is correct
+        const index = userSequence.length;
+        if (color !== sequence[index]) {
+          setGameState('failure');
+          return;
+        }
+        
+        // Check if sequence is complete
+        if (newUserSequence.length === sequence.length) {
+          setGameState('success');
+          // Advance to next level after delay
+          setTimeout(() => {
+            setLevel(level + 1);
+            setGameState('intro');
+          }, 2000);
+        }
+      };
+      
+      // Reset the test
+      const resetTest = () => {
+        setLevel(1);
+        setGameState('intro');
+      };
+      
+      return (
+        <div className="max-w-md mx-auto bg-gray-900 p-6 rounded-lg shadow-md">
+          <h2 className="text-xl font-semibold mb-2 text-white">Cognitive Assessment</h2>
+          <p className="text-sm text-gray-400 mb-4">Testing short-term memory and sequence recall abilities</p>
+          
+          {gameState === 'intro' && (
+            <div>
+              <p className="mb-4 text-gray-300">
+                This test evaluates your cognitive processing and memory function. Observe the sequence of colors and repeat it exactly. 
+                <br/><br/>
+                Current difficulty: Level {level} ({level + 2} elements)
+              </p>
+              <button 
+                onClick={startTest}
+                className="w-full py-2 bg-blue-600 text-white rounded hover:bg-blue-500"
+              >
+                Begin Assessment
+              </button>
+            </div>
+          )}
+          
+          {gameState === 'showing' && (
+            <div>
+              <p className="mb-3 text-gray-300">Memorize this sequence:</p>
+              <div className="grid grid-cols-2 gap-3 mb-4">
+                {colors.map((color, index) => (
+                  <button
+                    key={color}
+                    className={`h-24 rounded-lg border-2 ${
+                      sequence[currentShowIndex] === color ? 'border-white border-4 glow' : 'border-gray-800'
+                    } capitalize font-bold ${
+                      color === 'red' ? 'bg-red-600 text-white' :
+                      color === 'blue' ? 'bg-blue-600 text-white' :
+                      color === 'green' ? 'bg-green-600 text-white' :
+                      'bg-yellow-500 text-white'
+                    }`}
+                    disabled={true}
+                  >
+                    {color}
+                  </button>
+                ))}
+              </div>
+              <p className="text-center text-gray-300">Pattern recording in progress...</p>
+            </div>
+          )}
+          
+          {gameState === 'playing' && (
+            <div>
+              <p className="mb-3 text-gray-300">Reproduce the sequence:</p>
+              <div className="grid grid-cols-2 gap-3 mb-4">
+                {colors.map((color) => (
+                  <button
+                    key={color}
+                    onClick={() => handleColorClick(color)}
+                    className={`h-24 rounded-lg border-2 border-gray-800 capitalize font-bold ${
+                      color === 'red' ? 'bg-red-600 text-white' :
+                      color === 'blue' ? 'bg-blue-600 text-white' :
+                      color === 'green' ? 'bg-green-600 text-white' :
+                      'bg-yellow-500 text-white'
+                    }`}
+                  >
+                    {color}
+                  </button>
+                ))}
+              </div>
+              <div className="flex justify-between items-center text-gray-300">
+                <span>Sequence: {userSequence.length}/{sequence.length}</span>
+                <button 
+                  onClick={resetTest}
+                  className="text-sm px-3 py-1 bg-gray-800 rounded hover:bg-gray-700"
+                >
+                  Reset
+                </button>
+              </div>
+            </div>
+          )}
+          
+          {gameState === 'success' && (
+            <div className="text-center py-6">
+              <p className="text-green-400 text-xl mb-2">Assessment Successful</p>
+              <p className="text-gray-300">Cognitive functioning at level {level} performance.</p>
+              <p className="text-sm mt-3 text-gray-400">Advancing
+                // ABDOMEN: Body Composition Test
     const BodyCompositionTest = () => {
       const [height, setHeight] = React.useState('');
       const [weight, setWeight] = React.useState('');
@@ -1313,7 +1578,8 @@
     let arLabels = {};
     let tracker = document.getElementById('body-tracker');
     let audioEnabled = true;
-
+    let logoModel; // For the 3D logo
+    
     // DOM elements
     const canvasContainer = document.getElementById('canvas-container');
     const infoContent = document.getElementById('info-content');
@@ -1323,6 +1589,7 @@
     const panelToggle = document.getElementById('panel-toggle');
     const infoPanel = document.getElementById('info-panel');
     const systemStatus = document.getElementById('system-status');
+    const logoContainer = document.getElementById('logo-container');
 
     // Audio elements
     const soundClick = document.getElementById('sound-click');
@@ -1405,8 +1672,10 @@
       setupControls();
       setupRaycaster();
       setupARElements();
+      setupLogoRenderer(); // New function for logo rendering
       loadEnvironmentMap();
       loadModel();
+      loadLogo(); // Load the 3D logo
       setupEventListeners();
       animate();
     }
@@ -1431,6 +1700,41 @@
       renderer.shadowMap.enabled = true;
       renderer.shadowMap.type = THREE.PCFSoftShadowMap;
       canvasContainer.appendChild(renderer.domElement);
+    }
+
+    // --- Setup Logo Renderer ---
+    function setupLogoRenderer() {
+      // Create a separate renderer for the logo
+      const logoScene = new THREE.Scene();
+      const logoCamera = new THREE.PerspectiveCamera(60, 1, 0.1, 1000);
+      logoCamera.position.set(0, 0, 5);
+      
+      // Create a renderer for the logo
+      const logoRenderer = new THREE.WebGLRenderer({ 
+        antialias: true, 
+        alpha: true,
+        powerPreference: "high-performance" 
+      });
+      logoRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      logoRenderer.setSize(100, 100);
+      logoRenderer.outputEncoding = THREE.sRGBEncoding;
+      logoRenderer.setClearColor(0x000000, 0); // Transparent background
+      
+      // Add to the logo container
+      logoContainer.appendChild(logoRenderer.domElement);
+      
+      // Add lighting to the logo scene
+      const logoAmbientLight = new THREE.AmbientLight(0xffffff, 0.5);
+      logoScene.add(logoAmbientLight);
+      
+      const logoDirectionalLight = new THREE.DirectionalLight(0x3b82f6, 1.0);
+      logoDirectionalLight.position.set(5, 5, 5);
+      logoScene.add(logoDirectionalLight);
+      
+      // Store references for animation
+      window.logoRenderer = logoRenderer;
+      window.logoScene = logoScene;
+      window.logoCamera = logoCamera;
     }
 
     // --- Setup Lighting ---
@@ -1474,7 +1778,299 @@
     // --- Setup Controls ---
     function setupControls() {
       controls = new OrbitControls(camera, renderer.domElement);
-      controls.target.set(0, 1.0, 0);
+      controls.target.set(0,// ABDOMEN: Body Composition Test
+    const BodyCompositionTest = () => {
+      const [height, setHeight] = React.useState('');
+      const [weight, setWeight] = React.useState('');
+      const [unit, setUnit] = React.useState('metric'); // metric or imperial
+      const [result, setResult] = React.useState(null);
+      
+      const calculateBMI = () => {
+        let bmi, heightVal, weightVal;
+        
+        if (unit === 'metric') {
+          // Metric: weight in kg, height in cm
+          heightVal = parseFloat(height);
+          weightVal = parseFloat(weight);
+          
+          if (isNaN(heightVal) || isNaN(weightVal) || heightVal <= 0 || weightVal <= 0) {
+            setResult({ error: 'Please enter valid height and weight values' });
+            return;
+          }
+          
+          // Convert cm to meters and calculate BMI
+          bmi = weightVal / Math.pow(heightVal / 100, 2);
+        } else {
+          // Imperial: weight in lbs, height in inches
+          heightVal = parseFloat(height);
+          weightVal = parseFloat(weight);
+          
+          if (isNaN(heightVal) || isNaN(weightVal) || heightVal <= 0 || weightVal <= 0) {
+            setResult({ error: 'Please enter valid height and weight values' });
+            return;
+          }
+          
+          // Imperial BMI formula: (weight in pounds * 703) / (height in inches)²
+          bmi = (weightVal * 703) / Math.pow(heightVal, 2);
+        }
+        
+        // Round to one decimal place
+        bmi = Math.round(bmi * 10) / 10;
+        
+        // Determine BMI category
+        let category, color;
+        if (bmi < 18.5) {
+          category = 'Underweight';
+          color = 'text-blue-400';
+        } else if (bmi >= 18.5 && bmi < 25) {
+          category = 'Normal weight';
+          color = 'text-green-400';
+        } else if (bmi >= 25 && bmi < 30) {
+          category = 'Overweight';
+          color = 'text-yellow-400';
+        } else {
+          category = 'Obesity';
+          color = 'text-red-400';
+        }
+        
+        setResult({ bmi, category, color });
+      };
+      
+      return (
+        <div className="max-w-md mx-auto bg-gray-900 p-6 rounded-lg shadow-md">
+          <h2 className="text-xl font-semibold mb-2 text-white">Body Composition Analysis</h2>
+          <p className="text-sm text-gray-400 mb-4">Evaluating body mass index and tissue composition</p>
+          
+          <div className="mb-4">
+            <label className="block text-gray-300 mb-2">Measurement System:</label>
+            <div className="flex">
+              <button 
+                onClick={() => setUnit('metric')}
+                className={`flex-1 py-2 ${unit === 'metric' ? 'bg-blue-600 text-white' : 'bg-gray-800 text-gray-300'} rounded-l`}
+              >
+                Metric
+              </button>
+              <button 
+                onClick={() => setUnit('imperial')}
+                className={`flex-1 py-2 ${unit === 'imperial' ? 'bg-blue-600 text-white' : 'bg-gray-800 text-gray-300'} rounded-r`}
+              >
+                Imperial
+              </button>
+            </div>
+          </div>
+          
+          <div className="mb-4">
+            <label className="block text-gray-300 mb-2">
+              Height {unit === 'metric' ? '(cm)' : '(inches)'}:
+            </label>
+            <input
+              type="number"
+              value={height}
+              onChange={(e) => setHeight(e.target.value)}
+              placeholder={unit === 'metric' ? 'Enter height in cm' : 'Enter height in inches'}
+              className="w-full p-2 border rounded bg-gray-800 text-white border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400"
+            />
+          </div>
+          
+          <div className="mb-6">
+            <label className="block text-gray-300 mb-2">
+              Weight {unit === 'metric' ? '(kg)' : '(lbs)'}:
+            </label>
+            <input
+              type="number"
+              value={weight}
+              onChange={(e) => setWeight(e.target.value)}
+              placeholder={unit === 'metric' ? 'Enter weight in kg' : 'Enter weight in lbs'}
+              className="w-full p-2 border rounded bg-gray-800 text-white border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400"
+            />
+          </div>
+          
+          <button 
+            onClick={calculateBMI}
+            className="w-full py-2 bg-blue-600 text-white rounded hover:bg-blue-500"
+          >
+            Analyze Body Composition
+          </button>
+          
+          {result && !result.error && (
+            <div className="mt-6 p-4 bg-gray-800 rounded-lg border border-gray-700">
+              <h3 className="font-medium text-lg mb-3 text-white">Analysis Results</h3>
+              <div className="flex justify-between mb-2 text-gray-300">
+                <span>Body Mass Index:</span>
+                <span className="font-semibold text-white">{result.bmi}</span>
+              </div>
+              <div className="flex justify-between text-gray-300">
+                <span>Classification:</span>
+                <span className={`font-semibold ${result.color}`}>{result.category}</span>
+              </div>
+              <div className="mt-4 pt-4 border-t border-gray-700">
+                <h4 className="font-medium mb-2 text-gray-300">BMI Classifications:</h4>
+                <ul className="text-sm space-y-1 text-gray-400">
+                  <li><span className="text-blue-400 font-medium">Below 18.5:</span> Underweight</li>
+                  <li><span className="text-green-400 font-medium">18.5 - 24.9:</span> Normal weight</li>
+                  <li><span className="text-yellow-400 font-medium">25 - 29.9:</span> Overweight</li>
+                  <li><span className="text-red-400 font-medium">30 and above:</span> Obesity</li>
+                </ul>
+              </div>
+            </div>
+          )}
+          
+          {result && result.error && (
+            <div className="mt-4 p-3 bg-red-900 bg-opacity-30 text-red-300 rounded border border-red-700">
+              {result.error}
+            </div>
+          )}
+        </div>
+      );
+    };
+
+    // HANDS/ARMS: Reaction Test
+    const ReactionTest = () => {
+      const [state, setState] = React.useState('ready'); // ready, waiting, click, results
+      const [startTime, setStartTime] = React.useState(null);
+      const [reactionTime, setReactionTime] = React.useState(null);
+      const [results, setResults] = React.useState([]);
+      
+      // Start the test
+      const startTest = () => {
+        setState('waiting');
+        
+        // Random delay between 1-5 seconds
+        const delay = 1000 + Math.random() * 4000;
+        
+        setTimeout(() => {
+          setStartTime(Date.now());
+          setState('click');
+        }, delay);
+      };
+      
+      // Handle user click
+      const handleClick = () => {
+        if (state === 'waiting') {
+          // Clicked too early
+          setState('ready');
+          alert('Early response detected. Wait for the green signal before responding.');
+        } else if (state === 'click') {
+          // Measure reaction time
+          const endTime = Date.now();
+          const time = endTime - startTime;
+          setReactionTime(time);
+          
+          // Add to results history (keep last 5)
+          const newResults = [time, ...results].slice(0, 5);
+          setResults(newResults);
+          
+          setState('results');
+        }
+      };
+      
+      // Get feedback based on reaction time
+      const getFeedback = (time) => {
+        if (time < 200) return { text: 'Exceptional response time!', color: 'text-purple-400' };
+        if (time < 250) return { text: 'Excellent neural response!', color: 'text-indigo-400' };
+        if (time < 300) return { text: 'Very Good reflexes!', color: 'text-blue-400' };
+        if (time < 350) return { text: 'Good response time', color: 'text-green-400' };
+        if (time < 400) return { text: 'Average reaction speed', color: 'text-yellow-400' };
+        return { text: 'Response time could be improved', color: 'text-red-400' };
+      };
+      
+      // Calculate average reaction time
+      const getAverage = () => {
+        if (results.length === 0) return null;
+        const sum = results.reduce((a, b) => a + b, 0);
+        return Math.round(sum / results.length);
+      };
+      
+      // Get background color based on state
+      const getBackgroundColor = () => {
+        if (state === 'ready') return 'bg-blue-900 hover:bg-blue-800';
+        if (state === 'waiting') return 'bg-red-700';
+        if (state === 'click') return 'bg-green-700';
+        return 'bg-gray-800';
+      };
+      
+      return (
+        <div className="max-w-md mx-auto bg-gray-900 p-6 rounded-lg shadow-md">
+          <h2 className="text-xl font-semibold mb-2 text-white">Reaction Speed Assessment</h2>
+          <p className="text-sm text-gray-400 mb-4">Measuring neural pathway response and motor function</p>
+          
+          <div 
+            onClick={state === 'ready' ? startTest : handleClick}
+            className={`w-full h-64 rounded-lg flex items-center justify-center cursor-pointer transition-colors ${getBackgroundColor()}`}
+          >
+            <div className="text-center p-4">
+              {state === 'ready' && (
+                <div>
+                  <p className="font-medium mb-2 text-white">Tap to begin reaction assessment</p>
+                  <p className="text-sm text-gray-300">Wait for the red screen to turn green, then tap as quickly as possible.</p>
+                </div>
+              )}
+              
+              {state === 'waiting' && (
+                <p className="font-medium text-white">Wait for green signal...</p>
+              )}
+              
+              {state === 'click' && (
+                <p className="font-medium text-white pulse-animation">TAP NOW!</p>
+              )}
+              
+              {state === 'results' && (
+                <div>
+                  <p className="text-2xl font-bold mb-1 text-white">{reactionTime} ms</p>
+                  {reactionTime && (
+                    <p className={`font-medium ${getFeedback(reactionTime).color}`}>
+                      {getFeedback(reactionTime).text}
+                    </p>
+                  )}
+                  <button 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setState('ready');
+                    }}
+                    className="mt-3 px-4 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-500"
+                  >
+                    Assess Again
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+          
+          {results.length > 0 && (
+            <div className="mt-5">
+              <h3 className="font-medium mb-2 text-gray-300">Response time history:</h3>
+              <div className="flex flex-wrap gap-2">
+                {results.map((time, index) => (
+                  <div key={index} className="px-3 py-1 bg-gray-800 rounded text-sm text-gray-300">
+                    {time} ms
+                  </div>
+                ))}
+              </div>
+              {results.length > 1 && (
+                <p className="mt-3 text-sm text-gray-300">
+                  Average response: <span className="font-medium text-white">{getAverage()} ms</span>
+                </p>
+              )}
+            </div>
+          )}
+        </div>
+      );
+    };
+
+    // LEGS: Stability Test
+    const StabilityTest = () => {
+      const [timerRunning, setTimerRunning] = React.useState(false);
+      const [startTime, setStartTime] = React.useState(null);
+      const [elapsedTime, setElapsedTime] = React.useState(0);
+      const [bestTime, setBestTime] = React.useState(0);
+      const [leg, setLeg] = React.useState('right');
+      const [feedbackVisible, setFeedbackVisible] = React.useState(false);
+      const [intervalId, setIntervalId] = React.useState(null);
+      
+      // Start the timer
+      const startTimer = () => {
+        setTimerRunning(true);
+        controls.target.set(0, 1.0, 0);
       controls.enableDamping = true;
       controls.dampingFactor = 0.05;
       controls.screenSpacePanning = true;
@@ -1509,7 +2105,53 @@
         .load('royal_esplanade_1k.hdr', function(texture) {
           texture.mapping = THREE.EquirectangularReflectionMapping;
           scene.environment = texture;
+          window.logoScene.environment = texture; // Also use for logo
         });
+    }
+
+    // --- Load Logo Model ---
+    function loadLogo() {
+      const loader = new GLTFLoader();
+      loader.load(
+        './logo.glb', // Path to your logo.glb file
+        function (gltf) {
+          logoModel = gltf.scene;
+          
+          // Scale down the logo to fit in the corner
+          logoModel.scale.set(0.8, 0.8, 0.8);
+          
+          // Position the logo in the center of the logo scene
+          logoModel.position.set(0, 0, 0);
+          
+          // Apply special material to the logo for a futuristic feel
+          logoModel.traverse((node) => {
+            if (node.isMesh) {
+              // Create a shiny material with subtle glow
+              const material = new THREE.MeshStandardMaterial({
+                color: 0x3b82f6, // Blue color matching the UI theme
+                metalness: 0.8,
+                roughness: 0.2,
+                emissive: 0x1e40af, // Dark blue emissive color
+                emissiveIntensity: 0.5,
+              });
+              
+              // Apply the material
+              node.material = material;
+            }
+          });
+          
+          // Add the logo to the logo scene
+          window.logoScene.add(logoModel);
+          
+          console.log('Logo loaded successfully');
+        },
+        function (xhr) {
+          console.log('Logo loading: ' + (xhr.loaded / xhr.total * 100) + '%');
+        },
+        function (error) {
+          console.error('Error loading logo:', error);
+        }
+      );
     }
 
     // --- Load 3D Model ---
@@ -1886,7 +2528,7 @@
       }
     }
 
-    // --- Get Body Part At Point with EXTREMELY aggressive arm and abdomen detection ---
+    // --- Get Body Part At Point with aggressive arm and abdomen detection ---
     function getBodyPartAtPoint(point) {
       // Debug: Log the point coordinates for troubleshooting
       console.log('Checking point:', point);
@@ -2097,7 +2739,7 @@
       }
     }
 
-    // --- Update AR Labels Positions (Raised) ---
+    // --- Update AR Labels Positions ---
     function updateARLabelsPositions() {
       if (!model || !camera) return;
       // Adjusted positions for labels (raised y-values)
@@ -2125,12 +2767,29 @@
     // --- Animation Loop ---
     function animate() {
       requestAnimationFrame(animate);
+      
+      // Animate the main scene
       if (controls) {
         controls.update();
       }
       if (composer && scene && camera) {
         composer.render();
       }
+      
+      // Animate the logo (rotation)
+      if (logoModel) {
+        logoModel.rotation.y += 0.01; // Rotate around Y axis
+        
+        // Add a subtle floating motion
+        const time = Date.now() * 0.001;
+        logoModel.position.y = Math.sin(time) * 0.1; // Gentle floating up and down
+        
+        // Render the logo scene
+        if (window.logoRenderer && window.logoScene && window.logoCamera) {
+          window.logoRenderer.render(window.logoScene, window.logoCamera);
+        }
+      }
+      
       updateARLabelsPositions();
     }
 
@@ -2142,4 +2801,3 @@
   </script>
 </body>
 </html>
-      
