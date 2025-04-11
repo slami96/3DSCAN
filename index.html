@@ -6,2138 +6,2256 @@
   <title>BioCare Health Assessment System</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Roboto:wght@300;400;500&display=swap">
-  <!-- React and Babel scripts -->
   <script src="https://unpkg.com/react@17/umd/react.development.js"></script>
   <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
   <style>
-    /* Custom Science/Medical Theme */
+    /* --- STEP 2: Add CSS for the Logo Container --- */
+    #logo-container {
+      position: absolute;
+      top: 15px; /* Adjust as needed */
+      right: 15px; /* Adjust as needed */
+      width: 100px; /* Adjust as needed */
+      height: 100px; /* Adjust as needed */
+      z-index: 100; /* Ensure it's above other elements */
+      border: 1px solid rgba(59, 130, 246, 0.3); /* Optional border */
+      background-color: rgba(15, 23, 42, 0.5); /* Optional background */
+      backdrop-filter: blur(5px); /* Optional blur */
+      border-radius: 0.25rem;
+      overflow: hidden; /* Ensures the canvas stays within bounds */
+    }
+    #logo-container canvas {
+        display: block; /* Prevent extra space below canvas */
+        width: 100% !important;
+        height: 100% !important;
+    }
+    /* --- End Step 2 --- */
+
+    /* Existing CSS from[cite: 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77]... */
     :root {
-      --primary: #3b82f6;
-      --primary-hover: #2563eb;
-      --secondary: #10B981;
-      --accent: #06B6D4;
-      --dark-bg: #1e293b;
-      --panel-bg: #0f172a;
-      --text-primary: #F9FAFB;
-      --text-secondary: #D1D5DB;
-      --glow-primary: 0 0 15px rgba(59, 130, 246, 0.5);
-      --glow-secondary: 0 0 15px rgba(16, 185, 129, 0.5);
+      --primary: #3b82f6; /* [cite: 1] */
+      --primary-hover: #2563eb; /* [cite: 2] */
+      --secondary: #10B981; /* [cite: 2] */
+      --accent: #06B6D4; /* [cite: 2] */
+      --dark-bg: #1e293b; /* [cite: 2] */
+      --panel-bg: #0f172a; /* [cite: 2] */
+      --text-primary: #F9FAFB; /* [cite: 2] */
+      --text-secondary: #D1D5DB; /* [cite: 2] */
+      --glow-primary: 0 0 15px rgba(59, 130, 246, 0.5); /* [cite: 3] */
+      --glow-secondary: 0 0 15px rgba(16, 185, 129, 0.5); /* [cite: 3] */
     }
     body {
-      font-family: 'Roboto', sans-serif;
-      margin: 0;
-      overflow: hidden;
-      background-color: var(--dark-bg);
-      color: var(--text-primary);
+      font-family: 'Roboto', sans-serif; /* [cite: 4] */
+      margin: 0; /* [cite: 4] */
+      overflow: hidden; /* [cite: 4] */
+      background-color: var(--dark-bg); /* [cite: 4] */
+      color: var(--text-primary); /* [cite: 5] */
     }
-    h1, h2, h3, h4, h5, h6 {
-      font-family: 'Rajdhani', sans-serif;
-      font-weight: 600;
+     h1, h2, h3, h4, h5, h6 {
+      font-family: 'Rajdhani', sans-serif; /* [cite: 5] */
+      font-weight: 600; /* [cite: 6] */
     }
     .sci-panel {
-      background-color: rgba(15, 23, 42, 0.85);
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(59, 130, 246, 0.2);
-      border-radius: 0.5rem;
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06), var(--glow-primary);
+      background-color: rgba(15, 23, 42, 0.85); /* [cite: 6] */
+      backdrop-filter: blur(10px); /* [cite: 6] */
+      border: 1px solid rgba(59, 130, 246, 0.2); /* [cite: 7] */
+      border-radius: 0.5rem; /* [cite: 7] */
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06), var(--glow-primary); /* [cite: 7] */
     }
-    .sci-title {
-      position: relative;
-      overflow: hidden;
+     .sci-title {
+      position: relative; /* [cite: 8] */
+      overflow: hidden; /* [cite: 8] */
     }
-    .sci-title::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 5px;
-      height: 100%;
-      background: linear-gradient(180deg, var(--primary), var(--secondary));
+     .sci-title::before {
+      content: ''; /* [cite: 9] */
+      position: absolute; /* [cite: 9] */
+      top: 0; /* [cite: 9] */
+      left: 0; /* [cite: 9] */
+      width: 5px; /* [cite: 10] */
+      height: 100%; /* [cite: 10] */
+      background: linear-gradient(180deg, var(--primary), var(--secondary)); /* [cite: 10] */
     }
     .sci-badge {
-      background: linear-gradient(45deg, var(--primary), var(--accent));
-      color: white;
-      padding: 0.25rem 0.75rem;
-      border-radius: 9999px;
-      font-size: 0.75rem;
-      font-weight: 500;
+      background: linear-gradient(45deg, var(--primary), var(--accent)); /* [cite: 10] */
+      color: white; /* [cite: 11] */
+      padding: 0.25rem 0.75rem; /* [cite: 11] */
+      border-radius: 9999px; /* [cite: 11] */
+      font-size: 0.75rem; /* [cite: 11] */
+      font-weight: 500; /* [cite: 11] */
     }
     .sci-highlight {
-      color: var(--secondary);
-      font-weight: 500;
+      color: var(--secondary); /* [cite: 12] */
+      font-weight: 500; /* [cite: 12] */
     }
     .glow-text {
-      text-shadow: 0 0 8px rgba(59, 130, 246, 0.6);
+      text-shadow: 0 0 8px rgba(59, 130, 246, 0.6); /* [cite: 13] */
     }
-    /* Canvas Styling */
     #canvas-container {
-      flex-grow: 1;
-      height: 100vh;
-      position: relative;
+      flex-grow: 1; /* [cite: 14] */
+      height: 100vh; /* [cite: 15] */
+      position: relative; /* [cite: 15] */
     }
     #canvas-container canvas {
-      display: block;
-      width: 100%;
-      height: 100%;
-      cursor: grab;
+      display: block; /* [cite: 15] */
+      width: 100%; /* [cite: 15] */
+      height: 100%; /* [cite: 16] */
+      cursor: grab; /* [cite: 16] */
     }
-    #canvas-container canvas:active {
-      cursor: grabbing;
+     #canvas-container canvas:active {
+      cursor: grabbing; /* [cite: 16] */
     }
-    /* Sidebar Panel */
-    #info-panel {
-      width: 375px;
-      height: 100vh;
-      overflow-y: auto;
-      flex-shrink: 0;
-      background-color: var(--panel-bg);
-      transition: transform 0.3s ease;
-      scrollbar-width: thin;
-      scrollbar-color: var(--primary) var(--panel-bg);
+     #info-panel {
+      width: 375px; /* [cite: 17] */
+      height: 100vh; /* [cite: 18] */
+      overflow-y: auto; /* [cite: 18] */
+      flex-shrink: 0; /* [cite: 18] */
+      background-color: var(--panel-bg); /* [cite: 18] */
+      transition: transform 0.3s ease; /* [cite: 18] */
+      scrollbar-width: thin; /* [cite: 18] */
+      scrollbar-color: var(--primary) var(--panel-bg); /* [cite: 18] */
     }
     #info-panel::-webkit-scrollbar {
-      width: 8px;
+      width: 8px; /* [cite: 19] */
     }
-    #info-panel::-webkit-scrollbar-track {
-      background: var(--panel-bg);
+     #info-panel::-webkit-scrollbar-track {
+      background: var(--panel-bg); /* [cite: 20] */
     }
     #info-panel::-webkit-scrollbar-thumb {
-      background-color: var(--primary);
-      border-radius: 20px;
+      background-color: var(--primary); /* [cite: 21] */
+      border-radius: 20px; /* [cite: 21] */
     }
-    /* Loading Overlay */
-    #loading-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background-color: rgba(15, 23, 42, 0.95);
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      z-index: 50;
+     #loading-overlay {
+      position: fixed; /* [cite: 22] */
+      top: 0; /* [cite: 23] */
+      left: 0; /* [cite: 23] */
+      right: 0; /* [cite: 23] */
+      bottom: 0; /* [cite: 23] */
+      background-color: rgba(15, 23, 42, 0.95); /* [cite: 23] */
+      display: flex; /* [cite: 23] */
+      flex-direction: column; /* [cite: 23] */
+      justify-content: center; /* [cite: 23] */
+      align-items: center; /* [cite: 24] */
+      z-index: 50; /* [cite: 24] */
     }
     .progress-bar {
-      width: 300px;
-      height: 8px;
-      background-color: rgba(255, 255, 255, 0.1);
-      border-radius: 4px;
-      overflow: hidden;
-      margin-top: 2rem;
+      width: 300px; /* [cite: 24] */
+      height: 8px; /* [cite: 24] */
+      background-color: rgba(255, 255, 255, 0.1); /* [cite: 25] */
+      border-radius: 4px; /* [cite: 25] */
+      overflow: hidden; /* [cite: 25] */
+      margin-top: 2rem; /* [cite: 25] */
     }
     .progress-fill {
-      height: 100%;
-      background: linear-gradient(90deg, var(--primary), var(--secondary));
-      width: 0%;
-      transition: width 0.3s ease;
-      box-shadow: var(--glow-primary);
+      height: 100%; /* [cite: 26] */
+      background: linear-gradient(90deg, var(--primary), var(--secondary)); /* [cite: 26] */
+      width: 0%; /* [cite: 26] */
+      transition: width 0.3s ease; /* [cite: 27] */
+      box-shadow: var(--glow-primary); /* [cite: 27] */
     }
-    /* Controls Guide */
     #controls-guide {
-      position: absolute;
-      bottom: 1rem;
-      right: 1rem;
-      background-color: rgba(15, 23, 42, 0.8);
-      color: white;
-      font-size: 0.75rem;
-      line-height: 1.25rem;
-      padding: 0.75rem;
-      border-radius: 0.5rem;
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-      z-index: 10;
-      max-width: 250px;
-      backdrop-filter: blur(8px);
-      border: 1px solid rgba(59, 130, 246, 0.15);
-      transition: opacity 0.3s;
-      opacity: 0.7;
+      position: absolute; /* [cite: 27] */
+      bottom: 1rem; /* [cite: 28] */
+      right: 1rem; /* [cite: 28] */
+      background-color: rgba(15, 23, 42, 0.8); /* [cite: 28] */
+      color: white; /* [cite: 28] */
+      font-size: 0.75rem; /* [cite: 28] */
+      line-height: 1.25rem; /* [cite: 28] */
+      padding: 0.75rem; /* [cite: 28] */
+      border-radius: 0.5rem; /* [cite: 28] */
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); /* [cite: 29] */
+      z-index: 10; /* [cite: 29] */
+      max-width: 250px; /* [cite: 30] */
+      backdrop-filter: blur(8px); /* [cite: 30] */
+      border: 1px solid rgba(59, 130, 246, 0.15); /* [cite: 30] */
+      transition: opacity 0.3s; /* [cite: 30] */
+      opacity: 0.7; /* [cite: 30] */
     }
-    #controls-guide:hover {
-      opacity: 1;
+     #controls-guide:hover {
+      opacity: 1; /* [cite: 31] */
     }
-    /* HUD Elements */
     .hud-element {
-      position: absolute;
-      pointer-events: none;
-      z-index: 5;
-      font-family: 'Rajdhani', sans-serif;
+      position: absolute; /* [cite: 32] */
+      pointer-events: none; /* [cite: 33] */
+      z-index: 5; /* [cite: 33] */
+      font-family: 'Rajdhani', sans-serif; /* [cite: 33] */
     }
     .body-stat {
-      top: 1rem;
-      left: 1rem;
-      font-size: 0.8rem;
-      padding: 0.75rem;
-      color: var(--text-secondary);
-      max-width: 250px;
+      top: 1rem; /* [cite: 33] */
+      left: 1rem; /* [cite: 34] */
+      font-size: 0.8rem; /* [cite: 34] */
+      padding: 0.75rem; /* [cite: 34] */
+      color: var(--text-secondary); /* [cite: 34] */
+      max-width: 250px; /* [cite: 34] */
     }
     .body-scan-line {
-      position: absolute;
-      width: 100%;
-      height: 4px;
-      background: linear-gradient(90deg, 
-          transparent, 
-          rgba(59, 130, 246, 0.2), 
-          rgba(59, 130, 246, 0.5), 
-          rgba(59, 130, 246, 0.2), 
-          transparent);
-      z-index: 10;
-      pointer-events: none;
-      box-shadow: 0 0 15px rgba(59, 130, 246, 0.4);
-      opacity: 0;
-      animation: scanAnimation 8s infinite;
+      position: absolute; /* [cite: 35] */
+      width: 100%; /* [cite: 35] */
+      height: 4px; /* [cite: 35] */
+      background: linear-gradient(90deg, /* [cite: 36] */
+          transparent,
+          rgba(59, 130, 246, 0.2),
+          rgba(59, 130, 246, 0.5),
+          rgba(59, 130, 246, 0.2),
+          transparent); /* [cite: 36] */
+      z-index: 10; /* [cite: 37] */
+      pointer-events: none; /* [cite: 37] */
+      box-shadow: 0 0 15px rgba(59, 130, 246, 0.4); /* [cite: 37] */
+      opacity: 0; /* [cite: 37] */
+      animation: scanAnimation 8s infinite; /* [cite: 37] */
     }
-    @keyframes scanAnimation {
-      0% { top: 0%; opacity: 1; }
-      90% { top: 100%; opacity: 1; }
-      91% { opacity: 0; }
-      100% { top: 0%; opacity: 0; }
+     @keyframes scanAnimation {
+      0% { top: 0%; opacity: 1; } /* [cite: 38] */
+      90% { top: 100%; opacity: 1; } /* [cite: 39] */
+      91% { opacity: 0; } /* [cite: 40] */
+      100% { top: 0%; opacity: 0; } /* [cite: 40, 41] */
     }
-    /* HUD Trackers */
     .tracker {
-      position: absolute;
-      width: 80px;
-      height: 80px;
-      pointer-events: none;
-      z-index: 5;
-      border: 1px solid rgba(59, 130, 246, 0.5);
-      border-radius: 50%;
-      transform: translate(-50%, -50%);
-      background: radial-gradient(circle, 
-          rgba(59, 130, 246, 0.15) 0%, 
-          rgba(16, 185, 129, 0.05) 70%, 
-          transparent 100%);
-      box-shadow: 0 0 15px rgba(59, 130, 246, 0.3);
-      opacity: 0;
-      transition: opacity 0.5s;
+      position: absolute; /* [cite: 41] */
+      width: 80px; /* [cite: 42] */
+      height: 80px; /* [cite: 42] */
+      pointer-events: none; /* [cite: 42] */
+      z-index: 5; /* [cite: 42] */
+      border: 1px solid rgba(59, 130, 246, 0.5); /* [cite: 42] */
+      border-radius: 50%; /* [cite: 42] */
+      transform: translate(-50%, -50%); /* [cite: 42] */
+      background: radial-gradient(circle, /* [cite: 43] */
+          rgba(59, 130, 246, 0.15) 0%,
+          rgba(16, 185, 129, 0.05) 70%,
+          transparent 100%); /* [cite: 43] */
+      box-shadow: 0 0 15px rgba(59, 130, 246, 0.3); /* [cite: 44] */
+      opacity: 0; /* [cite: 44] */
+      transition: opacity 0.5s; /* [cite: 44] */
     }
     .tracker::before, .tracker::after {
-      content: '';
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      border-radius: 50%;
+      content: ''; /* [cite: 45] */
+      position: absolute; /* [cite: 45] */
+      top: 50%; /* [cite: 45] */
+      left: 50%; /* [cite: 45] */
+      transform: translate(-50%, -50%); /* [cite: 46] */
+      border-radius: 50%; /* [cite: 46] */
     }
     .tracker::before {
-      width: 60px;
-      height: 60px;
-      border: 1px dashed rgba(59, 130, 246, 0.5);
-      animation: rotate 10s linear infinite;
+      width: 60px; /* [cite: 46] */
+      height: 60px; /* [cite: 46] */
+      border: 1px dashed rgba(59, 130, 246, 0.5); /* [cite: 47] */
+      animation: rotate 10s linear infinite; /* [cite: 47] */
     }
-    .tracker::after {
-      width: 10px;
-      height: 10px;
-      background-color: rgba(16, 185, 129, 0.8);
-      box-shadow: 0 0 8px rgba(16, 185, 129, 0.8);
+     .tracker::after {
+      width: 10px; /* [cite: 48] */
+      height: 10px; /* [cite: 48] */
+      background-color: rgba(16, 185, 129, 0.8); /* [cite: 48] */
+      box-shadow: 0 0 8px rgba(16, 185, 129, 0.8); /* [cite: 49] */
     }
-    @keyframes rotate {
-      from { transform: translate(-50%, -50%) rotate(0deg); }
-      to { transform: translate(-50%, -50%) rotate(360deg); }
+     @keyframes rotate {
+      from { transform: translate(-50%, -50%) rotate(0deg); } /* [cite: 49] */
+      to { transform: translate(-50%, -50%) rotate(360deg); } /* [cite: 50, 51] */
     }
-    /* Augmented Reality Styled Labels */
     .ar-label {
-      position: absolute;
-      color: var(--secondary);
-      font-size: 0.7rem;
-      letter-spacing: 0.05em;
-      pointer-events: none;
-      z-index: 5;
-      transition: opacity 0.5s;
-      opacity: 0;
-      text-shadow: 0 0 5px var(--secondary);
+      position: absolute; /* [cite: 51] */
+      color: var(--secondary); /* [cite: 52] */
+      font-size: 0.7rem; /* [cite: 52] */
+      letter-spacing: 0.05em; /* [cite: 52] */
+      pointer-events: none; /* [cite: 52] */
+      z-index: 5; /* [cite: 52] */
+      transition: opacity 0.5s; /* [cite: 52] */
+      opacity: 0; /* [cite: 52] */
+      text-shadow: 0 0 5px var(--secondary); /* [cite: 52] */
     }
-    .ar-label::after {
-      content: '';
-      position: absolute;
-      top: 50%;
-      width: 30px;
-      height: 1px;
-      background-color: var(--secondary);
-      opacity: 0.5;
+     .ar-label::after {
+      content: ''; /* [cite: 53] */
+      position: absolute; /* [cite: 53] */
+      top: 50%; /* [cite: 53] */
+      width: 30px; /* [cite: 53] */
+      height: 1px; /* [cite: 54] */
+      background-color: var(--secondary); /* [cite: 54] */
+      opacity: 0.5; /* [cite: 54] */
     }
     .ar-label-left {
-      text-align: right;
+      text-align: right; /* [cite: 54, 55] */
     }
-    .ar-label-left::after {
-      right: -35px;
+     .ar-label-left::after {
+      right: -35px; /* [cite: 55, 56] */
     }
     .ar-label-right {
-      text-align: left;
+      text-align: left; /* [cite: 56, 57] */
     }
     .ar-label-right::after {
-      left: -35px;
+      left: -35px; /* [cite: 57, 58] */
     }
-    .info-card {
-      opacity: 0;
-      transform: translateY(20px);
-      transition: opacity 0.5s, transform 0.5s;
+     .info-card {
+      opacity: 0; /* [cite: 58] */
+      transform: translateY(20px); /* [cite: 58] */
+      transition: opacity 0.5s, transform 0.5s; /* [cite: 58] */
     }
-    .info-card.show {
-      opacity: 1;
-      transform: translateY(0);
+     .info-card.show {
+      opacity: 1; /* [cite: 59] */
+      transform: translateY(0); /* [cite: 60] */
     }
-    /* Responsive Styles */
-    @media (max-width: 768px) {
-      .flex-col-reverse { flex-direction: column-reverse; }
+     @media (max-width: 768px) {
+      .flex-col-reverse { flex-direction: column-reverse; } /* [cite: 60, 61] */
       #info-panel {
-        width: 100%;
-        height: 40%;
-        min-height: 250px;
-        max-height: 50%;
+        width: 100%; /* [cite: 61] */
+        height: 40%; /* [cite: 61] */
+        min-height: 250px; /* [cite: 62] */
+        max-height: 50%; /* [cite: 62] */
       }
       #canvas-container {
-        height: 60%;
+        height: 60%; /* [cite: 62, 63] */
       }
-      .panel-toggle {
-        display: block !important;
+       .panel-toggle {
+        display: block !important; /* [cite: 63, 64] */
       }
-      #info-panel.collapsed {
-        transform: translateY(calc(100% - 40px));
+       #info-panel.collapsed {
+        transform: translateY(calc(100% - 40px)); /* [cite: 64, 65] */
       }
-      #toggle-panel-icon {
-        transform: rotate(0deg);
-        transition: transform 0.3s;
+       #toggle-panel-icon {
+        transform: rotate(0deg); /* [cite: 65] */
+        transition: transform 0.3s; /* [cite: 65, 66] */
       }
-      #info-panel.collapsed #toggle-panel-icon {
-        transform: rotate(180deg);
+       #info-panel.collapsed #toggle-panel-icon {
+        transform: rotate(180deg); /* [cite: 66, 67] */
       }
-    }
-
-    /* Additional styles for assessment tests */
+     }
     .test-panel {
-      max-width: 100%;
-      height: 100%;
-      overflow-y: auto;
-      padding: 1rem;
+      max-width: 100%; /* [cite: 67] */
+      height: 100%; /* [cite: 68] */
+      overflow-y: auto; /* [cite: 68] */
+      padding: 1rem; /* [cite: 68] */
     }
-    
     .blink-animation {
-      animation: blink 1.5s infinite;
+      animation: blink 1.5s infinite; /* [cite: 68, 69] */
     }
-    
     @keyframes blink {
-      0% { opacity: 0.3; }
-      50% { opacity: 1; }
-      100% { opacity: 0.3; }
+      0% { opacity: 0.3; } /* [cite: 69, 70] */
+      50% { opacity: 1; } /* [cite: 70] */
+      100% { opacity: 0.3; } /* [cite: 70, 71] */
     }
-    
     .pulse-animation {
-      animation: pulse 2s infinite;
+      animation: pulse 2s infinite; /* [cite: 71, 72] */
     }
-    
-    @keyframes pulse {
-      0% { transform: scale(1); }
-      50% { transform: scale(1.05); }
-      100% { transform: scale(1); }
+     @keyframes pulse {
+      0% { transform: scale(1); } /* [cite: 72, 73] */
+      50% { transform: scale(1.05); } /* [cite: 73] */
+      100% { transform: scale(1); } /* [cite: 73, 74] */
     }
-    
     .glow {
-      box-shadow: 0 0 15px white;
-      animation: glow 1.5s infinite alternate;
+      box-shadow: 0 0 15px white; /* [cite: 74] */
+      animation: glow 1.5s infinite alternate; /* [cite: 75] */
     }
-    
-    @keyframes glow {
-      from { box-shadow: 0 0 5px rgba(59, 130, 246, 0.6); }
-      to { box-shadow: 0 0 20px rgba(59, 130, 246, 0.9); }
+     @keyframes glow {
+      from { box-shadow: 0 0 5px rgba(59, 130, 246, 0.6); } /* [cite: 75, 76] */
+      to { box-shadow: 0 0 20px rgba(59, 130, 246, 0.9); } /* [cite: 76, 77] */
     }
+    /* End of existing CSS */
   </style>
 </head>
 <body>
-  <!-- Loading Overlay -->
-  <div id="loading-overlay">
-    <h2 class="text-4xl font-bold text-center mb-2 glow-text">BIOCARE ASSESSMENT SYSTEM</h2>
-    <p class="text-blue-400 mb-2">Biometric scanning in progress...</p>
-    <p class="text-gray-400 mb-6">Please remain still while we analyze your health parameters</p>
-    <div class="progress-bar">
-      <div class="progress-fill" id="progress-bar"></div>
-    </div>
-    <p id="loading-text" class="mt-4 text-sm text-gray-300 blink-animation">Initializing bioscan...</p>
-  </div>
+  <div id="loading-overlay"> <h2 class="text-4xl font-bold text-center mb-2 glow-text">BIOCARE ASSESSMENT SYSTEM</h2> <p class="text-blue-400 mb-2">Biometric scanning in progress...</p> <p class="text-gray-400 mb-6">Please remain still while we analyze your health parameters</p> <div class="progress-bar"> <div class="progress-fill" id="progress-bar"></div> </div>
+    <p id="loading-text" class="mt-4 text-sm text-gray-300 blink-animation">Initializing bioscan...</p> </div>
 
-  <div class="flex h-screen md:flex-row flex-col-reverse">
-    <!-- Information Panel - Will be replaced with React assessment tests -->
-    <div id="info-panel" class="relative">
-      <!-- Mobile Toggle -->
-      <button id="panel-toggle" class="panel-toggle hidden absolute top-4 right-4 md:hidden bg-gray-700 p-2 rounded-md hover:bg-gray-600 focus:outline-none">
-        <svg id="toggle-panel-icon" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-          <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
-        </svg>
+  <div class="flex h-screen md:flex-row flex-col-reverse"> <div id="info-panel" class="relative"> <button id="panel-toggle" class="panel-toggle hidden absolute top-4 right-4 md:hidden bg-gray-700 p-2 rounded-md hover:bg-gray-600 focus:outline-none"> <svg id="toggle-panel-icon" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"> <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" /> </svg>
       </button>
-      <!-- Header Section -->
-      <div class="p-6">
-        <div class="sci-title pl-6 mb-4">
-          <h1 class="text-2xl font-bold">BioCare Assessment System</h1>
-          <p class="text-sm text-gray-400">Personalized Health Diagnostics</p>
-        </div>
-        <div class="flex items-center space-x-2 mb-4">
-          <div class="sci-badge bg-blue-700 text-blue-50">
-            <span class="opacity-60">BIO</span><span>METRICS</span>
-          </div>
-          <div class="h-2 w-2 rounded-full bg-green-400 animate-pulse"></div>
-          <div class="text-xs text-green-400">ASSESSMENT ACTIVE</div>
-        </div>
+
+      <div class="p-6"> <div class="sci-title pl-6 mb-4"> <h1 class="text-2xl font-bold">BioCare Assessment System</h1> <p class="text-sm text-gray-400">Personalized Health Diagnostics</p> </div>
+        <div class="flex items-center space-x-2 mb-4"> <div class="sci-badge bg-blue-700 text-blue-50"> <span class="opacity-60">BIO</span><span>METRICS</span> </div> <div class="h-2 w-2 rounded-full bg-green-400 animate-pulse"></div> <div class="text-xs text-green-400">ASSESSMENT ACTIVE</div> </div>
       </div>
-      <!-- Test Container - Will be populated by React -->
-      <div id="test-container" class="px-6 pb-6">
-        <!-- React content will be rendered here -->
-      </div>
+      <div id="test-container" class="px-6 pb-6"> </div>
     </div>
 
-    <!-- 3D Canvas Container -->
-    <div id="canvas-container" class="relative">
-      <!-- HUD Elements -->
-      <div class="hud-element body-stat sci-panel">
-        <div class="text-xs text-blue-300 mb-1">DIAGNOSTIC STATUS</div>
-        <div class="text-xs">
-          <span>SYSTEM</span>: <span id="system-status" class="text-green-400">STANDBY</span>
+    <div id="canvas-container" class="relative"> <div id="logo-container">
+            </div>
+        <div class="hud-element body-stat sci-panel"> <div class="text-xs text-blue-300 mb-1">DIAGNOSTIC STATUS</div> <div class="text-xs"> <span>SYSTEM</span>: <span id="system-status" class="text-green-400">STANDBY</span> </div>
+            <div class="text-xs"> <span>RECOMMENDED TESTS</span>: <span class="text-yellow-400">5</span> </div> </div>
+         <div class="body-scan-line"></div> <div id="body-tracker" class="tracker"></div> <div id="head-label" class="ar-label ar-label-left">COGNITIVE ASSESSMENT</div> <div id="torso-label" class="ar-label ar-label-right">CARDIOVASCULAR TEST</div> <div id="arm-label" class="ar-label ar-label-left">REACTION ASSESSMENT</div> <div id="leg-label" class="ar-label ar-label-right">STABILITY ASSESSMENT</div> <div id="abdomen-label" class="ar-label ar-label-right">BODY COMPOSITION</div> <div id="controls-guide" class="sci-panel"> <div class="text-xs text-blue-300 mb-1 font-semibold">INTERFACE CONTROLS</div> <div class="grid grid-cols-2 gap-x-3 gap-y-1 text-xs"> <span>ROTATE VIEW</span><span class="text-gray-300">Left Mouse / Drag</span> <span>ZOOM</span><span class="text-gray-300">Mouse Wheel</span> <span>PAN</span><span class="text-gray-300">Right Mouse / Drag</span> <span>RESET VIEW</span><span class="text-gray-300">Double Click</span> <span>SELECT TEST</span><span class="text-gray-300">Click Body Area</span> </div>
         </div>
-        <div class="text-xs">
-          <span>RECOMMENDED TESTS</span>: <span class="text-yellow-400">5</span>
-        </div>
-      </div>
-      <!-- Scan Line Animation -->
-      <div class="body-scan-line"></div>
-      <!-- Target Tracker (will be positioned in JS) -->
-      <div id="body-tracker" class="tracker"></div>
-      <!-- AR Labels (renamed to test names) -->
-      <div id="head-label" class="ar-label ar-label-left">COGNITIVE ASSESSMENT</div>
-      <div id="torso-label" class="ar-label ar-label-right">CARDIOVASCULAR TEST</div>
-      <div id="arm-label" class="ar-label ar-label-left">REACTION ASSESSMENT</div>
-      <div id="leg-label" class="ar-label ar-label-right">STABILITY ASSESSMENT</div>
-      <div id="abdomen-label" class="ar-label ar-label-right">BODY COMPOSITION</div>
-      <!-- Controls Guide -->
-      <div id="controls-guide" class="sci-panel">
-        <div class="text-xs text-blue-300 mb-1 font-semibold">INTERFACE CONTROLS</div>
-        <div class="grid grid-cols-2 gap-x-3 gap-y-1 text-xs">
-          <span>ROTATE VIEW</span><span class="text-gray-300">Left Mouse / Drag</span>
-          <span>ZOOM</span><span class="text-gray-300">Mouse Wheel</span>
-          <span>PAN</span><span class="text-gray-300">Right Mouse / Drag</span>
-          <span>RESET VIEW</span><span class="text-gray-300">Double Click</span>
-          <span>SELECT TEST</span><span class="text-gray-300">Click Body Area</span>
-        </div>
-      </div>
     </div>
   </div>
 
-  <!-- Audio Elements -->
-  <audio id="sound-click" preload="auto">
-    <source src="https://assets.mixkit.co/sfx/preview/mixkit-modern-technology-select-3124.mp3" type="audio/mpeg">
-  </audio>
-  <audio id="sound-hover" preload="auto">
-    <source src="https://assets.mixkit.co/sfx/preview/mixkit-interface-hint-notification-911.mp3" type="audio/mpeg">
-  </audio>
-  <audio id="sound-scan" preload="auto">
-    <source src="https://assets.mixkit.co/sfx/preview/mixkit-sci-fi-interface-zoom-890.mp3" type="audio/mpeg">
-  </audio>
+  <audio id="sound-click" preload="auto"> <source src="https://assets.mixkit.co/sfx/preview/mixkit-modern-technology-select-3124.mp3" type="audio/mpeg"> </audio>
+  <audio id="sound-hover" preload="auto"> <source src="https://assets.mixkit.co/sfx/preview/mixkit-interface-hint-notification-911.mp3" type="audio/mpeg"> </audio>
+  <audio id="sound-scan" preload="auto"> <source src="https://assets.mixkit.co/sfx/preview/mixkit-sci-fi-interface-zoom-890.mp3" type="audio/mpeg"> </audio>
 
-  <!-- React components -->
   <script type="text/babel">
+    // Existing React Components...
     // Component to manage which test is shown
-    const TestManager = () => {
-      const [activeTest, setActiveTest] = React.useState(null);
-      
+    const TestManager = () => { /* [cite: 85] */
+      const [activeTest, setActiveTest] = React.useState(null); /* [cite: 85] */
       // Function to be exposed globally
-      window.loadTest = (testId) => {
-        setActiveTest(testId);
-      };
-      
+      window.loadTest = (testId) => { /* [cite: 86] */
+        setActiveTest(testId); /* [cite: 86] */
+      }; /* [cite: 87] */
+
       // Render the appropriate test component based on the active test
-      const renderTest = () => {
-        switch(activeTest) {
-          case 'head': return <CognitiveTest />;
-          case 'chest': return <CardiovascularTest />;
-          case 'abdomen': return <BodyCompositionTest />;
-          case 'leftArm': 
-          case 'rightArm': return <ReactionTest />;
-          case 'leftLeg':
-          case 'rightLeg': return <StabilityTest />;
-          default: return <WelcomeScreen />;
-        }
-      };
-      
-      return (
-        <div className="test-panel">
-          {renderTest()}
+      const renderTest = () => { /* [cite: 87] */
+        switch(activeTest) { /* [cite: 87] */
+          case 'head': return <CognitiveTest />; /* [cite: 87] */
+          case 'chest': return <CardiovascularTest />; /* [cite: 88] */
+          case 'abdomen': return <BodyCompositionTest />; /* [cite: 88] */
+          case 'leftArm': /* [cite: 89] */
+          case 'rightArm': return <ReactionTest />; /* [cite: 89] */
+          case 'leftLeg': /* [cite: 90] */
+          case 'rightLeg': return <StabilityTest />; /* [cite: 90] */
+          default: return <WelcomeScreen />; /* [cite: 90] */
+        } /* [cite: 91] */
+      }; /* [cite: 91] */
+
+      return ( /* [cite: 91] */
+        <div className="test-panel"> {/* [cite: 91] */}
+          {renderTest()} {/* [cite: 91] */}
         </div>
       );
-    };
-
+    }; /* [cite: 92] */
     // Welcome screen shown initially with personalized message
-    const WelcomeScreen = () => (
-      <div className="sci-panel p-6 info-card show text-gray-200">
-        <h2 className="text-xl font-bold mb-4 text-blue-400">Bioscan Complete</h2>
-        
-        <p className="mb-4">
+    const WelcomeScreen = () => ( /* [cite: 92] */
+      <div className="sci-panel p-6 info-card show text-gray-200"> {/* [cite: 92] */}
+        <h2 className="text-xl font-bold mb-4 text-blue-400">Bioscan Complete</h2> {/* [cite: 92] */}
+
+        <p className="mb-4"> {/* [cite: 92] */}
           Our advanced AI diagnostic system has completed your biometric scan and identified specific areas that require assessment to evaluate your overall health status.
-        </p>
-        
-        <p className="mb-4">
+        </p> /* [cite: 93] */
+
+        <p className="mb-4"> {/* [cite: 93] */}{/* [cite: 93] */}
           Based on your unique physical profile, we've customized a series of non-invasive diagnostic tests to measure your physiological and cognitive functions. These assessments will provide valuable data about your current health condition.
-        </p>
-        
-        <div className="my-5 p-4 bg-blue-900 bg-opacity-30 rounded-lg border border-blue-700">
-          <h3 className="font-medium text-lg mb-2 text-blue-300">Required Assessments:</h3>
-          <ul className="space-y-2">
-            <li className="flex items-start">
-              <span className="text-blue-400 mr-2">•</span>
-              <div>
-                <span className="font-medium text-blue-300">Cognitive Assessment</span>
-                <p className="text-sm text-gray-400">Analysis indicates potential for memory optimization</p>
+        </p> {/* [cite: 93] */}{/* [cite: 93] */}
+
+        <div className="my-5 p-4 bg-blue-900 bg-opacity-30 rounded-lg border border-blue-700"> {/* [cite: 93] */}{/* [cite: 93] */}
+          <h3 className="font-medium text-lg /* [cite: 93] */ mb-2 text-blue-300">Required Assessments:</h3> {/* [cite: 94] */}
+          <ul className="space-y-2"> {/* [cite: 94] */}
+            <li className="flex items-start"> {/* [cite: 94] */}
+              <span className="text-blue-400 mr-2">•</span> {/* [cite: 94] */}
+              <div> {/* [cite: 94] */}
+                <span className="font-medium text-blue-300">Cognitive Assessment</span> {/* [cite: 94] */}
+                <p className="text-sm text-gray-400">Analysis indicates potential for memory optimization</p> /* [cite: 94] */{/* [cite: 95] */}
               </div>
             </li>
-            <li className="flex items-start">
-              <span className="text-blue-400 mr-2">•</span>
-              <div>
-                <span className="font-medium text-blue-300">Cardiovascular Test</span>
-                <p className="text-sm text-gray-400">Heart rate patterns require further evaluation</p>
+            <li className="flex items-start"> {/* [cite: 95] */}
+              <span className="text-blue-400 mr-2">•</span> {/* [cite: 95] */}
+              <div> {/* [cite: 95] */}
+                <span className="font-medium text-blue-300">Cardiovascular Test</span> {/* [cite: 95] */}
+                <p className="text-sm text-gray-400">Heart rate patterns require further evaluation</p> {/* [cite: 96] */}
               </div>
             </li>
-            <li className="flex items-start">
-              <span className="text-blue-400 mr-2">•</span>
-              <div>
-                <span className="font-medium text-blue-300">Body Composition</span>
-                <p className="text-sm text-gray-400">Tissue density scanning indicates BMI assessment needed</p>
+            <li className="flex items-start"> {/* [cite: 96] */}
+              <span className="text-blue-400 mr-2">•</span> {/* [cite: 96] */}
+              <div> {/* [cite: 96] */}
+                <span className="font-medium text-blue-300">Body {/* [cite: 96] */ Composition</span> {/* [cite: 97] */}
+                <p className="text-sm text-gray-400">Tissue density scanning indicates BMI assessment needed</p> {/* [cite: 97] */}
               </div>
             </li>
-            <li className="flex items-start">
-              <span className="text-blue-400 mr-2">•</span>
-              <div>
-                <span className="font-medium text-blue-300">Reaction Assessment</span>
-                <p className="text-sm text-gray-400">Neural pathway response measurement recommended</p>
+            <li className="flex items-start"> {/* [cite: 97] */}
+              <span className="text-blue-400 mr-2">•</span> {/* [cite: 97] */}
+              <div> {/* [cite: 97] */}
+                <span className="font-medium text-blue-300">Reaction Assessment</span> {/* [cite: 98] */}
+                <p className="text-sm text-gray-400">Neural pathway response measurement recommended</p> {/* [cite: 98] */}
               </div>
             </li>
-            <li className="flex items-start">
-              <span className="text-blue-400 mr-2">•</span>
-              <div>
-                <span className="font-medium text-blue-300">Stability Assessment</span>
-                <p className="text-sm text-gray-400">Vestibular system calibration check suggested</p>
+            <li className="flex items-start"> {/* [cite: 98] */}
+              <span className="text-blue-400 mr-2">•</span> {/* [cite: 98] */}
+              <div> {/* [cite: 99] */}
+                <span className="font-medium text-blue-300">Stability Assessment</span> {/* [cite: 99] */}
+                <p className="text-sm text-gray-400">Vestibular system calibration check suggested</p> {/* [cite: 99] */}
               </div>
             </li>
           </ul>
-        </div>
-        
-        <p className="mb-2">
-          Please select any highlighted area on your biometric model to begin the corresponding assessment. Your results will be analyzed to create a comprehensive health profile.
-        </p>
-        
-        <p className="text-xs text-gray-400 mt-4">
-          <strong>Note:</strong> This medical assessment system is for educational and demonstration purposes only. For accurate health diagnostics, please consult licensed healthcare professionals.
+        </div> {/* [cite: 99] */}
+
+
+        <p className="mb-2"> {/* [cite: 100] */}
+          Please select any highlighted area on your biometric model to begin the corresponding assessment. {/* [cite: 100] */}
+          Your results will be analyzed to create a comprehensive health profile. {/* [cite: 101] */}
+        </p> /* [cite: 102] */
+
+        <p className="text-xs text-gray-400 mt-4"> {/* [cite: 102] */}
+          <strong>Note:</strong> This medical assessment system is for educational and demonstration purposes only. {/* [cite: 102] */}
+          For accurate health diagnostics, please consult licensed healthcare professionals. {/* [cite: 103] */}
         </p>
       </div>
-    );
-
+    ); /* [cite: 103] */
     // HEAD: Cognitive (Memory) Test
-    const CognitiveTest = () => {
-      const [gameState, setGameState] = React.useState('intro'); // intro, showing, playing, success, failure
-      const [sequence, setSequence] = React.useState([]);
-      const [userSequence, setUserSequence] = React.useState([]);
-      const [level, setLevel] = React.useState(1);
-      const [currentShowIndex, setCurrentShowIndex] = React.useState(0);
-      
+    const CognitiveTest = () => { /* [cite: 104] */
+      const [gameState, setGameState] = React.useState('intro'); /* [cite: 104] */
+      // intro, showing, playing, success, failure /* [cite: 105] */
+      const [sequence, setSequence] = React.useState([]); /* [cite: 105] */
+      const [userSequence, setUserSequence] = React.useState([]); /* [cite: 106] */
+      const [level, setLevel] = React.useState(1); /* [cite: 106] */
+      const [currentShowIndex, setCurrentShowIndex] = React.useState(0); /* [cite: 106] */
       // Colors for the memory game
-      const colors = ['red', 'blue', 'green', 'yellow'];
-      
+      const colors = ['red', 'blue', 'green', 'yellow']; /* [cite: 107] */
       // Start a new test
-      const startTest = () => {
+      const startTest = () => { /* [cite: 108] */
         // Generate random sequence based on level (level + 2 items)
-        const newSequence = Array.from({ length: level + 2 }, () => 
-          colors[Math.floor(Math.random() * colors.length)]
-        );
-        setSequence(newSequence);
-        setUserSequence([]);
-        setGameState('showing');
-        setCurrentShowIndex(0);
-        
+        const newSequence = Array.from({ length: level + 2 }, () => /* [cite: 108] */
+          colors[Math.floor(Math.random() * colors.length)] /* [cite: 108] */
+        ); /* [cite: 108] */
+        setSequence(newSequence); /* [cite: 109] */
+        setUserSequence([]); /* [cite: 109] */
+        setGameState('showing'); /* [cite: 109] */
+        setCurrentShowIndex(0); /* [cite: 109] */
+
         // Start showing the sequence
-        showNextColor(newSequence, 0);
-      };
-      
+        showNextColor(newSequence, 0); /* [cite: 109] */
+      }; /* [cite: 109] */
       // Function to display the sequence one color at a time
-      const showNextColor = (seq, index) => {
-        setCurrentShowIndex(index);
-        
+      const showNextColor = (seq, index) => { /* [cite: 110] */
+        setCurrentShowIndex(index); /* [cite: 110] */
         // If we've shown all colors, move to playing state
-        if (index >= seq.length) {
-          setTimeout(() => {
-            setGameState('playing');
-            setCurrentShowIndex(-1);
-          }, 300);
-          return;
-        }
-        
+        if (index >= seq.length) { /* [cite: 111] */
+          setTimeout(() => { /* [cite: 111] */
+            setGameState('playing'); /* [cite: 111] */
+            setCurrentShowIndex(-1); /* [cite: 111] */
+          }, 300); /* [cite: 111] */
+          return; /* [cite: 112] */
+        } /* [cite: 112] */
+
         // Show the next color after a delay
-        setTimeout(() => {
-          showNextColor(seq, index + 1);
-        }, 800); // Show each color for 800ms
-      };
-      
+        setTimeout(() => { /* [cite: 112] */
+          showNextColor(seq, index + 1); /* [cite: 112] */
+        }, 800); /* [cite: 112] */
+        // Show each color for 800ms /* [cite: 113] */
+      }; /* [cite: 113] */
       // Handle user selection
-      const handleColorClick = (color) => {
-        if (gameState !== 'playing') return;
-        
-        const newUserSequence = [...userSequence, color];
-        setUserSequence(newUserSequence);
-        
+      const handleColorClick = (color) => { /* [cite: 114] */
+        if (gameState !== 'playing') return; /* [cite: 114] */
+        const newUserSequence = [...userSequence, color]; /* [cite: 115] */
+        setUserSequence(newUserSequence); /* [cite: 115] */
+
         // Check if selection is correct
-        const index = userSequence.length;
-        if (color !== sequence[index]) {
-          setGameState('failure');
-          return;
-        }
-        
+        const index = userSequence.length; /* [cite: 115] */
+        if (color !== sequence[index]) { /* [cite: 116] */
+          setGameState('failure'); /* [cite: 116] */
+          return; /* [cite: 116] */
+        } /* [cite: 117] */
+
         // Check if sequence is complete
-        if (newUserSequence.length === sequence.length) {
-          setGameState('success');
-          // Advance to next level after delay
-          setTimeout(() => {
-            setLevel(level + 1);
-            setGameState('intro');
-          }, 2000);
-        }
-      };
-      
+        if (newUserSequence.length === sequence.length) { /* [cite: 117] */
+          setGameState('success'); /* [cite: 117] */
+          // Advance to next level after delay /* [cite: 118] */
+          setTimeout(() => { /* [cite: 118] */
+            setLevel(level + 1); /* [cite: 118] */
+            setGameState('intro'); /* [cite: 118] */
+          }, 2000); /* [cite: 118] */
+        } /* [cite: 119] */
+      }; /* [cite: 119] */
+
       // Reset the test
-      const resetTest = () => {
-        setLevel(1);
-        setGameState('intro');
-      };
-      
-      return (
-        <div className="max-w-md mx-auto bg-gray-900 p-6 rounded-lg shadow-md">
-          <h2 className="text-xl font-semibold mb-2 text-white">Cognitive Assessment</h2>
-          <p className="text-sm text-gray-400 mb-4">Testing short-term memory and sequence recall abilities</p>
-          
-          {gameState === 'intro' && (
-            <div>
-              <p className="mb-4 text-gray-300">
-                This test evaluates your cognitive processing and memory function. Observe the sequence of colors and repeat it exactly. 
-                <br/><br/>
+      const resetTest = () => { /* [cite: 119] */
+        setLevel(1); /* [cite: 119] */
+        setGameState('intro'); /* [cite: 120] */
+      }; /* [cite: 120] */
+
+      return ( /* [cite: 120] */
+        <div className="max-w-md mx-auto bg-gray-900 p-6 rounded-lg shadow-md"> {/* [cite: 120] */}
+          <h2 className="text-xl font-semibold mb-2 text-white">Cognitive Assessment</h2> {/* [cite: 120] */}
+          <p className="text-sm text-gray-400 mb-4">Testing short-term memory and sequence recall abilities</p> {/* [cite: 120] */}
+
+          {gameState === 'intro' && ( /* [cite: 120] */
+            <div> /* [cite: 120] */
+
+              <p className="mb-4 text-gray-300"> {/* [cite: 121] */}{/* [cite: 121] */}
+                This test evaluates your cognitive processing and memory function. Observe the sequence of colors and repeat it exactly.
+                <br/><br/> {/* [cite: 121] */}
                 Current difficulty: Level {level} ({level + 2} elements)
-              </p>
-              <button 
-                onClick={startTest}
-                className="w-full py-2 bg-blue-600 text-white rounded hover:bg-blue-500"
+              </p> /* [cite: 121] */
+
+              <button /* [cite: 122] */
+                onClick={startTest} /* [cite: 122] */
+                className="w-full py-2 bg-blue-600 text-white rounded hover:bg-blue-500" /* [cite: 122] */
               >
                 Begin Assessment
-              </button>
-            </div>
-          )}
-          
-          {gameState === 'showing' && (
-            <div>
-              <p className="mb-3 text-gray-300">Memorize this sequence:</p>
-              <div className="grid grid-cols-2 gap-3 mb-4">
-                {colors.map((color, index) => (
-                  <button
-                    key={color}
-                    className={`h-24 rounded-lg border-2 ${
-                      sequence[currentShowIndex] === color ? 'border-white border-4 glow' : 'border-gray-800'
-                    } capitalize font-bold ${
-                      color === 'red' ? 'bg-red-600 text-white' :
-                      color === 'blue' ? 'bg-blue-600 text-white' :
-                      color === 'green' ? 'bg-green-600 text-white' :
-                      'bg-yellow-500 text-white'
-                    }`}
-                    disabled={true}
+              </button> /* [cite: 122] */
+            </div> /* [cite: 122] */
+          )} /* [cite: 123] */
+
+          {gameState === 'showing' && ( /* [cite: 123] */
+            <div> {/* [cite: 123] */}
+              <p className="mb-3 text-gray-300">Memorize this sequence:</p> {/* [cite: 123] */}
+              <div className="grid grid-cols-2 gap-3 mb-4"> {/* [cite: 123] */}
+                {colors.map((color, index) => /* [cite: 123] */ ( /* [cite: 124] */
+                  <button /* [cite: 124] */
+                    key={color} /* [cite: 124] */
+                    className={`h-24 rounded-lg border-2 ${ /* [cite: 124] */
+                      sequence[currentShowIndex] === color ? /* [cite: 124] */
+                      'border-white border-4 glow' : 'border-gray-800' /* [cite: 125] */
+                    } capitalize font-bold ${ /* [cite: 125] */
+                      color === 'red' ? /* [cite: 125] */
+                      'bg-red-600 text-white' : /* [cite: 126] */
+                      color === 'blue' ? /* [cite: 126] */
+                      'bg-blue-600 text-white' : /* [cite: 127] */
+                      color === 'green' ? /* [cite: 127] */
+                      'bg-green-600 text-white' : /* [cite: 128] */
+                      'bg-yellow-500 text-white' /* [cite: 128] */
+                    }`} /* [cite: 128] */
+                    disabled={true} /* [cite: 128] */
                   >
-                    {color}
+
+                    {color} /* [cite: 129] */
                   </button>
                 ))}
               </div>
-              <p className="text-center text-gray-300">Pattern recording in progress...</p>
+              <p className="text-center text-gray-300">Pattern recording in progress...</p> {/* [cite: 129] */}
             </div>
           )}
-          
-          {gameState === 'playing' && (
-            <div>
-              <p className="mb-3 text-gray-300">Reproduce the sequence:</p>
-              <div className="grid grid-cols-2 gap-3 mb-4">
-                {colors.map((color) => (
-                  <button
-                    key={color}
-                    onClick={() => handleColorClick(color)}
-                    className={`h-24 rounded-lg border-2 border-gray-800 capitalize font-bold ${
-                      color === 'red' ? 'bg-red-600 text-white' :
-                      color === 'blue' ? 'bg-blue-600 text-white' :
-                      color === 'green' ? 'bg-green-600 text-white' :
-                      'bg-yellow-500 text-white'
-                    }`}
+
+
+          {gameState === 'playing' && ( /* [cite: 130] */
+            <div> {/* [cite: 130] */}
+              <p className="mb-3 text-gray-300">Reproduce the sequence:</p> {/* [cite: 130] */}
+              <div className="grid grid-cols-2 gap-3 mb-4"> {/* [cite: 130] */}
+                {colors.map((color) => ( /* [cite: 130] */
+
+                  <button /* [cite: 131] */
+                    key={color} /* [cite: 131] */
+                    onClick={() => handleColorClick(color)} /* [cite: 131] */
+                    className={`h-24 rounded-lg border-2 border-gray-800 capitalize font-bold ${ /* [cite: 131] */
+                      color === 'red' ? 'bg-red-600 text-white' : /* [cite: 131] */
+
+                      color === 'blue' ? 'bg-blue-600 text-white' : /* [cite: 132] */
+                      color === 'green' ? /* [cite: 132] */
+                      'bg-green-600 text-white' : /* [cite: 133] */
+                      'bg-yellow-500 text-white' /* [cite: 133] */
+                    }`} /* [cite: 133] */
                   >
-                    {color}
-                  </button>
+                    {color} /* [cite: 133] */
+
+                  </button> /* [cite: 134] */
                 ))}
               </div>
-              <div className="flex justify-between items-center text-gray-300">
-                <span>Sequence: {userSequence.length}/{sequence.length}</span>
-                <button 
-                  onClick={resetTest}
-                  className="text-sm px-3 py-1 bg-gray-800 rounded hover:bg-gray-700"
+              <div className="flex justify-between items-center text-gray-300"> {/* [cite: 134] */}
+                <span>Sequence: {userSequence.length}/{sequence.length}</span> {/* [cite: 134] */}
+                <button /* [cite: 134] */
+
+                  onClick={resetTest} /* [cite: 135] */
+                  className="text-sm px-3 py-1 bg-gray-800 rounded hover:bg-gray-700" /* [cite: 135] */
                 >
                   Reset
-                </button>
+                </button> /* [cite: 135] */
               </div>
+
+            </div> /* [cite: 136] */
+          )}
+
+          {gameState === 'success' && ( /* [cite: 136] */
+            <div className="text-center py-6"> {/* [cite: 136] */}
+              <p className="text-green-400 text-xl mb-2">Assessment Successful</p> {/* [cite: 136] */}
+              <p className="text-gray-300">Cognitive functioning at level {level} performance.</p> {/* [cite: 136] */}
+
+              <p className="text-sm mt-3 text-gray-400">Advancing to higher difficulty level...</p> {/* [cite: 137] */}
             </div>
           )}
-          
-          {gameState === 'success' && (
-            <div className="text-center py-6">
-              <p className="text-green-400 text-xl mb-2">Assessment Successful</p>
-              <p className="text-gray-300">Cognitive functioning at level {level} performance.</p>
-              <p className="text-sm mt-3 text-gray-400">Advancing to higher difficulty level...</p>
-            </div>
-          )}
-          
-          {gameState === 'failure' && (
-            <div className="text-center py-6">
-              <p className="text-red-400 text-xl mb-2">Sequence Mismatch</p>
-              <p className="text-gray-300">Your cognitive assessment indicates level {level} function.</p>
-              <button 
-                onClick={resetTest}
-                className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-500"
+
+          {gameState === 'failure' && ( /* [cite: 137] */
+            <div className="text-center py-6"> {/* [cite: 137] */}
+              <p className="text-red-400 text-xl mb-2">Sequence Mismatch</p> {/* [cite: 137] */}
+              <p /* [cite: 137] */ className="text-gray-300">Your cognitive assessment indicates level {level} function.</p> {/* [cite: 138] */}
+              <button /* [cite: 138] */
+                onClick={resetTest} /* [cite: 138] */
+                className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-500" /* [cite: 138] */
               >
                 Retest
-              </button>
+
+              </button> /* [cite: 139] */
             </div>
           )}
         </div>
-      );
-    };
-
+      ); /* [cite: 139] */
+    }; /* [cite: 140] */
     // CHEST: Cardiovascular (Pulse) Test
-    const CardiovascularTest = () => {
-      const [heartRate, setHeartRate] = React.useState('');
-      const [age, setAge] = React.useState('');
-      const [result, setResult] = React.useState(null);
-      
-      const checkHeartRate = () => {
-        const rate = parseInt(heartRate);
-        const ageVal = parseInt(age);
-        
-        if (isNaN(rate) || isNaN(ageVal)) {
-          setResult({
-            status: 'error',
-            message: 'Please enter valid numbers for heart rate and age.'
-          });
-          return;
-        }
-        
+    const CardiovascularTest = () => { /* [cite: 140] */
+      const [heartRate, setHeartRate] = React.useState(''); /* [cite: 140] */
+      const [age, setAge] = React.useState(''); /* [cite: 141] */
+      const [result, setResult] = React.useState(null); /* [cite: 141] */
+      const checkHeartRate = () => { /* [cite: 142] */
+        const rate = parseInt(heartRate); /* [cite: 142] */
+        const ageVal = parseInt(age); /* [cite: 143] */
+
+        if (isNaN(rate) || isNaN(ageVal)) { /* [cite: 143] */
+          setResult({ /* [cite: 143] */
+            status: 'error', /* [cite: 143] */
+            message: 'Please enter valid numbers for heart rate and age.' /* [cite: 143] */
+          }); /* [cite: 143] */
+          return; /* [cite: 144] */
+        } /* [cite: 144] */
+
         // Heart rate evaluation based on age
-        let status, message;
-        
-        if (ageVal < 18) {
-          if (rate < 60) {
-            status = 'warning';
-            message = 'Your heart rate appears to be below the typical range for your age group.';
-          } else if (rate > 100) {
-            status = 'warning';
-            message = 'Your heart rate appears to be elevated for your age group.';
-          } else {
-            status = 'good';
-            message = 'Your heart rate falls within normal parameters for your age group.';
-          }
-        } else if (ageVal >= 18 && ageVal < 65) {
-          if (rate < 60) {
-            status = 'warning';
-            message = 'Your resting heart rate is below typical adult range. This could be normal for athletes or those with high cardiovascular fitness.';
-          } else if (rate > 100) {
-            status = 'warning';
-            message = 'Your heart rate is elevated above the typical adult range.';
-          } else {
-            status = 'good';
-            message = 'Your cardiovascular indicators are within standard adult parameters.';
-          }
-        } else {
-          if (rate < 50) {
-            status = 'warning';
-            message = 'Your heart rate is below the typical range for your age demographic.';
-          } else if (rate > 90) {
-            status = 'warning';
-            message = 'Your heart rate appears elevated for your age demographic.';
-          } else {
-            status = 'good';
-            message = 'Your cardiovascular readings are within normal parameters for your age demographic.';
-          }
-        }
-        
-        setResult({ status, message, rate });
-      };
-      
-      return (
-        <div className="max-w-md mx-auto bg-gray-900 p-6 rounded-lg shadow-md">
-          <h2 className="text-xl font-semibold mb-2 text-white">Cardiovascular Assessment</h2>
-          <p className="text-sm text-gray-400 mb-4">Analyzing heart rate indicators and cardiovascular health</p>
-          
-          <div className="mb-4">
-            <label className="block text-gray-300 mb-2">Biological Age (years):</label>
-            <input
-              type="number"
-              value={age}
-              onChange={(e) => setAge(e.target.value)}
-              placeholder="Enter your age"
-              className="w-full p-2 border rounded bg-gray-800 text-white border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400"
+        let status, message; /* [cite: 144] */
+        if (ageVal < 18) { /* [cite: 145] */
+          if (rate < 60) { /* [cite: 145] */
+            status = 'warning'; /* [cite: 145] */
+            message = 'Your heart rate appears to be below the typical range for your age group.'; /* [cite: 146] */
+          } else if (rate > 100) { /* [cite: 147] */
+            status = 'warning'; /* [cite: 147] */
+            message = 'Your heart rate appears to be elevated for your age group.'; /* [cite: 148] */
+          } else { /* [cite: 149] */
+            status = 'good'; /* [cite: 149] */
+            message = 'Your heart rate falls within normal parameters for your age group.'; /* [cite: 150] */
+          } /* [cite: 151] */
+        } else if (ageVal >= 18 && ageVal < 65) { /* [cite: 151] */
+          if (rate < 60) { /* [cite: 151] */
+            status = 'warning'; /* [cite: 151] */
+            message = 'Your resting heart rate is below typical adult range. /* [cite: 152] */
+            This could be normal for athletes or those with high cardiovascular fitness.'; /* [cite: 153] */
+          } else if (rate > 100) { /* [cite: 154] */
+            status = 'warning'; /* [cite: 154] */
+            message = 'Your heart rate is elevated above the typical adult range.'; /* [cite: 155] */
+          } else { /* [cite: 156] */
+            status = 'good'; /* [cite: 156] */
+            message = 'Your cardiovascular indicators are within standard adult parameters.'; /* [cite: 157] */
+          } /* [cite: 158] */
+        } else { /* [cite: 158] */
+          if (rate < 50) { /* [cite: 158] */
+            status = 'warning'; /* [cite: 158] */
+            message = 'Your heart rate is below the typical range for your age demographic.'; /* [cite: 159] */
+          } else if (rate > 90) { /* [cite: 160] */
+            status = 'warning'; /* [cite: 160] */
+            message = 'Your heart rate appears elevated for your age demographic.'; /* [cite: 161] */
+          } else { /* [cite: 162] */
+            status = 'good'; /* [cite: 162] */
+            message = 'Your cardiovascular readings are within normal parameters for your age demographic.'; /* [cite: 163] */
+          } /* [cite: 164] */
+        } /* [cite: 164] */
+
+        setResult({ status, message, rate }); /* [cite: 164] */
+      }; /* [cite: 165] */
+
+      return ( /* [cite: 165] */
+        <div className="max-w-md mx-auto bg-gray-900 p-6 rounded-lg shadow-md"> {/* [cite: 165] */}
+          <h2 className="text-xl font-semibold mb-2 text-white">Cardiovascular Assessment</h2> {/* [cite: 165] */}
+          <p className="text-sm text-gray-400 mb-4">Analyzing heart rate indicators and cardiovascular health</p> {/* [cite: 165] */}
+
+          <div className="mb-4"> {/* [cite: 165] */}
+            <label className="block text-gray-300 mb-2">Biological Age (years):</label> {/* [cite: 165] */}
+
+            <input /* [cite: 166] */
+              type="number" /* [cite: 166] */
+              value={age} /* [cite: 166] */
+              onChange={(e) => setAge(e.target.value)} /* [cite: 166] */
+              placeholder="Enter your age" /* [cite: 166] */
+              className="w-full p-2 border rounded bg-gray-800 text-white border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400" /* [cite: 166] */
+            /> /* [cite: 166] */
+
+          </div> /* [cite: 167] */
+
+          <div className="mb-6"> {/* [cite: 167] */}
+            <label className="block text-gray-300 mb-2">Resting Heart Rate (BPM):</label> {/* [cite: 167] */}
+            <input /* [cite: 167] */
+              type="number" /* [cite: 167] */
+              value={heartRate} /* [cite: 167] */
+              onChange={(e) => /* [cite: 167] */
+              setHeartRate(e.target.value)} /* [cite: 168] */
+              placeholder="Enter beats per minute" /* [cite: 168] */
+              className="w-full p-2 border rounded bg-gray-800 text-white border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400" /* [cite: 168] */
             />
-          </div>
-          
-          <div className="mb-6">
-            <label className="block text-gray-300 mb-2">Resting Heart Rate (BPM):</label>
-            <input
-              type="number"
-              value={heartRate}
-              onChange={(e) => setHeartRate(e.target.value)}
-              placeholder="Enter beats per minute"
-              className="w-full p-2 border rounded bg-gray-800 text-white border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400"
-            />
-            <p className="text-sm text-gray-500 mt-1">
+            <p className="text-sm text-gray-500 mt-1"> {/* [cite: 168] */}
               Measurement method: Locate radial or carotid pulse, count beats for 15 seconds and multiply by 4.
-            </p>
+
+            </p> /* [cite: 169] */
           </div>
-          
-          <button 
-            onClick={checkHeartRate}
-            className="w-full py-2 bg-blue-600 text-white rounded hover:bg-blue-500"
+
+          <button /* [cite: 169] */
+            onClick={checkHeartRate} /* [cite: 169] */
+            className="w-full py-2 bg-blue-600 text-white rounded hover:bg-blue-500" /* [cite: 169] */
           >
             Analyze Cardiovascular Metrics
-          </button>
-          
-          {result && (
-            <div className={`mt-6 p-4 rounded-lg ${
-              result.status === 'good' ? 'bg-green-900 bg-opacity-30 border border-green-700' : 
-              result.status === 'warning' ? 'bg-yellow-900 bg-opacity-30 border border-yellow-700' :
-              'bg-red-900 bg-opacity-30 border border-red-700'
+
+          </button> /* [cite: 170] */
+
+          {result && ( /* [cite: 170] */
+            <div className={`mt-6 p-4 rounded-lg ${ /* [cite: 170] */
+              result.status === 'good' ? /* [cite: 170] */
+              'bg-green-900 bg-opacity-30 border border-green-700' : /* [cite: 171] */
+              result.status === 'warning' ? /* [cite: 171] */
+              'bg-yellow-900 bg-opacity-30 border border-yellow-700' : /* [cite: 172] */
+              'bg-red-900 bg-opacity-30 border border-red-700' /* [cite: 172] */
             }`}>
-              <div className="flex items-center mb-2">
-                <span className="text-2xl mr-2">
-                  {result.status === 'good' ? '✅' : 
-                  result.status === 'warning' ? '⚠️' : 
-                  '❌'}
+              <div className="flex items-center mb-2"> {/* [cite: 172] */}
+                <span className="text-2xl mr-2"> {/* [cite: 172] */}
+                  {result.status === 'good' ? /* [cite: 172] */
+                  ' ✅ ' : /* [cite: 173] */
+                  result.status === 'warning' ? /* [cite: 173] */
+                  ' ⚠️ ' : /* [cite: 174] */
+                  ' ❌ '} {/* [cite: 174] */}
                 </span>
-                <h3 className="font-medium text-white">
-                  {result.status === 'good' ? 'Normal Parameters' : 
-                  result.status === 'warning' ? 'Further Monitoring Recommended' : 
-                  'Input Error'}
+                <h3 className="font-medium text-white"> {/* [cite: 174] */}
+                  {result.status === 'good' ? /* [cite: 174] */
+                  'Normal Parameters' : /* [cite: 175] */
+                  result.status === 'warning' ? /* [cite: 175] */
+                  'Further Monitoring Recommended' : /* [cite: 176] */
+                  'Input Error'} {/* [cite: 176] */}
                 </h3>
               </div>
-              <p className={`${
-                result.status === 'good' ? 'text-green-300' : 
-                result.status === 'warning' ? 'text-yellow-300' :
-                'text-red-300'
+              <p className={`${ /* [cite: 176] */
+                result.status === 'good' ? /* [cite: 176] */
+                'text-green-300' : /* [cite: 177] */
+                result.status === 'warning' ? /* [cite: 177] */
+                'text-yellow-300' : /* [cite: 178] */
+                'text-red-300' /* [cite: 178] */
               }`}>
-                {result.message}
+                {result.message} {/* [cite: 178] */}
               </p>
-              <p className="mt-3 text-sm text-gray-400">
-                <strong>Important:</strong> This is not a medical diagnosis. For accurate cardiovascular assessment, consult a qualified healthcare provider.
-              </p>
+              <p className="mt-3 text-sm text-gray-400"> {/* [cite: 178] */}
+                <strong>Important:</strong> This is not a medical /* [cite: 178] */ diagnosis. For accurate cardiovascular assessment, consult a qualified healthcare provider. /* [cite: 179] */
+              </p> /* [cite: 180] */
             </div>
           )}
         </div>
-      );
-    };
-
+      ); /* [cite: 180] */
+    }; /* [cite: 181] */
     // ABDOMEN: Body Composition Test
-    const BodyCompositionTest = () => {
-      const [height, setHeight] = React.useState('');
-      const [weight, setWeight] = React.useState('');
-      const [unit, setUnit] = React.useState('metric'); // metric or imperial
-      const [result, setResult] = React.useState(null);
-      
-      const calculateBMI = () => {
-        let bmi, heightVal, weightVal;
-        
-        if (unit === 'metric') {
+    const BodyCompositionTest = () => { /* [cite: 181] */
+      const [height, setHeight] = React.useState(''); /* [cite: 181] */
+      const [weight, setWeight] = React.useState(''); /* [cite: 182] */
+      const [unit, setUnit] = React.useState('metric'); /* [cite: 182] */
+      // metric or imperial /* [cite: 183] */
+      const [result, setResult] = React.useState(null); /* [cite: 183] */
+      const calculateBMI = () => { /* [cite: 184] */
+        let bmi, heightVal, weightVal; /* [cite: 184] */
+        if (unit === 'metric') { /* [cite: 185] */
           // Metric: weight in kg, height in cm
-          heightVal = parseFloat(height);
-          weightVal = parseFloat(weight);
-          
-          if (isNaN(heightVal) || isNaN(weightVal) || heightVal <= 0 || weightVal <= 0) {
-            setResult({ error: 'Please enter valid height and weight values' });
-            return;
-          }
-          
+          heightVal = parseFloat(height); /* [cite: 185] */
+          weightVal = parseFloat(weight); /* [cite: 186] */
+
+          if (isNaN(heightVal) || isNaN(weightVal) || heightVal <= 0 || weightVal <= 0) { /* [cite: 186] */
+            setResult({ error: 'Please enter valid height and weight values' }); /* [cite: 186] */
+            return; /* [cite: 187] */
+          } /* [cite: 187] */
+
           // Convert cm to meters and calculate BMI
-          bmi = weightVal / Math.pow(heightVal / 100, 2);
-        } else {
+          bmi = weightVal / Math.pow(heightVal / 100, 2); /* [cite: 187] */
+        } else { /* [cite: 188] */
           // Imperial: weight in lbs, height in inches
-          heightVal = parseFloat(height);
-          weightVal = parseFloat(weight);
-          
-          if (isNaN(heightVal) || isNaN(weightVal) || heightVal <= 0 || weightVal <= 0) {
-            setResult({ error: 'Please enter valid height and weight values' });
-            return;
-          }
-          
+          heightVal = parseFloat(height); /* [cite: 188] */
+          weightVal = parseFloat(weight); /* [cite: 189] */
+
+          if (isNaN(heightVal) || isNaN(weightVal) || heightVal <= 0 || weightVal <= 0) { /* [cite: 189] */
+            setResult({ error: 'Please enter valid height and weight values' }); /* [cite: 189] */
+            return; /* [cite: 190] */
+          } /* [cite: 190] */
+
           // Imperial BMI formula: (weight in pounds * 703) / (height in inches)²
-          bmi = (weightVal * 703) / Math.pow(heightVal, 2);
-        }
-        
+          bmi = (weightVal * 703) / Math.pow(heightVal, 2); /* [cite: 190] */
+        } /* [cite: 191] */
+
         // Round to one decimal place
-        bmi = Math.round(bmi * 10) / 10;
-        
-        // Determine BMI category
-        let category, color;
-        if (bmi < 18.5) {
-          category = 'Underweight';
-          color = 'text-blue-400';
-        } else if (bmi >= 18.5 && bmi < 25) {
-          category = 'Normal weight';
-          color = 'text-green-400';
-        } else if (bmi >= 25 && bmi < 30) {
-          category = 'Overweight';
-          color = 'text-yellow-400';
-        } else {
-          category = 'Obesity';
-          color = 'text-red-400';
-        }
-        
-        setResult({ bmi, category, color });
-      };
-      
-      return (
-        <div className="max-w-md mx-auto bg-gray-900 p-6 rounded-lg shadow-md">
-          <h2 className="text-xl font-semibold mb-2 text-white">Body Composition Analysis</h2>
-          <p className="text-sm text-gray-400 mb-4">Evaluating body mass index and tissue composition</p>
-          
-          <div className="mb-4">
-            <label className="block text-gray-300 mb-2">Measurement System:</label>
-            <div className="flex">
-              <button 
-                onClick={() => setUnit('metric')}
-                className={`flex-1 py-2 ${unit === 'metric' ? 'bg-blue-600 text-white' : 'bg-gray-800 text-gray-300'} rounded-l`}
+        bmi = Math.round(bmi * 10) / 10; /* [cite: 191] */
+        // Determine BMI category /* [cite: 192] */
+        let category, color; /* [cite: 192] */
+        if (bmi < 18.5) { /* [cite: 193] */
+          category = 'Underweight'; /* [cite: 193] */
+          color = 'text-blue-400'; /* [cite: 193] */
+        } else if (bmi >= 18.5 && bmi < 25) { /* [cite: 194] */
+          category = 'Normal weight'; /* [cite: 194] */
+          color = 'text-green-400'; /* [cite: 195] */
+        } else if (bmi >= 25 && bmi < 30) { /* [cite: 195] */
+          category = 'Overweight'; /* [cite: 195] */
+          color = 'text-yellow-400'; /* [cite: 196] */
+        } else { /* [cite: 196] */
+          category = 'Obesity'; /* [cite: 196] */
+          color = 'text-red-400'; /* [cite: 197] */
+        } /* [cite: 197] */
+
+        setResult({ bmi, category, color }); /* [cite: 197] */
+      }; /* [cite: 198] */
+
+      return ( /* [cite: 198] */
+        <div className="max-w-md mx-auto bg-gray-900 p-6 rounded-lg shadow-md"> {/* [cite: 198] */}
+          <h2 className="text-xl font-semibold mb-2 text-white">Body Composition Analysis</h2> {/* [cite: 198] */}
+          <p className="text-sm text-gray-400 mb-4">Evaluating body mass index and tissue composition</p> {/* [cite: 198] */}
+
+          <div className="mb-4"> {/* [cite: 198] */}
+            <label className="block text-gray-300 mb-2">Measurement System:</label> {/* [cite: 198] */}
+
+            <div className="flex"> {/* [cite: 199] */}
+              <button /* [cite: 199] */
+                onClick={() => setUnit('metric')} /* [cite: 199] */
+                className={`flex-1 py-2 ${unit === 'metric' ? 'bg-blue-600 text-white' : 'bg-gray-800 text-gray-300'} rounded-l`} /* [cite: 199] */
               >
                 Metric
-              </button>
-              <button 
-                onClick={() => setUnit('imperial')}
-                className={`flex-1 py-2 ${unit === 'imperial' ? 'bg-blue-600 text-white' : 'bg-gray-800 text-gray-300'} rounded-r`}
+
+              </button> /* [cite: 200] */
+              <button /* [cite: 200] */
+                onClick={() => setUnit('imperial')} /* [cite: 200] */
+                className={`flex-1 py-2 ${unit === 'imperial' ? 'bg-blue-600 text-white' : 'bg-gray-800 text-gray-300'} rounded-r`} /* [cite: 200] */
               >
                 Imperial
-              </button>
+
+              </button> /* [cite: 201] */
             </div>
           </div>
-          
-          <div className="mb-4">
-            <label className="block text-gray-300 mb-2">
-              Height {unit === 'metric' ? '(cm)' : '(inches)'}:
+
+          <div className="mb-4"> {/* [cite: 201] */}
+            <label className="block text-gray-300 mb-2"> {/* [cite: 201] */}
+              Height {unit === 'metric' ? /* [cite: 201] */
+              '(cm)' : '(inches)'}: {/* [cite: 202] */}
             </label>
-            <input
-              type="number"
-              value={height}
-              onChange={(e) => setHeight(e.target.value)}
-              placeholder={unit === 'metric' ? 'Enter height in cm' : 'Enter height in inches'}
-              className="w-full p-2 border rounded bg-gray-800 text-white border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400"
+            <input /* [cite: 202] */
+              type="number" /* [cite: 202] */
+              value={height} /* [cite: 202] */
+              onChange={(e) => setHeight(e.target.value)} /* [cite: 202] */
+              placeholder={unit === 'metric' ? /* [cite: 202] */
+              'Enter height in cm' : 'Enter height in inches'} /* [cite: 203] */
+              className="w-full p-2 border rounded bg-gray-800 text-white border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400" /* [cite: 203] */
             />
           </div>
-          
-          <div className="mb-6">
-            <label className="block text-gray-300 mb-2">
-              Weight {unit === 'metric' ? '(kg)' : '(lbs)'}:
+
+          <div className="mb-6"> {/* [cite: 203] */}
+            <label className="block text-gray-300 mb-2"> /* [cite: 203] */
+
+              Weight {unit === 'metric' ? '(kg)' : '(lbs)'}: {/* [cite: 204] */}
             </label>
-            <input
-              type="number"
-              value={weight}
-              onChange={(e) => setWeight(e.target.value)}
-              placeholder={unit === 'metric' ? 'Enter weight in kg' : 'Enter weight in lbs'}
-              className="w-full p-2 border rounded bg-gray-800 text-white border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400"
+            <input /* [cite: 204] */
+              type="number" /* [cite: 204] */
+              value={weight} /* [cite: 204] */
+              onChange={(e) => setWeight(e.target.value)} /* [cite: 204] */
+              placeholder={unit === 'metric' ? /* [cite: 204] */
+              'Enter weight in kg' : 'Enter weight in lbs'} /* [cite: 205] */
+              className="w-full p-2 border rounded bg-gray-800 text-white border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400" /* [cite: 205] */
             />
           </div>
-          
-          <button 
-            onClick={calculateBMI}
-            className="w-full py-2 bg-blue-600 text-white rounded hover:bg-blue-500"
+
+          <button /* [cite: 205] */
+            onClick={calculateBMI} /* [cite: 205] */
+            className="w-full py-2 /* [cite: 205] */ bg-blue-600 text-white rounded hover:bg-blue-500" /* [cite: 206] */
           >
             Analyze Body Composition
-          </button>
-          
-          {result && !result.error && (
-            <div className="mt-6 p-4 bg-gray-800 rounded-lg border border-gray-700">
-              <h3 className="font-medium text-lg mb-3 text-white">Analysis Results</h3>
-              <div className="flex justify-between mb-2 text-gray-300">
-                <span>Body Mass Index:</span>
-                <span className="font-semibold text-white">{result.bmi}</span>
+          </button> /* [cite: 206] */
+
+          {result && !result.error && ( /* [cite: 206] */
+            <div className="mt-6 p-4 bg-gray-800 rounded-lg border border-gray-700"> {/* [cite: 206] */}
+              <h3 className="font-medium text-lg mb-3 text-white">Analysis Results</h3> {/* [cite: 206] */}
+
+              <div className="flex justify-between mb-2 text-gray-300"> {/* [cite: 207] */}
+                <span>Body Mass Index:</span> {/* [cite: 207] */}
+                <span className="font-semibold text-white">{result.bmi}</span> {/* [cite: 207] */}
               </div>
-              <div className="flex justify-between text-gray-300">
-                <span>Classification:</span>
-                <span className={`font-semibold ${result.color}`}>{result.category}</span>
+              <div className="flex justify-between text-gray-300"> {/* [cite: 207] */}
+                <span>Classification:</span> {/* [cite: 207] */}
+
+                <span className={`font-semibold ${result.color}`}>{result.category}</span> {/* [cite: 208] */}
               </div>
-              <div className="mt-4 pt-4 border-t border-gray-700">
-                <h4 className="font-medium mb-2 text-gray-300">BMI Classifications:</h4>
-                <ul className="text-sm space-y-1 text-gray-400">
-                  <li><span className="text-blue-400 font-medium">Below 18.5:</span> Underweight</li>
-                  <li><span className="text-green-400 font-medium">18.5 - 24.9:</span> Normal weight</li>
-                  <li><span className="text-yellow-400 font-medium">25 - 29.9:</span> Overweight</li>
-                  <li><span className="text-red-400 font-medium">30 and above:</span> Obesity</li>
+              <div className="mt-4 pt-4 border-t border-gray-700"> {/* [cite: 208] */}
+                <h4 className="font-medium mb-2 text-gray-300">BMI Classifications:</h4> {/* [cite: 208] */}
+                <ul className="text-sm space-y-1 text-gray-400"> {/* [cite: 208] */}
+
+                  <li><span className="text-blue-400 font-medium">Below 18.5:</span> Underweight</li> {/* [cite: 209] */}
+                  <li><span className="text-green-400 font-medium">18.5 - 24.9:</span> Normal weight</li> {/* [cite: 209] */}
+                  <li><span className="text-yellow-400 font-medium">25 - 29.9:</span> Overweight</li> {/* [cite: 209] */}
+                  <li><span className="text-red-400 font-medium">30 and above:</span> Obesity</li> {/* [cite: 209] */}
                 </ul>
-              </div>
+
+              </div> /* [cite: 210] */
             </div>
           )}
-          
-          {result && result.error && (
-            <div className="mt-4 p-3 bg-red-900 bg-opacity-30 text-red-300 rounded border border-red-700">
-              {result.error}
-            </div>
+
+          {result && result.error && ( /* [cite: 210] */
+            <div className="mt-4 p-3 bg-red-900 bg-opacity-30 text-red-300 rounded border border-red-700"> {/* [cite: 210] */}
+              {result.error} {/* [cite: 210] */}
+
+            </div> /* [cite: 211] */
           )}
         </div>
-      );
-    };
-
+      ); /* [cite: 211] */
+    }; /* [cite: 212] */
     // HANDS/ARMS: Reaction Test
-    const ReactionTest = () => {
-      const [state, setState] = React.useState('ready'); // ready, waiting, click, results
-      const [startTime, setStartTime] = React.useState(null);
-      const [reactionTime, setReactionTime] = React.useState(null);
-      const [results, setResults] = React.useState([]);
-      
+    const ReactionTest = () => { /* [cite: 212] */
+      const [state, setState] = React.useState('ready'); /* [cite: 212] */
+      // ready, waiting, click, results /* [cite: 213] */
+      const [startTime, setStartTime] = React.useState(null); /* [cite: 213] */
+      const [reactionTime, setReactionTime] = React.useState(null); /* [cite: 213] */
+      const [results, setResults] = React.useState([]); /* [cite: 214] */
+
       // Start the test
-      const startTest = () => {
-        setState('waiting');
-        
-        // Random delay between 1-5 seconds
-        const delay = 1000 + Math.random() * 4000;
-        
-        setTimeout(() => {
-          setStartTime(Date.now());
-          setState('click');
-        }, delay);
-      };
-      
+      const startTest = () => { /* [cite: 214] */
+        setState('waiting'); /* [cite: 214] */
+        // Random delay between 1-5 seconds /* [cite: 215] */
+        const delay = 1000 + Math.random() * 4000; /* [cite: 215] */
+        setTimeout(() => { /* [cite: 216] */
+          setStartTime(Date.now()); /* [cite: 216] */
+          setState('click'); /* [cite: 216] */
+        }, delay); /* [cite: 216] */
+      }; /* [cite: 217] */
+
       // Handle user click
-      const handleClick = () => {
-        if (state === 'waiting') {
+      const handleClick = () => { /* [cite: 217] */
+        if (state === 'waiting') { /* [cite: 217] */
           // Clicked too early
-          setState('ready');
-          alert('Early response detected. Wait for the green signal before responding.');
-        } else if (state === 'click') {
+          setState('ready'); /* [cite: 217] */
+          alert('Early response detected. Wait for the green signal before responding.'); /* [cite: 218] */
+        } else if (state === 'click') { /* [cite: 219] */
           // Measure reaction time
-          const endTime = Date.now();
-          const time = endTime - startTime;
-          setReactionTime(time);
-          
+          const endTime = Date.now(); /* [cite: 219] */
+          const time = endTime - startTime; /* [cite: 220] */
+          setReactionTime(time); /* [cite: 220] */
+
           // Add to results history (keep last 5)
-          const newResults = [time, ...results].slice(0, 5);
-          setResults(newResults);
-          
-          setState('results');
-        }
-      };
-      
+          const newResults = [time, ...results].slice(0, 5); /* [cite: 220] */
+          setResults(newResults); /* [cite: 221] */
+
+          setState('results'); /* [cite: 221] */
+        } /* [cite: 221] */
+      }; /* [cite: 221] */
+
       // Get feedback based on reaction time
-      const getFeedback = (time) => {
-        if (time < 200) return { text: 'Exceptional response time!', color: 'text-purple-400' };
-        if (time < 250) return { text: 'Excellent neural response!', color: 'text-indigo-400' };
-        if (time < 300) return { text: 'Very Good reflexes!', color: 'text-blue-400' };
-        if (time < 350) return { text: 'Good response time', color: 'text-green-400' };
-        if (time < 400) return { text: 'Average reaction speed', color: 'text-yellow-400' };
-        return { text: 'Response time could be improved', color: 'text-red-400' };
-      };
-      
+      const getFeedback = (time) => { /* [cite: 221] */
+        if (time < 200) return { text: 'Exceptional response time!', color: 'text-purple-400' }; /* [cite: 221] */
+        if (time < 250) return { text: 'Excellent neural response!', color: 'text-indigo-400' }; /* [cite: 222] */
+        if (time < 300) return { text: 'Very Good reflexes!', color: 'text-blue-400' }; /* [cite: 223] */
+        if (time < 350) return { text: 'Good response time', color: 'text-green-400' }; /* [cite: 224] */
+        if (time < 400) return { text: 'Average reaction speed', color: 'text-yellow-400' }; /* [cite: 225] */
+        return { text: 'Response time could be improved', color: 'text-red-400' }; /* [cite: 226] */
+      }; /* [cite: 226] */
       // Calculate average reaction time
-      const getAverage = () => {
-        if (results.length === 0) return null;
-        const sum = results.reduce((a, b) => a + b, 0);
-        return Math.round(sum / results.length);
-      };
-      
+      const getAverage = () => { /* [cite: 227] */
+        if (results.length === 0) return null; /* [cite: 227] */
+        const sum = results.reduce((a, b) => a + b, 0); /* [cite: 228] */
+        return Math.round(sum / results.length); /* [cite: 228] */
+      }; /* [cite: 228] */
       // Get background color based on state
-      const getBackgroundColor = () => {
-        if (state === 'ready') return 'bg-blue-900 hover:bg-blue-800';
-        if (state === 'waiting') return 'bg-red-700';
-        if (state === 'click') return 'bg-green-700';
-        return 'bg-gray-800';
-      };
-      
-      return (
-        <div className="max-w-md mx-auto bg-gray-900 p-6 rounded-lg shadow-md">
-          <h2 className="text-xl font-semibold mb-2 text-white">Reaction Speed Assessment</h2>
-          <p className="text-sm text-gray-400 mb-4">Measuring neural pathway response and motor function</p>
-          
-          <div 
-            onClick={state === 'ready' ? startTest : handleClick}
-            className={`w-full h-64 rounded-lg flex items-center justify-center cursor-pointer transition-colors ${getBackgroundColor()}`}
+      const getBackgroundColor = () => { /* [cite: 229] */
+        if (state === 'ready') return 'bg-blue-900 hover:bg-blue-800'; /* [cite: 229] */
+        if (state === 'waiting') return 'bg-red-700'; /* [cite: 230] */
+        if (state === 'click') return 'bg-green-700'; /* [cite: 230] */
+        return 'bg-gray-800'; /* [cite: 230] */
+      }; /* [cite: 230] */
+      return ( /* [cite: 231] */
+        <div className="max-w-md mx-auto bg-gray-900 p-6 rounded-lg shadow-md"> {/* [cite: 231] */}
+          <h2 className="text-xl font-semibold mb-2 text-white">Reaction Speed Assessment</h2> {/* [cite: 231] */}
+          <p className="text-sm text-gray-400 mb-4">Measuring neural pathway response and motor function</p> {/* [cite: 231] */}
+
+          <div /* [cite: 231] */
+            onClick={state === 'ready' ? startTest : handleClick} /* [cite: 231] */
+
+            className={`w-full h-64 rounded-lg flex items-center justify-center cursor-pointer transition-colors ${getBackgroundColor()}`} /* [cite: 232] */
           >
-            <div className="text-center p-4">
-              {state === 'ready' && (
-                <div>
-                  <p className="font-medium mb-2 text-white">Tap to begin reaction assessment</p>
-                  <p className="text-sm text-gray-300">Wait for the red screen to turn green, then tap as quickly as possible.</p>
+            <div className="text-center p-4"> {/* [cite: 232] */}
+              {state === 'ready' && ( /* [cite: 232] */
+                <div> {/* [cite: 232] */}
+                  <p className="font-medium mb-2 text-white">Tap to begin reaction assessment</p> {/* [cite: 232] */}
+
+                  <p className="text-sm text-gray-300">Wait for the red screen to turn green, then tap as quickly as possible.</p> {/* [cite: 233] */}
                 </div>
               )}
-              
-              {state === 'waiting' && (
-                <p className="font-medium text-white">Wait for green signal...</p>
+
+              {state === 'waiting' && ( /* [cite: 233] */
+
+                <p className="font-medium text-white">Wait for green signal...</p> /* [cite: 234] */
               )}
-              
-              {state === 'click' && (
-                <p className="font-medium text-white pulse-animation">TAP NOW!</p>
+
+              {state === 'click' && ( /* [cite: 234] */
+                <p className="font-medium text-white pulse-animation">TAP NOW!</p> /* [cite: 234] */
               )}
-              
-              {state === 'results' && (
-                <div>
-                  <p className="text-2xl font-bold mb-1 text-white">{reactionTime} ms</p>
-                  {reactionTime && (
-                    <p className={`font-medium ${getFeedback(reactionTime).color}`}>
-                      {getFeedback(reactionTime).text}
+
+
+              {state === 'results' && ( /* [cite: 235] */
+                <div> {/* [cite: 235] */}
+                  <p className="text-2xl font-bold mb-1 text-white">{reactionTime} ms</p> {/* [cite: 235] */}
+                  {reactionTime && ( /* [cite: 235] */
+                    <p /* [cite: 235] */ className={`font-medium ${getFeedback(reactionTime).color}`}> {/* [cite: 236] */}
+                      {getFeedback(reactionTime).text} {/* [cite: 236] */}
                     </p>
                   )}
-                  <button 
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setState('ready');
+                  <button /* [cite: 236] */
+
+                    onClick={(e) => { /* [cite: 237] */
+                      e.stopPropagation(); /* [cite: 237] */
+                      setState('ready'); /* [cite: 238] */
                     }}
-                    className="mt-3 px-4 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-500"
+                    className="mt-3 px-4 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-500" /* [cite: 238] */
                   >
                     Assess Again
                   </button>
-                </div>
+
+                </div> /* [cite: 239] */
               )}
             </div>
           </div>
-          
-          {results.length > 0 && (
-            <div className="mt-5">
-              <h3 className="font-medium mb-2 text-gray-300">Response time history:</h3>
-              <div className="flex flex-wrap gap-2">
-                {results.map((time, index) => (
-                  <div key={index} className="px-3 py-1 bg-gray-800 rounded text-sm text-gray-300">
+
+          {results.length > 0 && ( /* [cite: 239] */
+            <div className="mt-5"> {/* [cite: 239] */}
+              <h3 className="font-medium mb-2 text-gray-300">Response time history:</h3> {/* [cite: 239] */}
+
+              <div className="flex flex-wrap gap-2"> {/* [cite: 240] */}
+                {results.map((time, index) => ( /* [cite: 240] */
+                  <div key={index} className="px-3 py-1 bg-gray-800 rounded text-sm text-gray-300"> {/* [cite: 240] */}
                     {time} ms
                   </div>
-                ))}
+
+                ))} /* [cite: 241] */
               </div>
-              {results.length > 1 && (
-                <p className="mt-3 text-sm text-gray-300">
-                  Average response: <span className="font-medium text-white">{getAverage()} ms</span>
+              {results.length > 1 && ( /* [cite: 241] */
+                <p className="mt-3 text-sm text-gray-300"> {/* [cite: 241] */}
+                  Average response: <span className="font-medium text-white">{getAverage()} ms</span> {/* [cite: 241] */}
                 </p>
-              )}
+
+              )} /* [cite: 242] */
             </div>
           )}
         </div>
-      );
-    };
-
+      ); /* [cite: 242] */
+    }; /* [cite: 243] */
     // LEGS: Stability Test
-    const StabilityTest = () => {
-      const [timerRunning, setTimerRunning] = React.useState(false);
-      const [startTime, setStartTime] = React.useState(null);
-      const [elapsedTime, setElapsedTime] = React.useState(0);
-      const [bestTime, setBestTime] = React.useState(0);
-      const [leg, setLeg] = React.useState('right');
-      const [feedbackVisible, setFeedbackVisible] = React.useState(false);
-      const [intervalId, setIntervalId] = React.useState(null);
-      
-      // Start the timer
-      const startTimer = () => {
-        setTimerRunning(true);
-        const now = Date.now();
-        setStartTime(now);
-        setElapsedTime(0);
-        setFeedbackVisible(false);
-        
+    const StabilityTest = () => { /* [cite: 243] */
+      const [timerRunning, setTimerRunning] = React.useState(false); /* [cite: 243] */
+      const [startTime, setStartTime] = React.useState(null); /* [cite: 244] */
+      const [elapsedTime, setElapsedTime] = React.useState(0); /* [cite: 244] */
+      const [bestTime, setBestTime] = React.useState(0); /* [cite: 244] */
+      const [leg, setLeg] = React.useState('right'); /* [cite: 244] */
+      const [feedbackVisible, setFeedbackVisible] = React.useState(false); /* [cite: 245] */
+      const [intervalId, setIntervalId] = React.useState(null); /* [cite: 245] */
+      // Start the timer /* [cite: 246] */
+      const startTimer = () => { /* [cite: 246] */
+        setTimerRunning(true); /* [cite: 246] */
+        const now = Date.now(); /* [cite: 247] */
+        setStartTime(now); /* [cite: 247] */
+        setElapsedTime(0); /* [cite: 247] */
+        setFeedbackVisible(false); /* [cite: 247] */
+
         // Update timer every 100ms
-        const newIntervalId = setInterval(() => {
-          const currentTime = Date.now();
-          const newElapsedTime = (currentTime - now) / 1000;
-          setElapsedTime(newElapsedTime);
-        }, 100);
-        
-        setIntervalId(newIntervalId);
-      };
-      
+        const newIntervalId = setInterval(() => { /* [cite: 247] */
+          const currentTime = Date.now(); /* [cite: 247] */
+          const newElapsedTime = (currentTime - now) / 1000; /* [cite: 247] */
+          setElapsedTime(newElapsedTime); /* [cite: 247] */
+        }, 100); /* [cite: 247] */
+        setIntervalId(newIntervalId); /* [cite: 248] */
+      }; /* [cite: 248] */
+
       // Stop the timer
-      const stopTimer = () => {
-        setTimerRunning(false);
-        
-        // Clear the interval
-        if (intervalId) {
-          clearInterval(intervalId);
-          setIntervalId(null);
-        }
-        
+      const stopTimer = () => { /* [cite: 248] */
+        setTimerRunning(false); /* [cite: 248] */
+        // Clear the interval /* [cite: 249] */
+        if (intervalId) { /* [cite: 249] */
+          clearInterval(intervalId); /* [cite: 249] */
+          setIntervalId(null); /* [cite: 250] */
+        } /* [cite: 250] */
+
         // Update best time if current time is better
-        if (elapsedTime > bestTime) {
-          setBestTime(elapsedTime);
-        }
-        
-        setFeedbackVisible(true);
-      };
-      
-      // Clean up interval on unmount
-      React.useEffect(() => {
-        return () => {
-          if (intervalId) {
-            clearInterval(intervalId);
+        if (elapsedTime > bestTime) { /* [cite: 250] */
+          setBestTime(elapsedTime); /* [cite: 250] */
+        } /* [cite: 251] */
+
+        setFeedbackVisible(true); /* [cite: 251] */
+      }; /* [cite: 251] */
+      // Clean up interval on unmount /* [cite: 252] */
+      React.useEffect(() => { /* [cite: 252] */
+        return () => { /* [cite: 252] */
+          if (intervalId) { /* [cite: 252] */
+            clearInterval(intervalId); /* [cite: 252] */
           }
         };
-      }, [intervalId]);
-      
-      // Get feedback based on balance time
-      const getFeedback = () => {
+      }, [intervalId]); /* [cite: 252] */
+      // Get feedback based on balance time /* [cite: 253] */
+      const getFeedback = () => { /* [cite: 253] */
         // Simplified feedback thresholds
-        if (elapsedTime < 10) {
-          return {
-            text: 'Vestibular system shows potential for improvement. Regular balance exercises recommended.',
-            color: 'text-red-400'
-          };
-        } else if (elapsedTime < 20) {
-          return {
-            text: 'Adequate stability detected. Further enhancement possible with targeted exercises.',
-            color: 'text-yellow-400'
-          };
-        } else if (elapsedTime < 30) {
-          return {
-            text: 'Good proprioceptive function observed. Your stability systems are performing well.',
-            color: 'text-green-400'
-          };
-        } else {
-          return {
-            text: 'Exceptional balance and stability detected. Superior vestibular system function.',
-            color: 'text-blue-400'
-          };
-        }
-      };
-      
-      return (
-        <div className="max-w-md mx-auto bg-gray-900 p-6 rounded-lg shadow-md">
-          <h2 className="text-xl font-semibold mb-2 text-white">Stability Assessment</h2>
-          <p className="text-sm text-gray-400 mb-4">Evaluating vestibular function and proprioceptive systems</p>
-          
-          <div className="mb-4 flex justify-center">
-            <div className="inline-flex rounded-md shadow-sm" role="group">
-              <button
-                type="button"
-                onClick={() => setLeg('right')}
-                className={`px-4 py-2 text-sm font-medium rounded-l-lg ${
-                  leg === 'right' 
-                    ? 'bg-blue-600 text-white' 
-                    : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
-                }`}
+        if (elapsedTime < 10) { /* [cite: 253] */
+          return { /* [cite: 253] */
+            text: 'Vestibular system shows potential for improvement. /* [cite: 253] */
+            Regular balance exercises recommended.', /* [cite: 254] */
+            color: 'text-red-400' /* [cite: 254] */
+          }; /* [cite: 254] */
+        } else if (elapsedTime < 20) { /* [cite: 255] */
+          return { /* [cite: 255] */
+            text: 'Adequate stability detected. /* [cite: 255] */
+            Further enhancement possible with targeted exercises.', /* [cite: 256] */
+            color: 'text-yellow-400' /* [cite: 256] */
+          }; /* [cite: 256] */
+        } else if (elapsedTime < 30) { /* [cite: 257] */
+          return { /* [cite: 257] */
+            text: 'Good proprioceptive function observed. /* [cite: 257] */
+            Your stability systems are performing well.', /* [cite: 258] */
+            color: 'text-green-400' /* [cite: 258] */
+          }; /* [cite: 258] */
+        } else { /* [cite: 259] */
+          return { /* [cite: 259] */
+            text: 'Exceptional balance and stability detected. /* [cite: 259] */
+            Superior vestibular system function.', /* [cite: 260] */
+            color: 'text-blue-400' /* [cite: 260] */
+          }; /* [cite: 260] */
+        } /* [cite: 261] */
+      }; /* [cite: 261] */
+
+      return ( /* [cite: 261] */
+        <div className="max-w-md mx-auto bg-gray-900 p-6 rounded-lg shadow-md"> {/* [cite: 261] */}
+          <h2 className="text-xl font-semibold mb-2 text-white">Stability Assessment</h2> {/* [cite: 261] */}
+          <p className="text-sm text-gray-400 mb-4">Evaluating vestibular function and proprioceptive systems</p> {/* [cite: 261] */}
+
+          <div className="mb-4 flex justify-center"> {/* [cite: 261] */}
+            <div className="inline-flex rounded-md shadow-sm" role="group"> {/* [cite: 261] */}
+
+              <button /* [cite: 262] */
+                type="button" /* [cite: 262] */
+                onClick={() => setLeg('right')} /* [cite: 262] */
+                className={`px-4 py-2 text-sm font-medium rounded-l-lg ${ /* [cite: 262] */
+                  leg === 'right' /* [cite: 262] */
+
+                    ? 'bg-blue-600 text-white' /* [cite: 263] */
+                    : 'bg-gray-800 text-gray-300 hover:bg-gray-700' /* [cite: 263] */
+                }`} /* [cite: 263] */
               >
                 Right Leg
-              </button>
-              <button
-                type="button"
-                onClick={() => setLeg('left')}
-                className={`px-4 py-2 text-sm font-medium rounded-r-lg ${
-                  leg === 'left' 
-                    ? 'bg-blue-600 text-white' 
-                    : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
-                }`}
+              </button> /* [cite: 263] */
+
+              <button /* [cite: 264] */
+                type="button" /* [cite: 264] */
+                onClick={() => setLeg('left')} /* [cite: 264] */
+                className={`px-4 py-2 text-sm font-medium rounded-r-lg ${ /* [cite: 264] */
+                  leg === 'left' /* [cite: 264] */
+
+                    ? 'bg-blue-600 text-white' /* [cite: 265] */
+                    : 'bg-gray-800 text-gray-300 hover:bg-gray-700' /* [cite: 265] */
+                }`} /* [cite: 265] */
               >
                 Left Leg
-              </button>
-            </div>
+              </button> /* [cite: 265] */
+
+            </div> /* [cite: 266] */
           </div>
-          
-          <div id="timer-container" className="text-center py-4">
-            <div className="text-5xl font-bold mb-4 text-white">{elapsedTime.toFixed(2)}</div>
-            <p className="text-sm text-gray-300 mb-4">
-              Stand on your {leg} leg in a safe, level area. Press start when ready, and stop when balance is compromised.
-            </p>
-            
-            {!timerRunning ? (
-              <button 
-                onClick={startTimer}
-                className="w-full py-3 bg-green-600 text-white rounded-lg text-lg hover:bg-green-500"
+
+          <div id="timer-container" className="text-center py-4"> {/* [cite: 266] */}
+            <div className="text-5xl font-bold mb-4 text-white">{elapsedTime.toFixed(2)}</div> {/* [cite: 266] */}
+            <p className="text-sm text-gray-300 mb-4"> {/* [cite: 266] */}
+              Stand on your {leg} leg in a safe, level area. {/* [cite: 266] */}{/* [cite: 267] */}
+              Press start when ready, and stop when balance is compromised.
+            </p> /* [cite: 267] */
+
+            {!timerRunning ? /* [cite: 268] */ ( /* [cite: 269] */
+              <button /* [cite: 269] */
+                onClick={startTimer} /* [cite: 269] */
+                className="w-full py-3 bg-green-600 text-white rounded-lg text-lg hover:bg-green-500" /* [cite: 269] */
               >
                 Begin Assessment
-              </button>
-            ) : (
-              <button 
-                onClick={stopTimer}
-                className="w-full py-3 bg-red-600 text-white rounded-lg text-lg hover:bg-red-500"
+              </button> /* [cite: 269] */
+
+            ) : ( /* [cite: 270] */
+              <button /* [cite: 270] */
+                onClick={stopTimer} /* [cite: 270] */
+                className="w-full py-3 bg-red-600 text-white rounded-lg text-lg hover:bg-red-500" /* [cite: 270] */
               >
                 End Assessment
-              </button>
+
+              </button> /* [cite: 271] */
             )}
-            
-            {bestTime > 0 && (
-              <p className="mt-3 text-sm font-medium text-gray-300">
+
+            {bestTime > 0 && ( /* [cite: 271] */
+              <p className="mt-3 text-sm font-medium text-gray-300"> {/* [cite: 271] */}
                 Best stability: <span className="text-white">{bestTime.toFixed(2)}</span> seconds
-              </p>
+
+              </p> /* [cite: 272] */
             )}
           </div>
-          
-          {feedbackVisible && (
-            <div className="mt-4 p-4 rounded-lg bg-gray-800 border border-gray-700">
-              <h3 className="font-medium mb-2 text-white">Stability Analysis</h3>
-              <p className={getFeedback().color}>{getFeedback().text}</p>
-              <div className="mt-4 text-sm text-gray-400">
-                <p className="mb-1"><strong>Balance Parameters:</strong></p>
-                <ul className="list-disc list-inside space-y-1">
-                  <li><span className="text-red-400 font-medium">Less than 10 seconds:</span> Stability enhancement recommended</li>
-                  <li><span className="text-yellow-400 font-medium">10-20 seconds:</span> Adequate stability</li>
-                  <li><span className="text-green-400 font-medium">20-30 seconds:</span> Good stability</li>
-                  <li><span className="text-blue-400 font-medium">More than 30 seconds:</span> Excellent stability</li>
+
+          {feedbackVisible && ( /* [cite: 272] */
+            <div className="mt-4 p-4 rounded-lg bg-gray-800 border border-gray-700"> {/* [cite: 272] */}
+              <h3 className="font-medium mb-2 text-white">Stability Analysis</h3> {/* [cite: 272] */}
+              <p className={getFeedback().color}>{getFeedback().text}</p> {/* [cite: 272] */}
+
+              <div className="mt-4 text-sm text-gray-400"> {/* [cite: 273] */}
+                <p className="mb-1"><strong>Balance Parameters:</strong></p> {/* [cite: 273] */}
+                <ul className="list-disc list-inside space-y-1"> {/* [cite: 273] */}
+                  <li><span className="text-red-400 font-medium">Less than 10 seconds:</span> Stability enhancement recommended</li> {/* [cite: 273] */}
+                  <li><span className="text-yellow-400 font-medium">10-20 seconds:</span> Adequate {/* [cite: 273] */ stability</li> /* [cite: 274] */
+                  <li><span className="text-green-400 font-medium">20-30 seconds:</span> Good stability</li> {/* [cite: 274] */}
+                  <li><span className="text-blue-400 font-medium">More than 30 seconds:</span> Excellent stability</li> {/* [cite: 274] */}
                 </ul>
-                <p className="mt-3">Compare results between legs to identify potential asymmetries in your vestibular system.</p>
-              </div>
+                <p className="mt-3">Compare results between legs to identify potential asymmetries in your vestibular system.</p> {/* [cite: 274] */}
+
+              </div> /* [cite: 275] */
             </div>
           )}
         </div>
-      );
-    };
-
+      ); /* [cite: 275] */
+    }; /* [cite: 276] */
     // Render the main TestManager component to the DOM
-    ReactDOM.render(
-      <TestManager />,
-      document.getElementById('test-container')
-    );
+    ReactDOM.render( /* [cite: 276] */
+      <TestManager />, /* [cite: 276] */
+      document.getElementById('test-container') /* [cite: 276] */
+    ); /* [cite: 277] */
   </script>
 
   <script type="importmap">
     {
-      "imports": {
-        "three": "https://cdn.jsdelivr.net/npm/three@0.163.0/build/three.module.js",
-        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.163.0/examples/jsm/"
+      "imports": { /* [cite: 277] */
+        "three": "https://cdn.jsdelivr.net/npm/three@0.163.0/build/three.module.js", /* [cite: 277] */
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.163.0/examples/jsm/" /* [cite: 277] */
       }
     }
   </script>
-
   <script type="module">
-    import * as THREE from 'three';
-    import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-    import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-    import { RGBELoader } from 'three/addons/loaders/RGBELoader.js';
-    import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
-    import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
-    import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
-    import { OutlinePass } from 'three/addons/postprocessing/OutlinePass.js';
+    import * as THREE from 'three'; /* [cite: 277] */
+    import { OrbitControls } from 'three/addons/controls/OrbitControls.js'; /* [cite: 278] */
+    import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'; /* [cite: 278] */
+    import { RGBELoader } from 'three/addons/loaders/RGBELoader.js'; /* [cite: 278] */
+    import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js'; /* [cite: 279] */
+    import { RenderPass } from 'three/addons/postprocessing/RenderPass.js'; /* [cite: 279] */
+    import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js'; /* [cite: 279] */
+    import { OutlinePass } from 'three/addons/postprocessing/OutlinePass.js'; /* [cite: 280] */
 
-    // --- Global Variables ---
-    let scene, camera, renderer, controls, composer;
-    let raycaster, mouse;
-    let model;
-    let bloomPass, outlinePass;
-    let selectedPart = null;
-    let initialCameraPosition = new THREE.Vector3();
-    let initialControlsTarget = new THREE.Vector3();
-    let arLabels = {};
-    let tracker = document.getElementById('body-tracker');
-    let audioEnabled = true;
+    // --- Global Variables for Main Scene ---
+    let scene, camera, renderer, controls, composer; /* [cite: 280] */
+    let raycaster, mouse; /* [cite: 281] */
+    let model; /* [cite: 281] */
+    let bloomPass, outlinePass; /* [cite: 281] */
+    let selectedPart = null; /* [cite: 281] */
+    let initialCameraPosition = new THREE.Vector3(); /* [cite: 281] */
+    let initialControlsTarget = new THREE.Vector3(); /* [cite: 282] */
+    let arLabels = {}; /* [cite: 282] */
+    let tracker = document.getElementById('body-tracker'); /* [cite: 282] */
+    let audioEnabled = true; /* [cite: 282] */
+
+    // --- STEP 3: Global Variables for Logo Scene ---
+    let logoScene, logoCamera, logoRenderer, logoModel;
+    const logoContainer = document.getElementById('logo-container'); // Reference the new div
+    // --- End Step 3 ---
 
     // DOM elements
-    const canvasContainer = document.getElementById('canvas-container');
-    const infoContent = document.getElementById('info-content');
-    const loadingOverlay = document.getElementById('loading-overlay');
-    const progressBar = document.getElementById('progress-bar');
-    const loadingText = document.getElementById('loading-text');
-    const panelToggle = document.getElementById('panel-toggle');
-    const infoPanel = document.getElementById('info-panel');
-    const systemStatus = document.getElementById('system-status');
-
+    const canvasContainer = document.getElementById('canvas-container'); /* [cite: 283] */
+    const infoContent = document.getElementById('info-content'); /* [cite: 283] */
+    const loadingOverlay = document.getElementById('loading-overlay'); /* [cite: 283] */
+    const progressBar = document.getElementById('progress-bar'); /* [cite: 284] */
+    const loadingText = document.getElementById('loading-text'); /* [cite: 284] */
+    const panelToggle = document.getElementById('panel-toggle'); /* [cite: 284] */
+    const infoPanel = document.getElementById('info-panel'); /* [cite: 284] */
+    const systemStatus = document.getElementById('system-status'); /* [cite: 284] */
     // Audio elements
-    const soundClick = document.getElementById('sound-click');
-    const soundHover = document.getElementById('sound-hover');
-    const soundScan = document.getElementById('sound-scan');
+    const soundClick = document.getElementById('sound-click'); /* [cite: 285] */
+    const soundHover = document.getElementById('sound-hover'); /* [cite: 285] */
+    const soundScan = document.getElementById('sound-scan'); /* [cite: 285] */
 
     // Detailed information for each body part with improved zone coordinates
-    const bodyPartsData = {
-      head: {
-        name: "Cognitive Assessment",  // Renamed from "Head"
-        system: "Neural Function",  // Renamed from "Nervous System"
-        description: "Analysis of memory function and cognitive processing abilities.",
-        zone: new THREE.Box3(
-          new THREE.Vector3(-0.5, 2.6, -0.5),
-          new THREE.Vector3(0.5, 3.5, 0.5)
+    const bodyPartsData = { /* [cite: 286] */
+      head: { /* [cite: 286] */
+        name: "Cognitive Assessment",  // Renamed from "Head" /* [cite: 286] */
+        system: "Neural Function",  // Renamed from "Nervous System" /* [cite: 286] */
+        description: "Analysis of memory function and cognitive processing abilities.", /* [cite: 286] */
+        zone: new THREE.Box3( /* [cite: 286] */
+          new THREE.Vector3(-0.5, 2.6, -0.5), /* [cite: 286] */
+
+          new THREE.Vector3(0.5, 3.5, 0.5) /* [cite: 287] */
         )
       },
-      chest: {
-        name: "Cardiovascular Test",  // Renamed from "Chest/Torso"
-        system: "Circulatory Function",  // Renamed from "Respiratory & Cardiovascular Systems"
-        description: "Evaluation of heart rate patterns and cardiovascular health indicators.",
-        zone: new THREE.Box3(
-          new THREE.Vector3(-0.8, 1.5, -0.5),
-          new THREE.Vector3(0.8, 2.6, 0.5)
+      chest: { /* [cite: 287] */
+        name: "Cardiovascular Test",  // Renamed from "Chest/Torso" /* [cite: 287] */
+        system: "Circulatory Function",  // Renamed from "Respiratory & Cardiovascular Systems" /* [cite: 287] */
+        description: "Evaluation of heart rate patterns and cardiovascular health indicators.", /* [cite: 287] */
+        zone: new THREE.Box3( /* [cite: 287] */
+          new THREE.Vector3(-0.8, /* [cite: 287] */ 1.5, -0.5), /* [cite: 288] */
+          new THREE.Vector3(0.8, 2.6, 0.5) /* [cite: 288] */
         )
       },
-      abdomen: {
-        name: "Body Composition",  // Renamed from "Abdomen"
-        system: "Metabolic Status",  // Renamed from "Digestive & Urinary Systems"
-        description: "Assessment of body mass index and tissue composition metrics.",
-        zone: new THREE.Box3(
-          new THREE.Vector3(-0.4, 1.0, -0.3),
-          new THREE.Vector3(0.4, 1.8, 0.3)
+      abdomen: { /* [cite: 288] */
+        name: "Body Composition",  // Renamed from "Abdomen" /* [cite: 288] */
+        system: "Metabolic Status",  // Renamed from "Digestive & Urinary Systems" /* [cite: 288] */
+        description: "Assessment of body mass index and tissue composition metrics.", /* [cite: 288] */
+        zone: new THREE.Box3( /* [cite: 288] */
+
+           new THREE.Vector3(-0.4, 1.0, -0.3), /* [cite: 289] */
+          new THREE.Vector3(0.4, 1.8, 0.3) /* [cite: 289] */
         )
       },
-      leftArm: {
-        name: "Reaction Assessment",  // Renamed from "Left Arm"
-        system: "Neural Responsiveness",  // Renamed from "Musculoskeletal System"
-        description: "Measurement of neural pathway efficiency and response time.",
-        zone: new THREE.Box3(
-          new THREE.Vector3(-1.5, 1.2, -0.6),
-          new THREE.Vector3(-0.5, 2.6, 0.6)
+      leftArm: { /* [cite: 289] */
+        name: "Reaction Assessment",  // Renamed from "Left Arm" /* [cite: 289] */
+        system: "Neural Responsiveness",  // Renamed from "Musculoskeletal System" /* [cite: 289] */
+        description: "Measurement of neural pathway efficiency and response time.", /* [cite: 289] */
+        zone: new /* [cite: 289] */ THREE.Box3( /* [cite: 290] */
+          new THREE.Vector3(-1.5, 1.2, -0.6), /* [cite: 290] */
+          new THREE.Vector3(-0.5, 2.6, 0.6) /* [cite: 290] */
         )
       },
-      rightArm: {
-        name: "Reaction Assessment",  // Renamed from "Right Arm"
-        system: "Neural Responsiveness",  // Renamed from "Musculoskeletal System"
-        description: "Measurement of neural pathway efficiency and response time.",
-        zone: new THREE.Box3(
-          new THREE.Vector3(0.5, 1.2, -0.6),
-          new THREE.Vector3(1.5, 2.6, 0.6)
+      rightArm: { /* [cite: 290] */
+        name: "Reaction Assessment",  // Renamed from "Right Arm" /* [cite: 290] */
+        system: "Neural Responsiveness",  // Renamed from "Musculoskeletal System" /* [cite: 290] */
+        description: "Measurement of neural pathway efficiency and response time.", /* [cite: 290] */
+
+        zone: new THREE.Box3( /* [cite: 291] */
+          new THREE.Vector3(0.5, 1.2, -0.6), /* [cite: 291] */
+          new THREE.Vector3(1.5, 2.6, 0.6) /* [cite: 291] */
         )
       },
-      leftLeg: {
-        name: "Stability Assessment",  // Renamed from "Left Leg"
-        system: "Vestibular Function",  // Renamed from "Musculoskeletal System"
-        description: "Evaluation of balance, proprioception, and vestibular system performance.",
-        zone: new THREE.Box3(
-          new THREE.Vector3(-0.6, -0.2, -0.5),
-          new THREE.Vector3(-0.1, 1.0, 0.5)
+      leftLeg: { /* [cite: 291] */
+        name: "Stability Assessment",  // Renamed from "Left Leg" /* [cite: 291] */
+        system: "Vestibular Function",  // Renamed from "Musculoskeletal System" /* [cite: 291] */
+        description: "Evaluation of balance, proprioception, and vestibular system /* [cite: 291] */ performance.", /* [cite: 292] */
+        zone: new THREE.Box3( /* [cite: 292] */
+          new THREE.Vector3(-0.6, -0.2, -0.5), /* [cite: 292] */
+          new THREE.Vector3(-0.1, 1.0, 0.5) /* [cite: 292] */
         )
       },
-      rightLeg: {
-        name: "Stability Assessment",  // Renamed from "Right Leg"
-        system: "Vestibular Function",  // Renamed from "Musculoskeletal System"
-        description: "Evaluation of balance, proprioception, and vestibular system performance.",
-        zone: new THREE.Box3(
-          new THREE.Vector3(0.1, -0.2, -0.5),
-          new THREE.Vector3(0.6, 1.0, 0.5)
+      rightLeg: { /* [cite: 292] */
+        name: "Stability Assessment",  // Renamed from "Right Leg" /* [cite: 292] */
+        system: "Vestibular Function",  // Renamed from "Musculoskeletal System" /* [cite: 292] */
+        description: "Evaluation of /* [cite: 292] */ balance, proprioception, and vestibular system performance.", /* [cite: 293] */
+        zone: new THREE.Box3( /* [cite: 293] */
+          new THREE.Vector3(0.1, -0.2, -0.5), /* [cite: 293] */
+          new THREE.Vector3(0.6, 1.0, 0.5) /* [cite: 293] */
         )
       }
-    };
+    }; /* [cite: 293] */
 
     // --- Initialization ---
     function init() {
-     initSceneAndCamera();
-      setupRenderer();
-      setupLighting();
-      setupPostProcessing();
-      setupControls();
-      setupRaycaster();
-      setupARElements();
-      loadEnvironmentMap();
-      loadModel();
-      setupEventListeners();
-      animate();
+      initSceneAndCamera(); /* [cite: 294] */
+      setupRenderer(); /* [cite: 294] */
+      setupLighting(); /* [cite: 294] */
+      setupPostProcessing(); /* [cite: 294] */
+      setupControls(); /* [cite: 294] */
+      setupRaycaster(); /* [cite: 294] */
+      setupARElements(); /* [cite: 295] */
+      loadEnvironmentMap(); /* [cite: 295] */
+      loadModel(); /* [cite: 295] */
+
+      // --- STEP 4: Initialize the Logo Scene ---
+      initLogoScene();
+      // --- End Step 4 ---
+
+      setupEventListeners(); /* [cite: 295] */
+      animate(); /* [cite: 295] */
     }
 
-    // --- Setup Scene and Camera ---
-    function initSceneAndCamera() {
-      scene = new THREE.Scene();
-      scene.background = new THREE.Color(0x0f172a);
-      scene.fog = new THREE.FogExp2(0x0f172a, 0.005);
-      camera = new THREE.PerspectiveCamera(60, canvasContainer.clientWidth / canvasContainer.clientHeight, 0.1, 1000);
-      camera.position.set(0, 1.2, 5);
-    }
+    // --- Setup Main Scene and Camera ---
+    function initSceneAndCamera() { /* [cite: 295] */
+      scene = new THREE.Scene(); /* [cite: 295] */
+      scene.background = new THREE.Color(0x0f172a); /* [cite: 296] */
+      scene.fog = new THREE.FogExp2(0x0f172a, 0.005); /* [cite: 296] */
+      camera = new THREE.PerspectiveCamera(60, canvasContainer.clientWidth / canvasContainer.clientHeight, 0.1, 1000); /* [cite: 296] */
+      camera.position.set(0, 1.2, 5); /* [cite: 297] */
+    } /* [cite: 297] */
 
-    // --- Setup Renderer ---
-    function setupRenderer() {
-      renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-      renderer.setSize(canvasContainer.clientWidth, canvasContainer.clientHeight);
-      renderer.outputEncoding = THREE.sRGBEncoding;
-      renderer.toneMapping = THREE.ACESFilmicToneMapping;
-      renderer.toneMappingExposure = 1.2;
-      renderer.shadowMap.enabled = true;
-      renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-      canvasContainer.appendChild(renderer.domElement);
-    }
+    // --- Setup Main Renderer ---
+    function setupRenderer() { /* [cite: 297] */
+      renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" }); /* [cite: 297] */
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); /* [cite: 298] */
+      renderer.setSize(canvasContainer.clientWidth, canvasContainer.clientHeight); /* [cite: 298] */
+      renderer.outputEncoding = THREE.sRGBEncoding; /* [cite: 298] */
+      renderer.toneMapping = THREE.ACESFilmicToneMapping; /* [cite: 298] */
+      renderer.toneMappingExposure = 1.2; /* [cite: 298] */
+      renderer.shadowMap.enabled = true; /* [cite: 298] */
+      renderer.shadowMap.type = THREE.PCFSoftShadowMap; /* [cite: 298] */
+      canvasContainer.appendChild(renderer.domElement); /* [cite: 298] */
+    } /* [cite: 299] */
 
-    // --- Setup Lighting ---
-    function setupLighting() {
-      const ambientLight = new THREE.AmbientLight(0x303060, 0.5);
-      scene.add(ambientLight);
-      const mainLight = new THREE.DirectionalLight(0x6080ff, 1.0);
-      mainLight.position.set(5, 10, 7.5);
-      mainLight.castShadow = true;
-      mainLight.shadow.mapSize.width = 1024;
-      mainLight.shadow.mapSize.height = 1024;
-      scene.add(mainLight);
-      const fillLight = new THREE.DirectionalLight(0x3040c0, 0.5);
-      fillLight.position.set(-5, 0, -7.5);
-      scene.add(fillLight);
-      const pointLight1 = new THREE.PointLight(0x3060ff, 1, 10);
-      pointLight1.position.set(3, 1, 3);
-      scene.add(pointLight1);
-      const pointLight2 = new THREE.PointLight(0x60ffff, 1, 10);
-      pointLight2.position.set(-3, 1, -3);
-      scene.add(pointLight2);
-    }
+    // --- Setup Main Lighting ---
+    function setupLighting() { /* [cite: 299] */
+      const ambientLight = new THREE.AmbientLight(0x303060, 0.5); /* [cite: 299] */
+      scene.add(ambientLight); /* [cite: 300] */
+      const mainLight = new THREE.DirectionalLight(0x6080ff, 1.0); /* [cite: 300] */
+      mainLight.position.set(5, 10, 7.5); /* [cite: 300] */
+      mainLight.castShadow = true; /* [cite: 300] */
+      mainLight.shadow.mapSize.width = 1024; /* [cite: 300] */
+      mainLight.shadow.mapSize.height = 1024; /* [cite: 300] */
+      scene.add(mainLight); /* [cite: 300] */
+      const fillLight = new THREE.DirectionalLight(0x3040c0, 0.5); /* [cite: 301] */
+      fillLight.position.set(-5, 0, -7.5); /* [cite: 301] */
+      scene.add(fillLight); /* [cite: 301] */
+      const pointLight1 = new THREE.PointLight(0x3060ff, 1, 10); /* [cite: 301] */
+      pointLight1.position.set(3, 1, 3); /* [cite: 301] */
+      scene.add(pointLight1); /* [cite: 302] */
+      const pointLight2 = new THREE.PointLight(0x60ffff, 1, 10); /* [cite: 302] */
+      pointLight2.position.set(-3, 1, -3); /* [cite: 302] */
+      scene.add(pointLight2); /* [cite: 302] */
+    } /* [cite: 303] */
 
-    // --- Setup Post-Processing Effects ---
-    function setupPostProcessing() {
-      composer = new EffectComposer(renderer);
-      const renderPass = new RenderPass(scene, camera);
-      composer.addPass(renderPass);
-      bloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 0.2, 0.2, 0.9);
-      composer.addPass(bloomPass);
-      outlinePass = new OutlinePass(new THREE.Vector2(window.innerWidth, window.innerHeight), scene, camera);
-      outlinePass.edgeStrength = 3.0;
-      outlinePass.edgeGlow = 1.0;
-      outlinePass.edgeThickness = 1.5;
-      outlinePass.pulsePeriod = 2;
-      outlinePass.visibleEdgeColor.set(0x3b82f6);
-      outlinePass.hiddenEdgeColor.set(0x3b82f6);
-      composer.addPass(outlinePass);
-    }
+    // --- Setup Main Post-Processing Effects ---
+    function setupPostProcessing() { /* [cite: 303] */
+      composer = new EffectComposer(renderer); /* [cite: 303] */
+      const renderPass = new RenderPass(scene, camera); /* [cite: 304] */
+      composer.addPass(renderPass); /* [cite: 304] */
+      bloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 0.2, 0.2, 0.9); /* [cite: 304] */
+      composer.addPass(bloomPass); /* [cite: 304] */
+      outlinePass = new OutlinePass(new THREE.Vector2(window.innerWidth, window.innerHeight), scene, camera); /* [cite: 305] */
+      outlinePass.edgeStrength = 3.0; /* [cite: 305] */
+      outlinePass.edgeGlow = 1.0; /* [cite: 305] */
+      outlinePass.edgeThickness = 1.5; /* [cite: 305] */
+      outlinePass.pulsePeriod = 2; /* [cite: 305] */
+      outlinePass.visibleEdgeColor.set(0x3b82f6); /* [cite: 306] */
+      outlinePass.hiddenEdgeColor.set(0x3b82f6); /* [cite: 306] */
+      composer.addPass(outlinePass); /* [cite: 306] */
+    } /* [cite: 306] */
 
-    // --- Setup Controls ---
-    function setupControls() {
-      controls = new OrbitControls(camera, renderer.domElement);
-      controls.target.set(0, 1.0, 0);
-      controls.enableDamping = true;
-      controls.dampingFactor = 0.05;
-      controls.screenSpacePanning = true;
-      controls.minDistance = 1;
-      controls.maxDistance = 20;
-      controls.autoRotate = false;
-      controls.autoRotateSpeed = 0.5;
-      controls.update();
-    }
+    // --- Setup Main Controls ---
+    function setupControls() { /* [cite: 306] */
+      controls = new OrbitControls(camera, renderer.domElement); /* [cite: 306] */
+      controls.target.set(0, 1.0, 0); /* [cite: 307] */
+      controls.enableDamping = true; /* [cite: 307] */
+      controls.dampingFactor = 0.05; /* [cite: 307] */
+      controls.screenSpacePanning = true; /* [cite: 307] */
+      controls.minDistance = 1; /* [cite: 307] */
+      controls.maxDistance = 20; /* [cite: 307] */
+      controls.autoRotate = false; /* [cite: 308] */
+      controls.autoRotateSpeed = 0.5; /* [cite: 308] */
+      controls.update(); /* [cite: 308] */
+    } /* [cite: 308] */
 
-    // --- Setup Raycaster ---
-    function setupRaycaster() {
-      raycaster = new THREE.Raycaster();
-      mouse = new THREE.Vector2();
-    }
+    // --- Setup Main Raycaster ---
+    function setupRaycaster() { /* [cite: 308] */
+      raycaster = new THREE.Raycaster(); /* [cite: 308] */
+      mouse = new THREE.Vector2(); /* [cite: 309] */
+    } /* [cite: 309] */
 
-    // --- Setup AR Elements ---
-    function setupARElements() {
-      arLabels = {
-        head: document.getElementById('head-label'),
-        torso: document.getElementById('torso-label'),
-        arm: document.getElementById('arm-label'),
-        leg: document.getElementById('leg-label'),
-        abdomen: document.getElementById('abdomen-label')
-      };
-    }
+    // --- Setup Main AR Elements ---
+    function setupARElements() { /* [cite: 309] */
+      arLabels = { /* [cite: 309] */
+        head: document.getElementById('head-label'), /* [cite: 309] */
+        torso: document.getElementById('torso-label'), /* [cite: 309] */
+        arm: document.getElementById('arm-label'), /* [cite: 309] */
+        leg: document.getElementById('leg-label'), /* [cite: 309] */
+        abdomen: document.getElementById('abdomen-label') /* [cite: 309] */
+      }; /* [cite: 309] */
+    } /* [cite: 310] */
 
-    // --- Load Environment Map for Reflections ---
-    function loadEnvironmentMap() {
-      new RGBELoader()
-        .setPath('https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/')
-        .load('royal_esplanade_1k.hdr', function(texture) {
-          texture.mapping = THREE.EquirectangularReflectionMapping;
-          scene.environment = texture;
-        });
-    }
+    // --- Load Main Environment Map for Reflections ---
+    function loadEnvironmentMap() { /* [cite: 310] */
+      new RGBELoader() /* [cite: 310] */
+        .setPath('https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/') /* [cite: 310] */
+        .load('royal_esplanade_1k.hdr', function(texture) { /* [cite: 310] */
+          texture.mapping = THREE.EquirectangularReflectionMapping; /* [cite: 310] */
+          scene.environment = texture; /* [cite: 310] */
+        }); /* [cite: 310] */
+    } /* [cite: 311] */
 
-    // --- Load 3D Model ---
-    function loadModel() {
-      const loader = new GLTFLoader();
-      const modelUrl = './human_body.glb';
-      progressBar.style.width = '5%';
-      loadingText.textContent = 'Initializing biometric scanner...';
-      
-      // Simulate a more extensive scanning process
-      let scanPhase = 0;
-      const scanMessages = [
-        'Calibrating sensors...',
-        'Initializing body composition scan...',
-        'Mapping skeletal structure...',
-        'Analyzing muscle tissue density...',
-        'Evaluating cardiovascular metrics...',
-        'Measuring neural response patterns...',
-        'Assessing cognitive parameters...',
-        'Compiling biometric profile...',
-        'Identifying assessment requirements...',
-        'Finalizing diagnostic recommendations...'
-      ];
-      
-      const scanInterval = setInterval(() => {
-        scanPhase++;
-        const progress = 5 + (scanPhase * 8);
-        progressBar.style.width = `${Math.min(progress, 95)}%`;
-        
-        if (scanPhase < scanMessages.length) {
-          loadingText.textContent = scanMessages[scanPhase];
-        } else {
-          clearInterval(scanInterval);
-        }
-      }, 800);
-      
-      loader.load(
-        modelUrl,
-        function (gltf) {
-          clearInterval(scanInterval);
-          progressBar.style.width = '100%';
-          loadingText.textContent = 'Biometric scan complete. Preparing results...';
-          
-          model = gltf.scene;
-          optimizeAndCenterModel(model);
-          applyBioScanMaterial(model);
-          scene.add(model);
-          updateControlsForModel();
-          
+    // --- Load Main 3D Model ---
+    function loadModel() { /* [cite: 311] */
+      const loader = new GLTFLoader(); /* [cite: 311] */
+      const modelUrl = './human_body.glb'; /* [cite: 312] */
+      progressBar.style.width = '5%'; /* [cite: 312] */
+      loadingText.textContent = 'Initializing biometric scanner...'; /* [cite: 312] */
+      // Simulate a more extensive scanning process /* [cite: 313] */
+      let scanPhase = 0; /* [cite: 313] */
+      const scanMessages = [ /* [cite: 314] */
+        'Calibrating sensors...', /* [cite: 314] */
+        'Initializing body composition scan...', /* [cite: 314] */
+        'Mapping skeletal structure...', /* [cite: 314] */
+        'Analyzing muscle tissue density...', /* [cite: 314] */
+        'Evaluating cardiovascular metrics...', /* [cite: 314] */
+        'Measuring neural response patterns...', /* [cite: 314] */
+        'Assessing cognitive parameters...', /* [cite: 314] */
+        'Compiling biometric profile...', /* [cite: 314] */
+        'Identifying assessment requirements...', /* [cite: 314] */
+
+        'Finalizing diagnostic recommendations...' /* [cite: 315] */
+      ]; /* [cite: 315] */
+      const scanInterval = setInterval(() => { /* [cite: 316] */
+        scanPhase++; /* [cite: 316] */
+        const progress = 5 + (scanPhase * 8); /* [cite: 316] */
+        progressBar.style.width = `${Math.min(progress, 95)}%`; /* [cite: 316] */
+
+        if (scanPhase < scanMessages.length) { /* [cite: 316] */
+          loadingText.textContent = scanMessages[scanPhase]; /* [cite: 316] */
+        } else { /* [cite: 316] */
+          clearInterval(scanInterval); /* [cite: 316] */
+        } /* [cite: 316] */
+
+      }, 800); /* [cite: 317] */
+
+      loader.load( /* [cite: 317] */
+        modelUrl, /* [cite: 317] */
+        function (gltf) { /* [cite: 317] */
+          clearInterval(scanInterval); /* [cite: 317] */
+          progressBar.style.width = '100%'; /* [cite: 317] */
+          loadingText.textContent = 'Biometric scan complete. Preparing results...'; /* [cite: 317] */
+
+          model = gltf.scene; /* [cite: 317] */
+          optimizeAndCenterModel(model); /* [cite: 317] */
+
+          applyBioScanMaterial(model); /* [cite: 318] */
+          scene.add(model); /* [cite: 318] */
+          updateControlsForModel(); /* [cite: 318] */
+
           // Delay completion slightly to enhance the "scanning" experience
-          setTimeout(completeLoading, 1500);
+          setTimeout(completeLoading, 1500); /* [cite: 318] */
         },
-        function (xhr) {
-          // Progress is handled by our custom scan animation above
+        function (xhr) { /* [cite: 318] */
+          // Progress is handled by our custom scan /* [cite: 318] */ animation above /* [cite: 319] */
         },
-        function (error) {
-          clearInterval(scanInterval);
-          loadingOverlay.innerHTML = `
-            <div class="text-center p-6">
-              <h2 class="text-2xl font-bold text-red-500 mb-4">Scan Error Detected</h2>
-              <p class="text-gray-300 mb-4">We encountered a problem while processing your biometric data.</p>
-              <p class="text-sm text-gray-400 mb-6">${error.message || 'Diagnostic system failure'}</p>
-              <button onclick="location.reload()" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md">
+        function (error) { /* [cite: 319] */
+          clearInterval(scanInterval); /* [cite: 319] */
+          loadingOverlay.innerHTML = ` /* [cite: 319] */
+            <div class="text-center p-6"> /* [cite: 319] */
+              <h2 class="text-2xl font-bold text-red-500 mb-4">Scan Error Detected</h2> /* [cite: 319] */
+              <p class="text-gray-300 mb-4">We encountered a problem while processing your biometric data.</p> /* [cite: 319] */
+
+              <p class="text-sm text-gray-400 mb-6">${error.message || /* [cite: 320] */
+              'Diagnostic system failure'}</p> /* [cite: 321] */
+              <button onclick="location.reload()" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md"> /* [cite: 321] */
                 Restart Assessment
-              </button>
+              </button> /* [cite: 321] */
             </div>
-          `;
-        }
+          `; /* [cite: 321] */
+        } /* [cite: 322] */
       );
     }
 
-    // --- Optimize and Center Model with improved zone handling ---
-    function optimizeAndCenterModel(model) {
-      const box = new THREE.Box3().setFromObject(model);
-      const center = box.getCenter(new THREE.Vector3());
-      const size = box.getSize(new THREE.Vector3());
-      const maxDim = Math.max(size.x, size.y, size.z);
-      const desiredHeight = 3.0;
-      const scale = desiredHeight / maxDim;
-      
-      model.scale.set(scale, scale, scale);
-      box.setFromObject(model);
-      box.getCenter(center);
-      model.position.sub(center);
-      model.position.y += box.max.y - center.y;
-      
-      // Store the model's final position and scale
-      model.userData.finalScale = scale;
-      model.userData.finalPosition = model.position.clone();
-      
-      console.log('Model scaled and centered. Scale:', scale, 'Position:', model.position);
-      console.log('Model bounding box:', box.min, box.max);
-      
-      // No need to update zones - we've manually defined them to match the model
+    // --- Optimize and Center Main Model ---
+    function optimizeAndCenterModel(model) { /* [cite: 322] */
+      const box = new THREE.Box3().setFromObject(model); /* [cite: 322] */
+      const center = box.getCenter(new THREE.Vector3()); /* [cite: 323] */
+      const size = box.getSize(new THREE.Vector3()); /* [cite: 323] */
+      const maxDim = Math.max(size.x, size.y, size.z); /* [cite: 323] */
+      const desiredHeight = 3.0; /* [cite: 323] */
+      const scale = desiredHeight / maxDim; /* [cite: 324] */
+
+      model.scale.set(scale, scale, scale); /* [cite: 324] */
+      box.setFromObject(model); /* [cite: 324] */
+      box.getCenter(center); /* [cite: 324] */
+      model.position.sub(center); /* [cite: 324] */
+      model.position.y += box.max.y - center.y; /* [cite: 324] */
+      // Store the model's final position and scale /* [cite: 325] */
+      model.userData.finalScale = scale; /* [cite: 325] */
+      model.userData.finalPosition = model.position.clone(); /* [cite: 325] */
+      console.log('Model scaled and centered. Scale:', scale, 'Position:', model.position); /* [cite: 326] */
+      console.log('Model bounding box:', box.min, box.max); /* [cite: 326] */
+      // No need to update zones - we've manually defined them to match the model /* [cite: 327] */
       // Just apply the model position offset to all zones
-      Object.keys(bodyPartsData).forEach(part => {
-        const zone = bodyPartsData[part].zone;
-        zone.translate(model.position);
-      });
-    }
+      Object.keys(bodyPartsData).forEach(part => { /* [cite: 327] */
+        const zone = bodyPartsData[part].zone; /* [cite: 327] */
+        zone.translate(model.position); /* [cite: 327] */
+      }); /* [cite: 327] */
+    } /* [cite: 328] */
 
-    // --- Add visual debug box for zones ---
-    function addDebugBox(partId, box) {
-      const size = new THREE.Vector3();
-      box.getSize(size);
-      
-      const center = new THREE.Vector3();
-      box.getCenter(center);
-      
+    // --- Add visual debug box for Main Scene zones ---
+    function addDebugBox(partId, box) { /* [cite: 328] */
+      const size = new THREE.Vector3(); /* [cite: 328] */
+      box.getSize(size); /* [cite: 329] */
+
+      const center = new THREE.Vector3(); /* [cite: 329] */
+      box.getCenter(center); /* [cite: 329] */
+
       // Create different colors for different body parts
-      let color = 0xff0000; // Default red
-      if (partId.includes('Arm')) {
-        color = 0x00ff00; // Green for arms
-      } else if (partId.includes('Leg')) {
-        color = 0x0000ff; // Blue for legs
-      } else if (partId === 'head') {
-        color = 0xffff00; // Yellow for head
-      } else if (partId === 'abdomen') {
-        color = 0xff00ff; // Magenta for abdomen
-      }
-      
-      const geometry = new THREE.BoxGeometry(size.x, size.y, size.z);
-      const material = new THREE.MeshBasicMaterial({
-        color: color,
-        wireframe: true,
-        transparent: true,
-        opacity: 0.5
-      });
-      
-      const debugBox = new THREE.Mesh(geometry, material);
-      debugBox.position.copy(center);
-      debugBox.name = 'debug_' + partId;
-      scene.add(debugBox);
-      
-      console.log(`Added debug box for ${partId} at position ${center.x}, ${center.y}, ${center.z}`);
-    }
+      let color = 0xff0000; /* [cite: 329] */
+      // Default red /* [cite: 330] */
+      if (partId.includes('Arm')) { /* [cite: 330] */
+        color = 0x00ff00; /* [cite: 330] */
+        // Green for arms /* [cite: 331] */
+      } else if (partId.includes('Leg')) { /* [cite: 331] */
+        color = 0x0000ff; /* [cite: 331] */
+        // Blue for legs /* [cite: 332] */
+      } else if (partId === 'head') { /* [cite: 332] */
+        color = 0xffff00; /* [cite: 332] */
+        // Yellow for head /* [cite: 333] */
+      } else if (partId === 'abdomen') { /* [cite: 333] */
+        color = 0xff00ff; /* [cite: 333] */
+        // Magenta for abdomen /* [cite: 334] */
+      } /* [cite: 334] */
 
-    // --- Apply Biotech Material Effect for a more medical/futuristic look ---
-    function applyBioScanMaterial(model) {
-      model.traverse((node) => {
-        if (node.isMesh) {
-          node.castShadow = true;
-          node.receiveShadow = true;
-          const material = node.material.clone();
-          material.metalness = 0.3;
-          material.roughness = 0.2;
-          material.envMapIntensity = 1.2;
-          
+      const geometry = new THREE.BoxGeometry(size.x, size.y, size.z); /* [cite: 334] */
+      const material = new THREE.MeshBasicMaterial({ /* [cite: 335] */
+        color: color, /* [cite: 335] */
+        wireframe: true, /* [cite: 335] */
+        transparent: true, /* [cite: 335] */
+        opacity: 0.5 /* [cite: 335] */
+      }); /* [cite: 335] */
+      const debugBox = new THREE.Mesh(geometry, material); /* [cite: 336] */
+      debugBox.position.copy(center); /* [cite: 336] */
+      debugBox.name = 'debug_' + partId; /* [cite: 336] */
+      scene.add(debugBox); /* [cite: 336] */
+      console.log(`Added debug box for ${partId} at position ${center.x}, ${center.y}, ${center.z}`); /* [cite: 337] */
+    } /* [cite: 337] */
+
+    // --- Apply Biotech Material Effect for Main Model ---
+    function applyBioScanMaterial(model) { /* [cite: 338] */
+      model.traverse((node) => { /* [cite: 338] */
+        if (node.isMesh) { /* [cite: 338] */
+          node.castShadow = true; /* [cite: 338] */
+          node.receiveShadow = true; /* [cite: 338] */
+          const material = node.material.clone(); /* [cite: 338] */
+          material.metalness = 0.3; /* [cite: 338] */
+          material.roughness = /* [cite: 338] */ 0.2; /* [cite: 339] */
+          material.envMapIntensity = 1.2; /* [cite: 339] */
+
           // Cool blue medical scan look
-          if (material.color) {
-            material.color.set(0x6090ff);
-            material.emissive.set(0x2050c0);
-            material.emissiveIntensity = 0.2;
-          }
-          
-          // Add some transparency for a holographic effect
-          material.transparent = true;
-          material.opacity = 0.9;
-          
-          node.material = material;
+          if (material.color) { /* [cite: 339] */
+            material.color.set(0x6090ff); /* [cite: 339] */
+            material.emissive.set(0x2050c0); /* [cite: 339] */
+            material.emissiveIntensity = 0.2; /* [cite: 339] */
+          } /* [cite: 339] */
+
+
+          // Add some transparency for a holographic effect /* [cite: 340] */
+          material.transparent = true; /* [cite: 340] */
+          material.opacity = 0.9; /* [cite: 340] */
+
+          node.material = material; /* [cite: 340] */
         }
-      });
-    }
+      }); /* [cite: 340] */
+    } /* [cite: 341] */
 
-    // --- Update Controls For Model ---
-    function updateControlsForModel() {
-      controls.target.set(model.position.x, model.position.y + 1.0, model.position.z);
-      controls.update();
-      initialCameraPosition.copy(camera.position);
-      initialControlsTarget.copy(controls.target);
-    }
+    // --- Update Main Controls For Model ---
+    function updateControlsForModel() { /* [cite: 341] */
+      controls.target.set(model.position.x, model.position.y + 1.0, model.position.z); /* [cite: 341] */
+      controls.update(); /* [cite: 342] */
+      initialCameraPosition.copy(camera.position); /* [cite: 342] */
+      initialControlsTarget.copy(controls.target); /* [cite: 342] */
+    } /* [cite: 342] */
 
-    // --- Complete Loading Process ---
-    function completeLoading() {
-      setTimeout(startScanAnimation, 1000);
-      loadingOverlay.style.transition = 'opacity 1s';
-      loadingOverlay.style.opacity = '0';
-      setTimeout(() => {
-        loadingOverlay.style.display = 'none';
-      }, 1000);
-      updateSystemStatus('ANALYZING', 'green');
-    }
+    // --- Complete Main Loading Process ---
+    function completeLoading() { /* [cite: 342] */
+      setTimeout(startScanAnimation, 1000); /* [cite: 342] */
+      loadingOverlay.style.transition = 'opacity 1s'; /* [cite: 343] */
+      loadingOverlay.style.opacity = '0'; /* [cite: 343] */
+      setTimeout(() => { /* [cite: 343] */
+        loadingOverlay.style.display = 'none'; /* [cite: 343] */
+      }, 1000); /* [cite: 343] */
+      updateSystemStatus('ANALYZING', 'green'); /* [cite: 344] */
+    } /* [cite: 344] */
 
-    // --- Start Scan Animation ---
-    function startScanAnimation() {
-      if (audioEnabled) {
-        soundScan.volume = 0.3;
-        soundScan.play().catch(e => {
-          console.warn("Auto-play prevented:", e);
-          audioEnabled = false;
-        });
-      }
-      controls.autoRotate = true;
-      setTimeout(() => { controls.autoRotate = false; }, 5000);
-      setTimeout(() => showLabel('head'), 500);
-      setTimeout(() => showLabel('torso'), 1000);
-      setTimeout(() => showLabel('arm'), 1500);
-      setTimeout(() => showLabel('leg'), 2000);
-      setTimeout(() => showLabel('abdomen'), 1300);
-      setTimeout(() => { updateSystemStatus('ASSESSMENT READY', 'green'); }, 3000);
-    }
+    // --- Start Main Scan Animation ---
+    function startScanAnimation() { /* [cite: 344] */
+      if (audioEnabled) { /* [cite: 344] */
+        soundScan.volume = 0.3; /* [cite: 344] */
+        soundScan.play().catch(e => { /* [cite: 345] */
+          console.warn("Auto-play prevented:", e); /* [cite: 345] */
+          audioEnabled = false; /* [cite: 345] */
+        }); /* [cite: 345] */
+      } /* [cite: 346] */
+      controls.autoRotate = true; /* [cite: 346] */
+      setTimeout(() => { controls.autoRotate = false; }, 5000); /* [cite: 346] */
+      setTimeout(() => showLabel('head'), 500); /* [cite: 347] */
+      setTimeout(() => showLabel('torso'), 1000); /* [cite: 347] */
+      setTimeout(() => showLabel('arm'), 1500); /* [cite: 347] */
+      setTimeout(() => showLabel('leg'), 2000); /* [cite: 347] */
+      setTimeout(() => showLabel('abdomen'), 1300); /* [cite: 347] */
+      setTimeout(() => { updateSystemStatus('ASSESSMENT READY', 'green'); }, 3000); /* [cite: 348] */
+    } /* [cite: 348] */
 
-    // --- Show AR Label ---
-    function showLabel(label) {
-      if (arLabels[label]) {
-        arLabels[label].style.opacity = '1';
-      }
-    }
+    // --- Show Main AR Label ---
+    function showLabel(label) { /* [cite: 348] */
+      if (arLabels[label]) { /* [cite: 348] */
+        arLabels[label].style.opacity = '1'; /* [cite: 348] */
+      } /* [cite: 349] */
+    } /* [cite: 349] */
 
     // --- Update System Status ---
-    function updateSystemStatus(status, color) {
-      systemStatus.textContent = status;
-      systemStatus.className = '';
-      if (color === 'green') {
-        systemStatus.classList.add('text-green-400');
-      } else if (color === 'yellow') {
-        systemStatus.classList.add('text-yellow-400');
-      } else if (color === 'red') {
-        systemStatus.classList.add('text-red-400');
-      }
-    }
+    function updateSystemStatus(status, color) { /* [cite: 349] */
+      systemStatus.textContent = status; /* [cite: 349] */
+      systemStatus.className = ''; /* [cite: 350] */
+      if (color === 'green') { /* [cite: 350] */
+        systemStatus.classList.add('text-green-400'); /* [cite: 350] */
+      } else if (color === 'yellow') { /* [cite: 351] */
+        systemStatus.classList.add('text-yellow-400'); /* [cite: 351] */
+      } else if (color === 'red') { /* [cite: 352] */
+        systemStatus.classList.add('text-red-400'); /* [cite: 352] */
+      } /* [cite: 353] */
+    } /* [cite: 353] */
 
-    // --- Setup Event Listeners ---
-    function setupEventListeners() {
-      window.addEventListener('resize', onWindowResize);
-      canvasContainer.addEventListener('click', onClick);
-      canvasContainer.addEventListener('dblclick', onDoubleClick);
-      canvasContainer.addEventListener('mousemove', onMouseMove);
-      if (panelToggle) {
-        panelToggle.addEventListener('click', () => {
-          infoPanel.classList.toggle('collapsed');
-        });
-      }
-      
+    // --- --- LOGO SCENE FUNCTIONS --- ---
+
+    // --- STEP 4 (cont.): Initialize Logo Scene ---
+    function initLogoScene() {
+        if (!logoContainer) {
+            console.error("Logo container not found!");
+            return;
+        }
+
+        // Scene
+        logoScene = new THREE.Scene();
+        logoScene.background = null; // Transparent background
+
+        // Camera
+        const aspect = logoContainer.clientWidth / logoContainer.clientHeight;
+        logoCamera = new THREE.PerspectiveCamera(50, aspect, 0.1, 100);
+        logoCamera.position.z = 3; // Adjust camera distance as needed
+
+        // Renderer
+        logoRenderer = new THREE.WebGLRenderer({ antialias: true, alpha: true }); // alpha: true for transparency
+        logoRenderer.setPixelRatio(window.devicePixelRatio);
+        logoRenderer.setSize(logoContainer.clientWidth, logoContainer.clientHeight);
+        logoRenderer.outputEncoding = THREE.sRGBEncoding; // Match main scene if needed
+        logoRenderer.toneMapping = THREE.ACESFilmicToneMapping; // Match main scene if needed
+        logoRenderer.toneMappingExposure = 1.0; // Adjust exposure for logo
+        logoContainer.appendChild(logoRenderer.domElement); // Add canvas to the div
+
+        // Lighting (Simple lighting for the logo)
+        const logoAmbient = new THREE.AmbientLight(0xffffff, 0.6);
+        logoScene.add(logoAmbient);
+        const logoDirectional = new THREE.DirectionalLight(0xffffff, 0.8);
+        logoDirectional.position.set(1, 2, 3);
+        logoScene.add(logoDirectional);
+
+        // Load the logo model
+        loadLogoModel();
+
+        // Start the logo animation loop
+        animateLogo();
+    }
+    // --- End Step 4 ---
+
+    // --- STEP 5: Load the Logo Model ---
+    function loadLogoModel() {
+        const loader = new GLTFLoader();
+        const logoUrl = './logo.glb'; // <<< IMPORTANT: Replace with your logo file path!
+
+        loader.load(
+            logoUrl,
+            function (gltf) {
+                logoModel = gltf.scene;
+
+                // Optional: Scale and center the logo if needed
+                const box = new THREE.Box3().setFromObject(logoModel);
+                const size = box.getSize(new THREE.Vector3());
+                const center = box.getCenter(new THREE.Vector3());
+
+                const maxDim = Math.max(size.x, size.y, size.z);
+                const scale = 1.5 / maxDim; // Adjust 1.5 to fit logo nicely
+                logoModel.scale.set(scale, scale, scale);
+
+                // Center the model
+                box.setFromObject(logoModel); // Recalculate box after scaling
+                box.getCenter(center);
+                logoModel.position.sub(center);
+
+                logoScene.add(logoModel);
+                console.log("Logo model loaded successfully.");
+            },
+            undefined, // Progress function (optional)
+            function (error) {
+                console.error('Error loading logo model:', error);
+                // Optionally display an error in the logo container
+                logoContainer.innerHTML = '<p style="color: red; padding: 5px; font-size: 10px;">Logo Load Error</p>';
+            }
+        );
+    }
+    // --- End Step 5 ---
+
+    // --- STEP 6: Logo Animation Loop ---
+    function animateLogo() {
+        requestAnimationFrame(animateLogo);
+
+        // Rotate the logo model if it's loaded
+        if (logoModel) {
+            logoModel.rotation.y += 0.01; // Adjust rotation speed as needed
+             // Optional: Add rotation on other axes
+            // logoModel.rotation.x += 0.005;
+        }
+
+        // Render the logo scene
+        if (logoRenderer && logoScene && logoCamera) {
+            logoRenderer.render(logoScene, logoCamera);
+        }
+    }
+    // --- End Step 6 ---
+
+    // --- STEP 7: Handle Logo Resizing ---
+    function onLogoResize() {
+        if (!logoContainer || !logoCamera || !logoRenderer) return;
+
+        const width = logoContainer.clientWidth;
+        const height = logoContainer.clientHeight;
+
+        logoCamera.aspect = width / height;
+        logoCamera.updateProjectionMatrix();
+        logoRenderer.setSize(width, height);
+    }
+    // --- End Step 7 ---
+
+    // --- --- END LOGO SCENE FUNCTIONS --- ---
+
+
+    // --- Setup Main Event Listeners ---
+    function setupEventListeners() { /* [cite: 353] */
+      window.addEventListener('resize', onWindowResize); /* [cite: 353] */
+      canvasContainer.addEventListener('click', onClick); /* [cite: 354] */
+      canvasContainer.addEventListener('dblclick', onDoubleClick); /* [cite: 354] */
+      canvasContainer.addEventListener('mousemove', onMouseMove); /* [cite: 354] */
+      if (panelToggle) { /* [cite: 354] */
+        panelToggle.addEventListener('click', () => { /* [cite: 354] */
+          infoPanel.classList.toggle('collapsed'); /* [cite: 354] */
+        }); /* [cite: 354] */
+      } /* [cite: 355] */
+
       // Add keyboard listener for zone visualization toggle
-      document.addEventListener('keydown', function(event) {
-        if (event.key === 'z' || event.key === 'Z') {
-          let zonesVisible = scene.children.some(child => 
-            child.name && child.name.startsWith('debug_')
-          );
-          
-          if (zonesVisible) {
+      document.addEventListener('keydown', function(event) { /* [cite: 355] */
+        if (event.key === 'z' || event.key === 'Z') { /* [cite: 355] */
+          let zonesVisible = scene.children.some(child => /* [cite: 355] */
+            child.name && child.name.startsWith('debug_') /* [cite: 355] */
+          ); /* [cite: 355] */
+
+
+          if (zonesVisible) { /* [cite: 356] */
             // Hide zones
-            scene.children.forEach(child => {
-              if (child.name && child.name.startsWith('debug_')) {
-                scene.remove(child);
+            scene.children.forEach(child => { /* [cite: 356] */
+              if (child.name && child.name.startsWith('debug_')) { /* [cite: 356] */
+                scene.remove(child); /* [cite: 356] */
               }
-            });
-            console.log('Zone visualization disabled');
-          } else {
+            }); /* [cite: 356] */
+
+            console.log('Zone visualization disabled'); /* [cite: 357] */
+          } else { /* [cite: 357] */
             // Show zones
-            showAllZones();
+            showAllZones(); /* [cite: 357] */
           }
         }
-      });
-    }
+      }); /* [cite: 358] */
+    } /* [cite: 358] */
 
     // --- Visualization of all zones for debugging ---
-    function showAllZones() {
+    function showAllZones() { /* [cite: 358] */
       // First clear any existing debug boxes
-      scene.children.forEach(child => {
-        if (child.name && child.name.startsWith('debug_')) {
-          scene.remove(child);
+      scene.children.forEach(child => { /* [cite: 358] */
+        if (child.name && child.name.startsWith('debug_')) { /* [cite: 358] */
+          scene.remove(child); /* [cite: 358] */
         }
-      });
-      
-      // Create a debug box for each body part zone
-      Object.keys(bodyPartsData).forEach(part => {
-        const zone = bodyPartsData[part].zone;
-        addDebugBox(part, zone);
-      });
-      
-      console.log('Zone visualization enabled');
-    }
+      }); /* [cite: 358] */
+      // Create a debug box for each body part zone /* [cite: 359] */
+      Object.keys(bodyPartsData).forEach(part => { /* [cite: 359] */
+        const zone = bodyPartsData[part].zone; /* [cite: 359] */
+        addDebugBox(part, zone); /* [cite: 359] */
+      }); /* [cite: 359] */
+      console.log('Zone visualization enabled'); /* [cite: 360] */
+    } /* [cite: 360] */
 
-    // --- Handle Window Resize ---
-    function onWindowResize() {
-      if (!renderer || !camera || !canvasContainer) return;
-      camera.aspect = canvasContainer.clientWidth / canvasContainer.clientHeight;
-      camera.updateProjectionMatrix();
-      renderer.setSize(canvasContainer.clientWidth, canvasContainer.clientHeight);
-      composer.setSize(canvasContainer.clientWidth, canvasContainer.clientHeight);
-      updateARLabelsPositions();
-    }
+    // --- Handle Main Window Resize ---
+    function onWindowResize() { /* [cite: 360] */
+      if (!renderer || !camera || !canvasContainer) return; /* [cite: 360] */
+      camera.aspect = canvasContainer.clientWidth / canvasContainer.clientHeight; /* [cite: 361] */
+      camera.updateProjectionMatrix(); /* [cite: 361] */
+      renderer.setSize(canvasContainer.clientWidth, canvasContainer.clientHeight); /* [cite: 361] */
+      composer.setSize(canvasContainer.clientWidth, canvasContainer.clientHeight); /* [cite: 361] */
+      updateARLabelsPositions(); /* [cite: 361] */
 
-    // --- Handle Double Click (Reset View) ---
-    function onDoubleClick() {
-      if (!controls || !initialCameraPosition || !initialControlsTarget) return;
-      if (audioEnabled) {
-        soundClick.volume = 0.2;
-        soundClick.play().catch(e => console.warn("Audio play prevented:", e));
-      }
-      camera.position.copy(initialCameraPosition);
-      controls.target.copy(initialControlsTarget);
-      controls.update();
-      updateSystemStatus('VIEW RESET', 'yellow');
-      setTimeout(() => updateSystemStatus('ASSESSMENT READY', 'green'), 2000);
-    }
+      // --- STEP 7 (cont.): Call logo resize handler ---
+      onLogoResize();
+      // --- End Step 7 ---
+    } /* [cite: 362] */
 
-    // --- Handle Mouse Move ---
-    function onMouseMove(event) {
-      if (!model) return;
-      const rect = renderer.domElement.getBoundingClientRect();
-      mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
-      mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
-      raycaster.setFromCamera(mouse, camera);
-      const intersects = raycaster.intersectObject(model, true);
-      if (intersects.length > 0) {
-        document.body.style.cursor = 'pointer';
-        const clickPoint = intersects[0].point;
-        const hoveredPart = getBodyPartAtPoint(clickPoint);
-        if (hoveredPart && hoveredPart !== selectedPart) {
-          updateTrackerPosition(clickPoint);
-          if (audioEnabled && Math.random() > 0.95) {
-            soundHover.volume = 0.1;
-            soundHover.play().catch(e => console.warn("Audio play prevented:", e));
+    // --- Handle Main Double Click (Reset View) ---
+    function onDoubleClick() { /* [cite: 362] */
+      if (!controls || !initialCameraPosition || !initialControlsTarget) return; /* [cite: 362] */
+      if (audioEnabled) { /* [cite: 363] */
+        soundClick.volume = 0.2; /* [cite: 363] */
+        soundClick.play().catch(e => console.warn("Audio play prevented:", e)); /* [cite: 363] */
+      } /* [cite: 364] */
+      camera.position.copy(initialCameraPosition); /* [cite: 364] */
+      controls.target.copy(initialControlsTarget); /* [cite: 364] */
+      controls.update(); /* [cite: 364] */
+      updateSystemStatus('VIEW RESET', 'yellow'); /* [cite: 364] */
+      setTimeout(() => updateSystemStatus('ASSESSMENT READY', 'green'), 2000); /* [cite: 364] */
+    } /* [cite: 365] */
+
+    // --- Handle Main Mouse Move ---
+    function onMouseMove(event) { /* [cite: 365] */
+      if (!model) return; /* [cite: 365] */
+      const rect = renderer.domElement.getBoundingClientRect(); /* [cite: 366] */
+      mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1; /* [cite: 366] */
+      mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1; /* [cite: 367] */
+      raycaster.setFromCamera(mouse, camera); /* [cite: 367] */
+      const intersects = raycaster.intersectObject(model, true); /* [cite: 367] */
+      if (intersects.length > 0) { /* [cite: 368] */
+        document.body.style.cursor = 'pointer'; /* [cite: 368] */
+        const clickPoint = intersects[0].point; /* [cite: 368] */
+        const hoveredPart = getBodyPartAtPoint(clickPoint); /* [cite: 369] */
+        if (hoveredPart && hoveredPart !== selectedPart) { /* [cite: 369] */
+          updateTrackerPosition(clickPoint); /* [cite: 369] */
+          if (audioEnabled && Math.random() > 0.95) { /* [cite: 370] */
+            soundHover.volume = 0.1; /* [cite: 370] */
+            soundHover.play().catch(e => console.warn("Audio play prevented:", e)); /* [cite: 371] */
           }
         }
-      } else {
-        document.body.style.cursor = 'default';
-        hideTracker();
+      } else { /* [cite: 371] */
+        document.body.style.cursor = 'default'; /* [cite: 371] */
+        hideTracker(); /* [cite: 372] */
       }
-    }
+    } /* [cite: 372] */
 
-    // --- Update Tracker Position ---
-    function updateTrackerPosition(position) {
-      if (!tracker) return;
-      const vector = new THREE.Vector3(position.x, position.y, position.z);
-      vector.project(camera);
-      const x = (vector.x * 0.5 + 0.5) * canvasContainer.clientWidth;
-      const y = (-(vector.y * 0.5) + 0.5) * canvasContainer.clientHeight;
-      tracker.style.left = x + 'px';
-      tracker.style.top = y + 'px';
-      tracker.style.opacity = '1';
-    }
+    // --- Update Main Tracker Position ---
+    function updateTrackerPosition(position) { /* [cite: 372] */
+      if (!tracker) return; /* [cite: 372] */
+      const vector = new THREE.Vector3(position.x, position.y, position.z); /* [cite: 373] */
+      vector.project(camera); /* [cite: 373] */
+      const x = (vector.x * 0.5 + 0.5) * canvasContainer.clientWidth; /* [cite: 373] */
+      const y = (-(vector.y * 0.5) + 0.5) * canvasContainer.clientHeight; /* [cite: 374] */
+      tracker.style.left = x + 'px'; /* [cite: 374] */
+      tracker.style.top = y + 'px'; /* [cite: 374] */
+      tracker.style.opacity = '1'; /* [cite: 375] */
+    } /* [cite: 375] */
 
-    // --- Hide Tracker ---
-    function hideTracker() {
-      if (tracker) {
-        tracker.style.opacity = '0';
-      }
-    }
+    // --- Hide Main Tracker ---
+    function hideTracker() { /* [cite: 375] */
+      if (tracker) { /* [cite: 375] */
+        tracker.style.opacity = '0'; /* [cite: 375] */
+      } /* [cite: 376] */
+    } /* [cite: 376] */
 
-    // --- Improved Click Handler - Now loads tests ---
-    function onClick(event) {
-      if (!model) return;
-      
-      const rect = renderer.domElement.getBoundingClientRect();
-      mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
-      mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
-      
-      raycaster.setFromCamera(mouse, camera);
-      const intersects = raycaster.intersectObject(model, true);
-      
-      if (intersects.length > 0) {
-        const clickPoint = intersects[0].point;
-        console.log('Click Point:', clickPoint);
-        
-        // Try to get body part using the improved function
-        const partId = getBodyPartAtPoint(clickPoint);
-        
-        if (partId) {
-          selectBodyPart(partId, clickPoint);
-          
-          // Load the appropriate test using the window.loadTest function exposed by React
-          if (window.loadTest) {
-            window.loadTest(partId);
-          }
-        } else {
-          console.log('Clicked on model but no part identified');
-        }
-      } else {
-        clearBodyPartSelection();
-      }
-    }
+    // --- Improved Main Click Handler ---
+    function onClick(event) { /* [cite: 376] */
+      if (!model) return; /* [cite: 376] */
+      const rect = renderer.domElement.getBoundingClientRect(); /* [cite: 377] */
+      mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1; /* [cite: 377] */
+      mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1; /* [cite: 378] */
 
-    // --- Get Body Part At Point with EXTREMELY aggressive arm and abdomen detection ---
-    function getBodyPartAtPoint(point) {
+      raycaster.setFromCamera(mouse, camera); /* [cite: 378] */
+      const intersects = raycaster.intersectObject(model, true); /* [cite: 378] */
+      if (intersects.length > 0) { /* [cite: 379] */
+        const clickPoint = intersects[0].point; /* [cite: 379] */
+        console.log('Click Point:', clickPoint); /* [cite: 379] */
+        // Try to get body part using the improved function /* [cite: 380] */
+        const partId = getBodyPartAtPoint(clickPoint); /* [cite: 380] */
+        if (partId) { /* [cite: 381] */
+          selectBodyPart(partId, clickPoint); /* [cite: 381] */
+          // Load the appropriate test using the window.loadTest function exposed by React /* [cite: 382] */
+          if (window.loadTest) { /* [cite: 382] */
+            window.loadTest(partId); /* [cite: 382] */
+          } /* [cite: 383] */
+        } else { /* [cite: 383] */
+          console.log('Clicked on model but no part identified'); /* [cite: 383] */
+        } /* [cite: 384] */
+      } else { /* [cite: 384] */
+        clearBodyPartSelection(); /* [cite: 384] */
+      } /* [cite: 385] */
+    } /* [cite: 385] */
+
+    // --- Get Main Body Part At Point ---
+    function getBodyPartAtPoint(point) { /* [cite: 385] */
       // Debug: Log the point coordinates for troubleshooting
-      console.log('Checking point:', point);
-      
-      const y = point.y;
-      const x = point.x;
-      
+      console.log('Checking point:', point); /* [cite: 385] */
+      const y = point.y; /* [cite: 386] */
+      const x = point.x; /* [cite: 386] */
+
       // EXTREMELY AGGRESSIVE ARM DETECTION
       // This will override the chest detection when x is far enough from center
-      if (y > 1.2 && y < 2.6) {  // FIXED: Raised lower bound from 0.5 to 1.2 to match arm zone
+      if (y > 1.2 && y < 2.6) {  // FIXED: Raised lower bound from 0.5 to 1.2 to match arm zone /* [cite: 386] */
         // Far left = left arm (no matter what other detections say)
-        if (x < -0.5) {
-          console.log('Aggressive arm detection: leftArm');
-          return 'leftArm';
+        if (x < -0.5) { /* [cite: 386] */
+
+          console.log('Aggressive arm detection: leftArm'); /* [cite: 387] */
+          return 'leftArm'; /* [cite: 387] */
         }
-        
+
         // Far right = right arm (no matter what other detections say)
-        if (x > 0.5) {
-          console.log('Aggressive arm detection: rightArm');
-          return 'rightArm';
+        if (x > 0.5) { /* [cite: 387] */
+          console.log('Aggressive arm detection: rightArm'); /* [cite: 387] */
+          return 'rightArm'; /* [cite: 388] */
         }
       }
-      
+
       // Special case for abdomen to make it more central - with CORRECTED height
-      if (Math.abs(x) < 0.4 && y > 1.0 && y < 1.8) {  // Fixed height
-        console.log('Direct abdomen detection');
-        return 'abdomen';
+      if (Math.abs(x) < 0.4 && y > 1.0 && y < 1.8) {  // Fixed height /* [cite: 388] */
+        console.log('Direct abdomen detection'); /* [cite: 388] */
+        return 'abdomen'; /* [cite: 389] */
       }
-      
+
       // Standard detection for all parts
-      const tolerance = 0.3;
-      for (const partId in bodyPartsData) {
-        const zone = bodyPartsData[partId].zone.clone();
-        zone.expandByScalar(tolerance);
-        
-        if (zone.containsPoint(point)) {
-          console.log('Direct hit on zone:', partId);
-          return partId;
-        }
-      }
-      
+      const tolerance = 0.3; /* [cite: 389] */
+      for (const partId in bodyPartsData) { /* [cite: 390] */
+        const zone = bodyPartsData[partId].zone.clone(); /* [cite: 390] */
+        zone.expandByScalar(tolerance); /* [cite: 390] */
+        if (zone.containsPoint(point)) { /* [cite: 391] */
+          console.log('Direct hit on zone:', partId); /* [cite: 391] */
+          return partId; /* [cite: 391] */
+        } /* [cite: 392] */
+      } /* [cite: 392] */
+
       // Find closest part if no direct hit
-      let closestPart = null;
-      let minDistance = Infinity;
-      
-      for (const partId in bodyPartsData) {
-        const zoneCenter = new THREE.Vector3();
-        bodyPartsData[partId].zone.getCenter(zoneCenter);
-        
-        const distance = point.distanceTo(zoneCenter);
-        console.log(`Distance to ${partId}: ${distance.toFixed(3)}`);
-        
-        if (distance < minDistance) {
-          minDistance = distance;
-          closestPart = partId;
+      let closestPart = null; /* [cite: 392] */
+      let minDistance = Infinity; /* [cite: 393] */
+
+      for (const partId in bodyPartsData) { /* [cite: 393] */
+        const zoneCenter = new THREE.Vector3(); /* [cite: 393] */
+        bodyPartsData[partId].zone.getCenter(zoneCenter); /* [cite: 394] */
+
+        const distance = point.distanceTo(zoneCenter); /* [cite: 394] */
+        console.log(`Distance to ${partId}: ${distance.toFixed(3)}`); /* [cite: 394] */
+
+        if (distance < minDistance) { /* [cite: 394] */
+          minDistance = distance; /* [cite: 394] */
+          closestPart = partId; /* [cite: 395] */
         }
       }
-      
+
       // Use closest part if it's within a reasonable distance
-      if (minDistance < 1.5) {
-        console.log(`Using closest part: ${closestPart}, distance: ${minDistance.toFixed(3)}`);
-        return closestPart;
+      if (minDistance < 1.5) { /* [cite: 395] */
+        console.log(`Using closest part: ${closestPart}, distance: ${minDistance.toFixed(3)}`); /* [cite: 395] */
+        return closestPart; /* [cite: 396] */
       }
-      
-      console.log('No body part found at point');
-      return null;
-    }
 
-    // --- Select Body Part with improved highlighting ---
-    function selectBodyPart(partId, clickPoint) {
-      if (audioEnabled) {
-        soundClick.volume = 0.3;
-        soundClick.currentTime = 0;
-        soundClick.play().catch(e => console.warn("Audio play prevented:", e));
+      console.log('No body part found at point'); /* [cite: 396] */
+      return null; /* [cite: 397] */
+    } /* [cite: 397] */
+
+    // --- Select Main Body Part ---
+    function selectBodyPart(partId, clickPoint) { /* [cite: 397] */
+      if (audioEnabled) { /* [cite: 397] */
+        soundClick.volume = 0.3; /* [cite: 397] */
+        soundClick.currentTime = 0; /* [cite: 398] */
+        soundClick.play().catch(e => console.warn("Audio play prevented:", e)); /* [cite: 398] */
       }
-      if (selectedPart === partId) return;
-      selectedPart = partId;
-      updateSystemStatus('INITIALIZING TEST', 'yellow');
-      
+      if (selectedPart === partId) return; /* [cite: 398] */
+      selectedPart = partId; /* [cite: 399] */
+      updateSystemStatus('INITIALIZING TEST', 'yellow'); /* [cite: 399] */
+
       // Try to select meshes that are within the zone of the selected part
-      const selectedObjects = [];
-      
-      // For arm parts, use special handling
-      if (partId === 'leftArm' || partId === 'rightArm') {
+      const selectedObjects = []; /* [cite: 399] */
+      // For arm parts, use special handling /* [cite: 400] */
+      if (partId === 'leftArm' || partId === 'rightArm') { /* [cite: 400] */
         // Determine which side to check
-        const isLeft = partId === 'leftArm';
-        const xThreshold = isLeft ? 0 : 0; // Use 0 as the dividing line
-        
-        // Check all meshes 
-        model.traverse((object) => {
-          if (object.isMesh) {
-            const meshPosition = new THREE.Vector3();
-            object.getWorldPosition(meshPosition);
-            
-            // For arms, check if the mesh is on the correct side (left or right)
+        const isLeft = partId === 'leftArm'; /* [cite: 400] */
+        const xThreshold = isLeft ? 0 : 0; // Use 0 as the dividing line /* [cite: 401] */
+
+        // Check all meshes
+        model.traverse((object) => { /* [cite: 401] */
+          if (object.isMesh) { /* [cite: 401] */
+            const meshPosition = new THREE.Vector3(); /* [cite: 401] */
+            object.getWorldPosition(meshPosition); /* [cite: 401] */
+
+
+            // For arms, check if the mesh is on the correct side (left or right) /* [cite: 402] */
             // and in the appropriate height range
-            if ((isLeft && meshPosition.x < xThreshold) || (!isLeft && meshPosition.x > xThreshold)) {
-              if (meshPosition.y > 1.2 && meshPosition.y < 2.7) { // FIXED: Updated height range for arms
-                selectedObjects.push(object);
+            if ((isLeft && meshPosition.x < xThreshold) || (!isLeft && meshPosition.x > xThreshold)) { /* [cite: 402] */
+              if (meshPosition.y > 1.2 && meshPosition.y < 2.7) { // FIXED: Updated height range for arms /* [cite: 402] */
+
+                 selectedObjects.push(object); /* [cite: 403] */
               }
             }
           }
-        });
-      } 
+        }); /* [cite: 403] */
+      } /* [cite: 404] */
       // Special case for abdomen to ensure correct selection - CORRECTED height
-      else if (partId === 'abdomen') {
-        model.traverse((object) => {
-          if (object.isMesh) {
-            const meshPosition = new THREE.Vector3();
-            object.getWorldPosition(meshPosition);
-            
-            // For abdomen, check if the mesh is in the central area
-            if (Math.abs(meshPosition.x) < 0.5 && meshPosition.y > 1.0 && meshPosition.y < 1.8) {  // Fixed height
-              selectedObjects.push(object);
+      else if (partId === 'abdomen') { /* [cite: 404] */
+        model.traverse((object) => { /* [cite: 404] */
+          if (object.isMesh) { /* [cite: 404] */
+            const meshPosition = new THREE.Vector3(); /* [cite: 404] */
+            object.getWorldPosition(meshPosition); /* [cite: 404] */
+
+
+            // For abdomen, check if the mesh is in the central area /* [cite: 405] */
+            if (Math.abs(meshPosition.x) < 0.5 && meshPosition.y > 1.0 && meshPosition.y < 1.8) {  // Fixed height /* [cite: 405] */
+              selectedObjects.push(object); /* [cite: 405] */
             }
           }
-        });
-      }
+        }); /* [cite: 405] */
+      } /* [cite: 406] */
       // Special case for legs with updated height range
-      else if (partId === 'leftLeg' || partId === 'rightLeg') {
+      else if (partId === 'leftLeg' || partId === 'rightLeg') { /* [cite: 406] */
         // Determine which side to check
-        const isLeft = partId === 'leftLeg';
-        const xThreshold = isLeft ? 0 : 0; // Use 0 as the dividing line
-        
-        model.traverse((object) => {
-          if (object.isMesh) {
-            const meshPosition = new THREE.Vector3();
-            object.getWorldPosition(meshPosition);
-            
-            // For legs, check if the mesh is on the correct side (left or right)
+        const isLeft = partId === 'leftLeg'; /* [cite: 406] */
+        const xThreshold = isLeft ? 0 : 0; // Use 0 as the dividing line /* [cite: 407] */
+
+        model.traverse((object) => { /* [cite: 407] */
+          if (object.isMesh) { /* [cite: 407] */
+            const meshPosition = new THREE.Vector3(); /* [cite: 407] */
+            object.getWorldPosition(meshPosition); /* [cite: 407] */
+
+            // For legs, check /* [cite: 407] */ if the mesh is on the correct side (left or right) /* [cite: 408] */
             // and in the appropriate height range
-            if ((isLeft && meshPosition.x < xThreshold) || (!isLeft && meshPosition.x > xThreshold)) {
-              if (meshPosition.y > -0.2 && meshPosition.y < 1.0) { // Updated height range for legs
-                selectedObjects.push(object);
-              }
+            if ((isLeft && meshPosition.x < xThreshold) || (!isLeft && meshPosition.x > xThreshold)) { /* [cite: 408] */
+              if (meshPosition.y > -0.2 && meshPosition.y < 1.0) { // Updated height range for legs /* [cite: 408] */
+                selectedObjects.push(object); /* [cite: 408] */
+
+              } /* [cite: 409] */
             }
           }
-        });
-      }
-      else {
+        }); /* [cite: 409] */
+      } /* [cite: 410] */
+      else { /* [cite: 410] */
         // For non-arm/non-leg parts, use the standard zone-based approach
-        model.traverse((object) => {
-          if (object.isMesh) {
-            const meshPosition = new THREE.Vector3();
-            object.getWorldPosition(meshPosition);
-            
-            // Use extended zone for selection to be more inclusive
-            const extendedZone = bodyPartsData[partId].zone.clone().expandByScalar(0.3);
-            if (extendedZone.containsPoint(meshPosition)) {
-              selectedObjects.push(object);
+        model.traverse((object) => { /* [cite: 410] */
+          if (object.isMesh) { /* [cite: 410] */
+            const meshPosition = new THREE.Vector3(); /* [cite: 410] */
+            object.getWorldPosition(meshPosition); /* [cite: 410] */
+
+            // Use extended /* [cite: 410] */ zone for selection to be more inclusive /* [cite: 411] */
+            const extendedZone = bodyPartsData[partId].zone.clone().expandByScalar(0.3); /* [cite: 411] */
+            if (extendedZone.containsPoint(meshPosition)) { /* [cite: 411] */
+              selectedObjects.push(object); /* [cite: 411] */
             }
           }
-        });
-      }
-      
+        }); /* [cite: 411] */
+      } /* [cite: 412] */
+
       // If no meshes were selected, try alternative methods
-      if (selectedObjects.length === 0) {
-        console.log('No meshes in zone, selecting by object names for', partId);
-        
-        // First try: select by part name in mesh name
-        model.traverse((object) => {
-          if (object.isMesh) {
-            const meshName = object.name.toLowerCase();
-            const partName = bodyPartsData[partId].name.toLowerCase();
-            if (
-              meshName.includes(partId) || 
-              meshName.includes(partName) ||
-              (partId === 'head' && (meshName.includes('head') || meshName.includes('skull') || meshName.includes('face'))) ||
-              (partId === 'chest' && (meshName.includes('chest') || meshName.includes('torso') || meshName.includes('rib'))) ||
-              (partId === 'abdomen' && (meshName.includes('abdomen') || meshName.includes('stomach') || meshName.includes('waist'))) ||
-              (partId.includes('arm') && (meshName.includes('arm') || meshName.includes('hand') || meshName.includes('shoulder'))) ||
-              (partId.includes('leg') && (meshName.includes('leg') || meshName.includes('thigh') || meshName.includes('foot')))
-            ) {
-              selectedObjects.push(object);
-            }
+      if (selectedObjects.length === 0) { /* [cite: 412] */
+        console.log('No meshes in zone, selecting by object names for', partId); /* [cite: 412] */
+        // First try: select by part name in mesh name /* [cite: 413] */
+        model.traverse((object) => { /* [cite: 413] */
+          if (object.isMesh) { /* [cite: 413] */
+            const meshName = object.name.toLowerCase(); /* [cite: 413] */
+            const partName = bodyPartsData[partId].name.toLowerCase(); /* [cite: 413] */
+            if ( /* [cite: 413] */
+              meshName.includes(partId) || /* [cite: 413] */
+
+              meshName.includes(partName) || /* [cite: 414] */
+              (partId === 'head' && (meshName.includes('head') || meshName.includes('skull') || meshName.includes('face'))) || /* [cite: 414] */
+              (partId === 'chest' && (meshName.includes('chest') || meshName.includes('torso') || meshName.includes('rib'))) || /* [cite: 414] */
+              (partId === 'abdomen' && (meshName.includes('abdomen') || meshName.includes('stomach') || meshName.includes('waist'))) || /* [cite: 414] */
+              (partId.includes('arm') && (meshName.includes('arm') || meshName.includes('hand') || meshName.includes('shoulder'))) || /* [cite: 414] */
+
+              (partId.includes('leg') && (meshName.includes('leg') || meshName.includes('thigh') || meshName.includes('foot'))) /* [cite: 415] */
+            ) { /* [cite: 415] */
+              selectedObjects.push(object); /* [cite: 415] */
+            } /* [cite: 416] */
           }
-        });
-        
-        // Last resort: if still no objects found, just highlight any visible mesh
-        if (selectedObjects.length === 0) {
-          model.traverse((object) => {
-            if (object.isMesh && object.visible) {
-              selectedObjects.push(object);
+        }); /* [cite: 416] */
+        // Last resort: if still no objects found, just highlight any visible mesh /* [cite: 417] */
+        if (selectedObjects.length === 0) { /* [cite: 417] */
+          model.traverse((object) => { /* [cite: 417] */
+            if (object.isMesh && object.visible) { /* [cite: 417] */
+              selectedObjects.push(object); /* [cite: 417] */
             }
-          });
-        }
+          }); /* [cite: 417] */
+        } /* [cite: 418] */
       }
-      
-      outlinePass.selectedObjects = selectedObjects;
-      if (clickPoint) {
-        updateTrackerPosition(clickPoint);
-      }
-      
-      setTimeout(() => {
-        updateSystemStatus('TEST ACTIVE', 'green');
-      }, 1000);
-    }
 
-    // --- Clear Body Part Selection ---
-    function clearBodyPartSelection() {
-      selectedPart = null;
-      outlinePass.selectedObjects = [];
-      hideTracker();
-      
+      outlinePass.selectedObjects = selectedObjects; /* [cite: 418] */
+      if (clickPoint) { /* [cite: 419] */
+        updateTrackerPosition(clickPoint); /* [cite: 419] */
+      } /* [cite: 420] */
+
+      setTimeout(() => { /* [cite: 420] */
+        updateSystemStatus('TEST ACTIVE', 'green'); /* [cite: 420] */
+      }, 1000); /* [cite: 420] */
+    } /* [cite: 421] */
+
+    // --- Clear Main Body Part Selection ---
+    function clearBodyPartSelection() { /* [cite: 421] */
+      selectedPart = null; /* [cite: 421] */
+      outlinePass.selectedObjects = []; /* [cite: 422] */
+      hideTracker(); /* [cite: 422] */
+
       // Reset the test display
-      if (window.loadTest) {
-        window.loadTest(null);
-      }
-    }
+      if (window.loadTest) { /* [cite: 422] */
+        window.loadTest(null); /* [cite: 422] */
+      } /* [cite: 423] */
+    } /* [cite: 423] */
 
-    // --- Update AR Labels Positions (Raised) ---
-    function updateARLabelsPositions() {
-      if (!model || !camera) return;
-      // Adjusted positions for labels (raised y-values)
-      const labelPositions = {
-        head: new THREE.Vector3(0, 3.2, 0),
-        torso: new THREE.Vector3(0.6, 2.2, 0),
-        arm: new THREE.Vector3(-1.2, 1.8, 0),
-        leg: new THREE.Vector3(0.6, 0.2, 0),
-        abdomen: new THREE.Vector3(0, 1.4, 0.4) // Added abdomen label position
-      };
-      for (const [label, element] of Object.entries(arLabels)) {
-        if (element && labelPositions[label]) {
-          const position = labelPositions[label].clone();
-          position.add(model.position);
-          const vector = position.project(camera);
-          const x = (vector.x * 0.5 + 0.5) * canvasContainer.clientWidth;
-          const y = (-(vector.y * 0.5) + 0.5) * canvasContainer.clientHeight;
-          element.style.left = (label.includes('right') ? x + 40 : x - 40) + 'px';
-          element.style.top = y + 'px';
-          element.style.display = vector.z < 1 ? 'block' : 'none';
+    // --- Update Main AR Labels Positions ---
+    function updateARLabelsPositions() { /* [cite: 423] */
+      if (!model || !camera) return; /* [cite: 282, 423] */
+      // Adjusted positions for labels (raised y-values) /* [cite: 424] */
+      const labelPositions = { /* [cite: 424] */
+        head: new THREE.Vector3(0, 3.2, 0), /* [cite: 424] */
+        torso: new THREE.Vector3(0.6, 2.2, 0), /* [cite: 424] */
+        arm: new THREE.Vector3(-1.2, 1.8, 0), /* [cite: 424] */
+        leg: new THREE.Vector3(0.6, 0.2, 0), /* [cite: 424] */
+        abdomen: new THREE.Vector3(0, 1.4, 0.4) // Added abdomen label position /* [cite: 424] */
+      }; /* [cite: 424] */
+      for (const [label, element] of Object.entries(arLabels)) { /* [cite: 425] */
+        if (element && labelPositions[label]) { /* [cite: 425] */
+          const position = labelPositions[label].clone(); /* [cite: 425] */
+          position.add(model.position); /* [cite: 426] */
+          const vector = position.project(camera); /* [cite: 426] */
+          const x = (vector.x * 0.5 + 0.5) * canvasContainer.clientWidth; /* [cite: 426] */
+          const y = (-(vector.y * 0.5) + 0.5) * canvasContainer.clientHeight; /* [cite: 427] */
+          element.style.left = (label.includes('right') ? x + 40 : x - 40) + 'px'; /* [cite: 428] */
+          element.style.top = y + 'px'; /* [cite: 428] */
+          element.style.display = vector.z < 1 ? 'block' : 'none'; /* [cite: 429] */
         }
       }
-    }
+    } /* [cite: 429] */
 
-    // --- Animation Loop ---
-    function animate() {
-      requestAnimationFrame(animate);
-      if (controls) {
-        controls.update();
-      }
-      if (composer && scene && camera) {
-        composer.render();
-      }
-      updateARLabelsPositions();
-    }
+    // --- Main Animation Loop ---
+    function animate() { /* [cite: 429] */
+      requestAnimationFrame(animate); /* [cite: 429] */
+      if (controls) { /* [cite: 430] */
+        controls.update(); /* [cite: 430] */
+      } /* [cite: 431] */
+      if (composer && scene && camera) { /* [cite: 431] */
+        composer.render(); /* [cite: 431] */
+      } /* [cite: 432] */
+      updateARLabelsPositions(); /* [cite: 432] */
+       // NOTE: The logo animation loop (animateLogo) runs independently
+    } /* [cite: 432] */
 
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', init);
-    } else {
-      init();
+    // --- Initial Execution ---
+    if (document.readyState === 'loading') { /* [cite: 432] */
+      document.addEventListener('DOMContentLoaded', init); /* [cite: 432] */
+    } else { /* [cite: 433] */
+      init(); /* [cite: 433] */
     }
   </script>
 </body>
