@@ -6,1281 +6,1305 @@
   <title>BioCare Health Assessment System</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Roboto:wght@300;400;500&display=swap">
-  <!-- React and Babel scripts -->
   <script src="https://unpkg.com/react@17/umd/react.development.js"></script>
   <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
   <style>
     /* Custom Science/Medical Theme */
     :root {
-      --primary: #3b82f6;
-      --primary-hover: #2563eb;
-      --secondary: #10B981;
-      --accent: #06B6D4;
-      --dark-bg: #1e293b;
-      --panel-bg: #0f172a;
-      --text-primary: #F9FAFB;
-      --text-secondary: #D1D5DB;
-      --glow-primary: 0 0 15px rgba(59, 130, 246, 0.5);
-      --glow-secondary: 0 0 15px rgba(16, 185, 129, 0.5);
-    }
+      --primary: #3b82f6; /* */
+      --primary-hover: #2563eb; /* */
+      --secondary: #10B981; /* */
+      --accent: #06B6D4; /* */
+      --dark-bg: #1e293b; /* */
+      --panel-bg: #0f172a; /* */
+      --text-primary: #F9FAFB; /* */
+      --text-secondary: #D1D5DB; /* */
+      --glow-primary: 0 0 15px rgba(59, 130, 246, 0.5); /* */
+      --glow-secondary: 0 0 15px rgba(16, 185, 129, 0.5); /* */
+    } /* */
     body {
-      font-family: 'Roboto', sans-serif;
-      margin: 0;
-      overflow: hidden;
-      background-color: var(--dark-bg);
-      color: var(--text-primary);
+      font-family: 'Roboto', sans-serif; /* */
+      margin: 0; /* */
+      overflow: hidden; /* */
+      background-color: var(--dark-bg); /* */
+      color: var(--text-primary); /* */
     }
     h1, h2, h3, h4, h5, h6 {
-      font-family: 'Rajdhani', sans-serif;
-      font-weight: 600;
+      font-family: 'Rajdhani', sans-serif; /* */
+      font-weight: 600; /* */
     }
     .sci-panel {
-      background-color: rgba(15, 23, 42, 0.85);
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(59, 130, 246, 0.2);
-      border-radius: 0.5rem;
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06), var(--glow-primary);
-    }
+      background-color: rgba(15, 23, 42, 0.85); /* */
+      backdrop-filter: blur(10px); /* */
+      border: 1px solid rgba(59, 130, 246, 0.2); /* */
+      border-radius: 0.5rem; /* */
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06), var(--glow-primary); /* */
+    } /* */
     .sci-title {
-      position: relative;
-      overflow: hidden;
-    }
+      position: relative; /* */
+      overflow: hidden; /* */
+    } /* */
     .sci-title::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 5px;
-      height: 100%;
-      background: linear-gradient(180deg, var(--primary), var(--secondary));
+      content: ''; /* */
+      position: absolute; /* */
+      top: 0; /* */
+      left: 0; /* */
+      width: 5px; /* */
+      height: 100%; /* */
+      background: linear-gradient(180deg, var(--primary), var(--secondary)); /* */
     }
     .sci-badge {
-      background: linear-gradient(45deg, var(--primary), var(--accent));
-      color: white;
-      padding: 0.25rem 0.75rem;
-      border-radius: 9999px;
-      font-size: 0.75rem;
-      font-weight: 500;
-    }
+      background: linear-gradient(45deg, var(--primary), var(--accent)); /* */
+      color: white; /* */
+      padding: 0.25rem 0.75rem; /* */
+      border-radius: 9999px; /* */
+      font-size: 0.75rem; /* */
+      font-weight: 500; /* */
+    } /* */
     .sci-highlight {
-      color: var(--secondary);
-      font-weight: 500;
-    }
+      color: var(--secondary); /* */
+      font-weight: 500; /* */
+    } /* */
     .glow-text {
-      text-shadow: 0 0 8px rgba(59, 130, 246, 0.6);
-    }
+      text-shadow: 0 0 8px rgba(59, 130, 246, 0.6); /* */
+    } /* */
     /* Canvas Styling */
     #canvas-container {
-      flex-grow: 1;
-      height: 100vh;
-      position: relative;
+      flex-grow: 1; /* */
+      height: 100vh; /* */
+      position: relative; /* */
     }
     #canvas-container canvas {
-      display: block;
-      width: 100%;
-      height: 100%;
-      cursor: grab;
+      display: block; /* */
+      width: 100%; /* */
+      height: 100%; /* */
+      cursor: grab; /* */
     }
     #canvas-container canvas:active {
-      cursor: grabbing;
-    }
+      cursor: grabbing; /* */
+    } /* */
     /* Sidebar Panel */
     #info-panel {
-      width: 375px;
-      height: 100vh;
-      overflow-y: auto;
-      flex-shrink: 0;
-      background-color: var(--panel-bg);
-      transition: transform 0.3s ease;
-      scrollbar-width: thin;
-      scrollbar-color: var(--primary) var(--panel-bg);
-    }
+      width: 375px; /* */
+      height: 100vh; /* */
+      overflow-y: auto; /* */
+      flex-shrink: 0; /* */
+      background-color: var(--panel-bg); /* */
+      transition: transform 0.3s ease; /* */
+      scrollbar-width: thin; /* */
+      scrollbar-color: var(--primary) var(--panel-bg); /* */
+    } /* */
     #info-panel::-webkit-scrollbar {
-      width: 8px;
-    }
+      width: 8px; /* */
+    } /* */
     #info-panel::-webkit-scrollbar-track {
-      background: var(--panel-bg);
-    }
+      background: var(--panel-bg); /* */
+    } /* */
     #info-panel::-webkit-scrollbar-thumb {
-      background-color: var(--primary);
-      border-radius: 20px;
-    }
+      background-color: var(--primary); /* */
+      border-radius: 20px; /* */
+    } /* */
     /* Loading Overlay */
     #loading-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background-color: rgba(15, 23, 42, 0.95);
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      z-index: 50;
+      position: fixed; /* */
+      top: 0; /* */
+      left: 0; /* */
+      right: 0; /* */
+      bottom: 0; /* */
+      background-color: rgba(15, 23, 42, 0.95); /* */
+      display: flex; /* */
+      flex-direction: column; /* */
+      justify-content: center; /* */
+      align-items: center; /* */
+      z-index: 150; /* Higher z-index */
     }
     .progress-bar {
-      width: 300px;
-      height: 8px;
-      background-color: rgba(255, 255, 255, 0.1);
-      border-radius: 4px;
-      overflow: hidden;
-      margin-top: 2rem;
-    }
+      width: 300px; /* */
+      height: 8px; /* */
+      background-color: rgba(255, 255, 255, 0.1); /* */
+      border-radius: 4px; /* */
+      overflow: hidden; /* */
+      margin-top: 2rem; /* */
+    } /* */
     .progress-fill {
-      height: 100%;
-      background: linear-gradient(90deg, var(--primary), var(--secondary));
-      width: 0%;
-      transition: width 0.3s ease;
-      box-shadow: var(--glow-primary);
+      height: 100%; /* */
+      background: linear-gradient(90deg, var(--primary), var(--secondary)); /* */
+      width: 0%; /* */
+      transition: width 0.3s ease; /* */
+      box-shadow: var(--glow-primary); /* */
     }
     /* Controls Guide */
     #controls-guide {
-      position: absolute;
-      bottom: 1rem;
-      right: 1rem;
-      background-color: rgba(15, 23, 42, 0.8);
-      color: white;
-      font-size: 0.75rem;
-      line-height: 1.25rem;
-      padding: 0.75rem;
-      border-radius: 0.5rem;
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-      z-index: 10;
-      max-width: 250px;
-      backdrop-filter: blur(8px);
-      border: 1px solid rgba(59, 130, 246, 0.15);
-      transition: opacity 0.3s;
-      opacity: 0.7;
-    }
+      position: absolute; /* */
+      bottom: 1rem; /* */
+      right: 1rem; /* */
+      background-color: rgba(15, 23, 42, 0.8); /* */
+      color: white; /* */
+      font-size: 0.75rem; /* */
+      line-height: 1.25rem; /* */
+      padding: 0.75rem; /* */
+      border-radius: 0.5rem; /* */
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); /* */
+      z-index: 10; /* */
+      max-width: 250px; /* */
+      backdrop-filter: blur(8px); /* */
+      border: 1px solid rgba(59, 130, 246, 0.15); /* */
+      transition: opacity 0.3s; /* */
+      opacity: 0.7; /* */
+    } /**/
     #controls-guide:hover {
-      opacity: 1;
-    }
+      opacity: 1; /* */
+    } /* */
     /* HUD Elements */
     .hud-element {
-      position: absolute;
-      pointer-events: none;
-      z-index: 5;
-      font-family: 'Rajdhani', sans-serif;
+      position: absolute; /* */
+      pointer-events: none; /* */
+      z-index: 5; /* */
+      font-family: 'Rajdhani', sans-serif; /* */
     }
     .body-stat {
-      top: 1rem;
-      left: 1rem;
-      font-size: 0.8rem;
-      padding: 0.75rem;
-      color: var(--text-secondary);
-      max-width: 250px;
-    }
+      top: 1rem; /* */
+      left: 1rem; /* */
+      font-size: 0.8rem; /* */
+      padding: 0.75rem; /* */
+      color: var(--text-secondary); /* */
+      max-width: 250px; /* */
+    } /* */
     .body-scan-line {
-      position: absolute;
-      width: 100%;
-      height: 4px;
-      background: linear-gradient(90deg, 
-          transparent, 
-          rgba(59, 130, 246, 0.2), 
-          rgba(59, 130, 246, 0.5), 
-          rgba(59, 130, 246, 0.2), 
-          transparent);
-      z-index: 10;
-      pointer-events: none;
-      box-shadow: 0 0 15px rgba(59, 130, 246, 0.4);
-      opacity: 0;
-      animation: scanAnimation 8s infinite;
-    }
+      position: absolute; /* */
+      width: 100%; /* */
+      height: 4px; /* */
+      background: linear-gradient(90deg,
+          transparent,
+          rgba(59, 130, 246, 0.2),
+          rgba(59, 130, 246, 0.5),
+          rgba(59, 130, 246, 0.2),
+          transparent); /* */
+      z-index: 10; /* */
+      pointer-events: none; /* */
+      box-shadow: 0 0 15px rgba(59, 130, 246, 0.4); /* */
+      opacity: 0; /* */
+      animation: scanAnimation 8s infinite; /* */
+    } /**/
     @keyframes scanAnimation {
-      0% { top: 0%; opacity: 1; }
-      90% { top: 100%; opacity: 1; }
-      91% { opacity: 0; }
-      100% { top: 0%; opacity: 0; }
+      0% { top: 0%; opacity: 1; /* */
+      } /* */
+      90% { top: 100%; opacity: 1; /* */
+      } /* */
+      91% { opacity: 0; } /* */
+      100% { top: 0%; /* */
+      opacity: 0; } /* */
     }
     /* HUD Trackers */
     .tracker {
-      position: absolute;
-      width: 80px;
-      height: 80px;
-      pointer-events: none;
-      z-index: 5;
-      border: 1px solid rgba(59, 130, 246, 0.5);
-      border-radius: 50%;
-      transform: translate(-50%, -50%);
-      background: radial-gradient(circle, 
-          rgba(59, 130, 246, 0.15) 0%, 
-          rgba(16, 185, 129, 0.05) 70%, 
-          transparent 100%);
-      box-shadow: 0 0 15px rgba(59, 130, 246, 0.3);
-      opacity: 0;
-      transition: opacity 0.5s;
-    }
+      position: absolute; /* */
+      width: 80px; /* */
+      height: 80px; /* */
+      pointer-events: none; /* */
+      z-index: 5; /* */
+      border: 1px solid rgba(59, 130, 246, 0.5); /* */
+      border-radius: 50%; /* */
+      transform: translate(-50%, -50%); /* */
+      background: radial-gradient(circle,
+          rgba(59, 130, 246, 0.15) 0%,
+          rgba(16, 185, 129, 0.05) 70%,
+          transparent 100%); /* */
+      box-shadow: 0 0 15px rgba(59, 130, 246, 0.3); /* */
+      opacity: 0; /* */
+      transition: opacity 0.5s; /* */
+    } /**/
     .tracker::before, .tracker::after {
-      content: '';
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      border-radius: 50%;
+      content: ''; /* */
+      position: absolute; /* */
+      top: 50%; /* */
+      left: 50%; /* */
+      transform: translate(-50%, -50%); /* */
+      border-radius: 50%; /* */
     }
     .tracker::before {
-      width: 60px;
-      height: 60px;
-      border: 1px dashed rgba(59, 130, 246, 0.5);
-      animation: rotate 10s linear infinite;
-    }
+      width: 60px; /* */
+      height: 60px; /* */
+      border: 1px dashed rgba(59, 130, 246, 0.5); /* */
+      animation: rotate 10s linear infinite; /* */
+    } /* */
     .tracker::after {
-      width: 10px;
-      height: 10px;
-      background-color: rgba(16, 185, 129, 0.8);
-      box-shadow: 0 0 8px rgba(16, 185, 129, 0.8);
+      width: 10px; /* */
+      height: 10px; /* */
+      background-color: rgba(16, 185, 129, 0.8); /* */
+      box-shadow: 0 0 8px rgba(16, 185, 129, 0.8); /* */
     }
     @keyframes rotate {
-      from { transform: translate(-50%, -50%) rotate(0deg); }
-      to { transform: translate(-50%, -50%) rotate(360deg); }
+      from { transform: translate(-50%, -50%) rotate(0deg); /* */
+      } /* */
+      to { transform: translate(-50%, -50%) rotate(360deg); /* */
+      } /* */
     }
     /* Augmented Reality Styled Labels */
     .ar-label {
-      position: absolute;
-      color: var(--secondary);
-      font-size: 0.7rem;
-      letter-spacing: 0.05em;
-      pointer-events: none;
-      z-index: 5;
-      transition: opacity 0.5s;
-      opacity: 0;
-      text-shadow: 0 0 5px var(--secondary);
-    }
+      position: absolute; /* */
+      color: var(--secondary); /* */
+      font-size: 0.7rem; /* */
+      letter-spacing: 0.05em; /* */
+      pointer-events: none; /* */
+      z-index: 5; /* */
+      transition: opacity 0.5s; /* */
+      opacity: 0; /* */
+      text-shadow: 0 0 5px var(--secondary); /* */
+    } /* */
     .ar-label::after {
-      content: '';
-      position: absolute;
-      top: 50%;
-      width: 30px;
-      height: 1px;
-      background-color: var(--secondary);
-      opacity: 0.5;
+      content: ''; /* */
+      position: absolute; /* */
+      top: 50%; /* */
+      width: 30px; /* */
+      height: 1px; /* */
+      background-color: var(--secondary); /* */
+      opacity: 0.5; /* */
     }
     .ar-label-left {
-      text-align: right;
-    }
+      text-align: right; /* */
+    } /* */
     .ar-label-left::after {
-      right: -35px;
-    }
+      right: -35px; /* */
+    } /* */
     .ar-label-right {
-      text-align: left;
-    }
+      text-align: left; /* */
+    } /* */
     .ar-label-right::after {
-      left: -35px;
-    }
+      left: -35px; /* */
+    } /* */
     .info-card {
-      opacity: 0;
-      transform: translateY(20px);
-      transition: opacity 0.5s, transform 0.5s;
-    }
+      opacity: 0; /* */
+      transform: translateY(20px); /* */
+      transition: opacity 0.5s, transform 0.5s; /* */
+    } /* */
     .info-card.show {
-      opacity: 1;
-      transform: translateY(0);
-    }
+      opacity: 1; /* */
+      transform: translateY(0); /* */
+    } /* */
     /* Responsive Styles */
     @media (max-width: 768px) {
-      .flex-col-reverse { flex-direction: column-reverse; }
+      .flex-col-reverse { flex-direction: column-reverse; /* */
+      } /* */
       #info-panel {
-        width: 100%;
-        height: 40%;
-        min-height: 250px;
-        max-height: 50%;
+        width: 100%; /* */
+        height: 40%; /* */
+        min-height: 250px; /* */
+        max-height: 50%; /* */
       }
       #canvas-container {
-        height: 60%;
-      }
+        height: 60%; /* */
+      } /* */
       .panel-toggle {
-        display: block !important;
-      }
+        display: block !important; /* */
+      } /* */
       #info-panel.collapsed {
-        transform: translateY(calc(100% - 40px));
-      }
+        transform: translateY(calc(100% - 40px)); /* */
+      } /* */
       #toggle-panel-icon {
-        transform: rotate(0deg);
-        transition: transform 0.3s;
+        transform: rotate(0deg); /* */
+        transition: transform 0.3s; /* */
       }
       #info-panel.collapsed #toggle-panel-icon {
-        transform: rotate(180deg);
-      }
+        transform: rotate(180deg); /* */
+      } /* */
     }
-
     /* Additional styles for assessment tests */
     .test-panel {
-      max-width: 100%;
-      height: 100%;
-      overflow-y: auto;
-      padding: 1rem;
+      max-width: 100%; /* */
+      height: 100%; /* */
+      overflow-y: auto; /* */
+      padding: 1rem; /* */
     }
-    
+
     .blink-animation {
-      animation: blink 1.5s infinite;
-    }
-    
+      animation: blink 1.5s infinite; /* */
+    } /* */
+
     @keyframes blink {
-      0% { opacity: 0.3; }
-      50% { opacity: 1; }
-      100% { opacity: 0.3; }
+      0% { opacity: 0.3; /* */
+      } /* */
+      50% { opacity: 1; } /* */
+      100% { opacity: 0.3; /* */
+      } /* */
     }
-    
+
     .pulse-animation {
-      animation: pulse 2s infinite;
-    }
-    
+      animation: pulse 2s infinite; /* */
+    } /* */
+
     @keyframes pulse {
-      0% { transform: scale(1); }
-      50% { transform: scale(1.05); }
-      100% { transform: scale(1); }
+      0% { transform: scale(1); /* */
+      } /* */
+      50% { transform: scale(1.05); } /* */
+      100% { transform: scale(1); /* */
+      } /* */
     }
-    
+
     .glow {
-      box-shadow: 0 0 15px white;
-      animation: glow 1.5s infinite alternate;
+      box-shadow: 0 0 15px white; /* */
+      animation: glow 1.5s infinite alternate; /* */
     }
-    
+
     @keyframes glow {
-      from { box-shadow: 0 0 5px rgba(59, 130, 246, 0.6); }
-      to { box-shadow: 0 0 20px rgba(59, 130, 246, 0.9); }
+      from { box-shadow: 0 0 5px rgba(59, 130, 246, 0.6); /* */
+      } /* */
+      to { box-shadow: 0 0 20px rgba(59, 130, 246, 0.9); /* */
+      } /* */
     }
+
+    /* --- NEW: Styles for the 3D logo canvas --- */
+    #logo-canvas {
+        position: absolute;
+        top: 1rem; /* Adjust as needed */
+        right: 1rem; /* Adjust as needed */
+        width: 80px;  /* Adjust size */
+        height: 80px; /* Adjust size */
+        z-index: 100; /* Ensure it's above other elements */
+        pointer-events: none; /* Make canvas click-through */
+    }
+    /* --- END NEW --- */
+
   </style>
 </head>
 <body>
-  <!-- Loading Overlay -->
+  <canvas id="logo-canvas"></canvas>
   <div id="loading-overlay">
-    <h2 class="text-4xl font-bold text-center mb-2 glow-text">BIOCARE ASSESSMENT SYSTEM</h2>
-    <p class="text-blue-400 mb-2">Biometric scanning in progress...</p>
-    <p class="text-gray-400 mb-6">Please remain still while we analyze your health parameters</p>
+    <h2 class="text-4xl font-bold text-center mb-2 glow-text">BIOCARE ASSESSMENT SYSTEM</h2> /* */
+    <p class="text-blue-400 mb-2">Biometric scanning in progress...</p> /* */
+    <p class="text-gray-400 mb-6">Please remain still while we analyze your health parameters</p> /* */
     <div class="progress-bar">
-      <div class="progress-fill" id="progress-bar"></div>
+      <div class="progress-fill" id="progress-bar"></div> /* */
     </div>
-    <p id="loading-text" class="mt-4 text-sm text-gray-300 blink-animation">Initializing bioscan...</p>
+    <p id="loading-text" class="mt-4 text-sm text-gray-300 blink-animation">Initializing bioscan...</p> /* */
   </div>
-
   <div class="flex h-screen md:flex-row flex-col-reverse">
-    <!-- Information Panel - Will be replaced with React assessment tests -->
-    <div id="info-panel" class="relative">
-      <!-- Mobile Toggle -->
-      <button id="panel-toggle" class="panel-toggle hidden absolute top-4 right-4 md:hidden bg-gray-700 p-2 rounded-md hover:bg-gray-600 focus:outline-none">
-        <svg id="toggle-panel-icon" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-          <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
-        </svg>
-      </button>
-      <!-- Header Section -->
-      <div class="p-6">
-        <div class="sci-title pl-6 mb-4">
-          <h1 class="text-2xl font-bold">BioCare Assessment System</h1>
-          <p class="text-sm text-gray-400">Personalized Health Diagnostics</p>
+    <div id="info-panel" class="relative"> /* */
+        <button id="panel-toggle" class="panel-toggle hidden absolute top-4 right-4 md:hidden bg-gray-700 p-2 rounded-md hover:bg-gray-600 focus:outline-none"> /* */
+            <svg id="toggle-panel-icon" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"> /* */
+                <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" /> /* */
+            </svg>
+        </button>
+
+        <div class="p-6"> /* */
+            <div class="sci-title pl-6 mb-4">
+                <h1 class="text-2xl font-bold">BioCare Assessment System</h1> /* */
+                <p class="text-sm text-gray-400">Personalized Health Diagnostics</p> /* */
+            </div>
+            <div class="flex items-center space-x-2 mb-4">
+                <div class="sci-badge bg-blue-700 text-blue-50">
+                    <span class="opacity-60">BIO</span><span>METRICS</span> /* */
+                </div> /* */
+                <div class="h-2 w-2 rounded-full bg-green-400 animate-pulse"></div> /* */
+                <div class="text-xs text-green-400">ASSESSMENT ACTIVE</div> /* */
+            </div>
         </div>
-        <div class="flex items-center space-x-2 mb-4">
-          <div class="sci-badge bg-blue-700 text-blue-50">
-            <span class="opacity-60">BIO</span><span>METRICS</span>
-          </div>
-          <div class="h-2 w-2 rounded-full bg-green-400 animate-pulse"></div>
-          <div class="text-xs text-green-400">ASSESSMENT ACTIVE</div>
-        </div>
-      </div>
-      <!-- Test Container - Will be populated by React -->
-      <div id="test-container" class="px-6 pb-6">
-        <!-- React content will be rendered here -->
-      </div>
+        <div id="test-container" class="px-6 pb-6">
+            </div> /* */
     </div>
 
-    <!-- 3D Canvas Container -->
-    <div id="canvas-container" class="relative">
-      <!-- HUD Elements -->
-      <div class="hud-element body-stat sci-panel">
-        <div class="text-xs text-blue-300 mb-1">DIAGNOSTIC STATUS</div>
-        <div class="text-xs">
-          <span>SYSTEM</span>: <span id="system-status" class="text-green-400">STANDBY</span>
+    <div id="canvas-container" class="relative"> /* */
+        <div class="hud-element body-stat sci-panel">
+            <div class="text-xs text-blue-300 mb-1">DIAGNOSTIC STATUS</div> /* */
+            <div class="text-xs">
+                <span>SYSTEM</span>: <span id="system-status" class="text-green-400">STANDBY</span> /* */
+            </div>
+            <div class="text-xs">
+                <span>RECOMMENDED TESTS</span>: <span class="text-yellow-400">5</span> /* */
+            </div> /* */
         </div>
-        <div class="text-xs">
-          <span>RECOMMENDED TESTS</span>: <span class="text-yellow-400">5</span>
+        <div class="body-scan-line"></div> /* */
+        <div id="body-tracker" class="tracker"></div> /* */
+        <div id="head-label" class="ar-label ar-label-left">COGNITIVE ASSESSMENT</div> /* */
+        <div id="torso-label" class="ar-label ar-label-right">CARDIOVASCULAR TEST</div> /* */
+        <div id="arm-label" class="ar-label ar-label-left">REACTION ASSESSMENT</div> /* */
+        <div id="leg-label" class="ar-label ar-label-right">STABILITY ASSESSMENT</div> /* */
+        <div id="abdomen-label" class="ar-label ar-label-right">BODY COMPOSITION</div> /* */
+        <div id="controls-guide" class="sci-panel">
+            <div class="text-xs text-blue-300 mb-1 font-semibold">INTERFACE CONTROLS</div> /* */
+            <div class="grid grid-cols-2 gap-x-3 gap-y-1 text-xs">
+                <span>ROTATE VIEW</span><span class="text-gray-300">Left Mouse / Drag</span> /* */
+                <span>ZOOM</span><span class="text-gray-300">Mouse Wheel</span> /* */
+                <span>PAN</span><span class="text-gray-300">Right Mouse / Drag</span> /* */
+                <span>RESET VIEW</span><span class="text-gray-300">Double Click</span> /* */
+                <span>SELECT TEST</span><span class="text-gray-300">Click Body Area</span> /* */
+            </div>
         </div>
-      </div>
-      <!-- Scan Line Animation -->
-      <div class="body-scan-line"></div>
-      <!-- Target Tracker (will be positioned in JS) -->
-      <div id="body-tracker" class="tracker"></div>
-      <!-- AR Labels (renamed to test names) -->
-      <div id="head-label" class="ar-label ar-label-left">COGNITIVE ASSESSMENT</div>
-      <div id="torso-label" class="ar-label ar-label-right">CARDIOVASCULAR TEST</div>
-      <div id="arm-label" class="ar-label ar-label-left">REACTION ASSESSMENT</div>
-      <div id="leg-label" class="ar-label ar-label-right">STABILITY ASSESSMENT</div>
-      <div id="abdomen-label" class="ar-label ar-label-right">BODY COMPOSITION</div>
-      <!-- Controls Guide -->
-      <div id="controls-guide" class="sci-panel">
-        <div class="text-xs text-blue-300 mb-1 font-semibold">INTERFACE CONTROLS</div>
-        <div class="grid grid-cols-2 gap-x-3 gap-y-1 text-xs">
-          <span>ROTATE VIEW</span><span class="text-gray-300">Left Mouse / Drag</span>
-          <span>ZOOM</span><span class="text-gray-300">Mouse Wheel</span>
-          <span>PAN</span><span class="text-gray-300">Right Mouse / Drag</span>
-          <span>RESET VIEW</span><span class="text-gray-300">Double Click</span>
-          <span>SELECT TEST</span><span class="text-gray-300">Click Body Area</span>
-        </div>
-      </div>
     </div>
   </div>
-
-  <!-- Audio Elements -->
   <audio id="sound-click" preload="auto">
-    <source src="https://assets.mixkit.co/sfx/preview/mixkit-modern-technology-select-3124.mp3" type="audio/mpeg">
+    <source src="https://assets.mixkit.co/sfx/preview/mixkit-modern-technology-select-3124.mp3" type="audio/mpeg"> /* */
   </audio>
   <audio id="sound-hover" preload="auto">
-    <source src="https://assets.mixkit.co/sfx/preview/mixkit-interface-hint-notification-911.mp3" type="audio/mpeg">
+    <source src="https://assets.mixkit.co/sfx/preview/mixkit-interface-hint-notification-911.mp3" type="audio/mpeg"> /* */
   </audio>
   <audio id="sound-scan" preload="auto">
-    <source src="https://assets.mixkit.co/sfx/preview/mixkit-sci-fi-interface-zoom-890.mp3" type="audio/mpeg">
+    <source src="https://assets.mixkit.co/sfx/preview/mixkit-sci-fi-interface-zoom-890.mp3" type="audio/mpeg"> /* */
   </audio>
 
-  <!-- React components -->
   <script type="text/babel">
-    // Component to manage which test is shown
-    const TestManager = () => {
-      const [activeTest, setActiveTest] = React.useState(null);
-      
-      // Function to be exposed globally
-      window.loadTest = (testId) => {
-        setActiveTest(testId);
-      };
-      
+    // ============================================
+    // React Components (CognitiveTest, CardiovascularTest, etc.)
+    // [Your existing React code remains here - unchanged]
+    // ============================================
+
+     const TestManager = () => { /* */
+      const [activeTest, setActiveTest] = React.useState(null); /* */
+// Function to be exposed globally /* */
+      window.loadTest = (testId) => { /* */
+        setActiveTest(testId); /* */
+      }; /* */
+
       // Render the appropriate test component based on the active test
-      const renderTest = () => {
-        switch(activeTest) {
-          case 'head': return <CognitiveTest />;
-          case 'chest': return <CardiovascularTest />;
-          case 'abdomen': return <BodyCompositionTest />;
-          case 'leftArm': 
-          case 'rightArm': return <ReactionTest />;
-          case 'leftLeg':
-          case 'rightLeg': return <StabilityTest />;
-          default: return <WelcomeScreen />;
-        }
+      const renderTest = () => { /* */
+        switch(activeTest) { /* */
+          case 'head': return <CognitiveTest />; /* */
+ case 'chest': return <CardiovascularTest />; /* */
+          case 'abdomen': return <BodyCompositionTest />; /* */
+ case 'leftArm': /* */
+          case 'rightArm': return <ReactionTest />; /* */
+ case 'leftLeg': /* */
+          case 'rightLeg': return <StabilityTest />; /* */
+          default: return <WelcomeScreen />; /* */
+ } /* */
       };
-      
-      return (
+
+      return ( /* */
         <div className="test-panel">
           {renderTest()}
-        </div>
-      );
-    };
-
-    // Welcome screen shown initially with personalized message
-    const WelcomeScreen = () => (
+        </div> /* */
+      ); /* */
+ }; /* */
+    const WelcomeScreen = () => ( /* */
       <div className="sci-panel p-6 info-card show text-gray-200">
-        <h2 className="text-xl font-bold mb-4 text-blue-400">Bioscan Complete</h2>
-        
+        <h2 className="text-xl font-bold mb-4 text-blue-400">Bioscan Complete</h2> /* */
         <p className="mb-4">
-          Our advanced AI diagnostic system has completed your biometric scan and identified specific areas that require assessment to evaluate your overall health status.
+          Our advanced AI diagnostic system has completed your biometric scan and identified specific areas that require assessment to evaluate your overall health status. /* */
         </p>
-        
         <p className="mb-4">
-          Based on your unique physical profile, we've customized a series of non-invasive diagnostic tests to measure your physiological and cognitive functions. These assessments will provide valuable data about your current health condition.
+          Based on your unique physical profile, we've customized a series of non-invasive diagnostic tests to measure your physiological and cognitive functions. These assessments will provide valuable data about your current health condition. /* */
         </p>
-        
         <div className="my-5 p-4 bg-blue-900 bg-opacity-30 rounded-lg border border-blue-700">
-          <h3 className="font-medium text-lg mb-2 text-blue-300">Required Assessments:</h3>
+          <h3 className="font-medium text-lg mb-2 text-blue-300">Required Assessments:</h3> /* */
           <ul className="space-y-2">
-            <li className="flex items-start">
-              <span className="text-blue-400 mr-2">•</span>
-              <div>
-                <span className="font-medium text-blue-300">Cognitive Assessment</span>
-                <p className="text-sm text-gray-400">Analysis indicates potential for memory optimization</p>
-              </div>
-            </li>
-            <li className="flex items-start">
-              <span className="text-blue-400 mr-2">•</span>
-              <div>
-                <span className="font-medium text-blue-300">Cardiovascular Test</span>
-                <p className="text-sm text-gray-400">Heart rate patterns require further evaluation</p>
-              </div>
-            </li>
-            <li className="flex items-start">
-              <span className="text-blue-400 mr-2">•</span>
-              <div>
-                <span className="font-medium text-blue-300">Body Composition</span>
-                <p className="text-sm text-gray-400">Tissue density scanning indicates BMI assessment needed</p>
-              </div>
-            </li>
-            <li className="flex items-start">
-              <span className="text-blue-400 mr-2">•</span>
-              <div>
-                <span className="font-medium text-blue-300">Reaction Assessment</span>
-                <p className="text-sm text-gray-400">Neural pathway response measurement recommended</p>
-              </div>
-            </li>
-            <li className="flex items-start">
-              <span className="text-blue-400 mr-2">•</span>
-              <div>
-                <span className="font-medium text-blue-300">Stability Assessment</span>
-                <p className="text-sm text-gray-400">Vestibular system calibration check suggested</p>
-              </div>
-            </li>
+            <li className="flex items-start"><span className="text-blue-400 mr-2">•</span><div><span className="font-medium text-blue-300">Cognitive Assessment</span><p className="text-sm text-gray-400">Analysis indicates potential for memory optimization</p></div></li> /* */
+            <li className="flex items-start"><span className="text-blue-400 mr-2">•</span><div><span className="font-medium text-blue-300">Cardiovascular Test</span><p className="text-sm text-gray-400">Heart rate patterns require further evaluation</p></div></li> /* */
+            <li className="flex items-start"><span className="text-blue-400 mr-2">•</span><div><span className="font-medium text-blue-300">Body Composition</span><p className="text-sm text-gray-400">Tissue density scanning indicates BMI assessment needed</p></div></li> /* */
+            <li className="flex items-start"><span className="text-blue-400 mr-2">•</span><div><span className="font-medium text-blue-300">Reaction Assessment</span><p className="text-sm text-gray-400">Neural pathway response measurement recommended</p></div></li> /* */
+            <li className="flex items-start"><span className="text-blue-400 mr-2">•</span><div><span className="font-medium text-blue-300">Stability Assessment</span><p className="text-sm text-gray-400">Vestibular system calibration check suggested</p></div></li> /* */
           </ul>
         </div>
-        
         <p className="mb-2">
-          Please select any highlighted area on your biometric model to begin the corresponding assessment. Your results will be analyzed to create a comprehensive health profile.
-        </p>
-        
+          Please select any highlighted area on your biometric model to begin the corresponding assessment. /* */
+ Your results will be analyzed to create a comprehensive health profile. /* */
+ </p> /* */
         <p className="text-xs text-gray-400 mt-4">
-          <strong>Note:</strong> This medical assessment system is for educational and demonstration purposes only. For accurate health diagnostics, please consult licensed healthcare professionals.
+          <strong>Note:</strong> This medical assessment system is for educational and demonstration purposes only. /* */
+ For accurate health diagnostics, please consult licensed healthcare professionals. /* */
         </p>
-      </div>
-    );
-
-    // HEAD: Cognitive (Memory) Test
-    const CognitiveTest = () => {
-      const [gameState, setGameState] = React.useState('intro'); // intro, showing, playing, success, failure
-      const [sequence, setSequence] = React.useState([]);
-      const [userSequence, setUserSequence] = React.useState([]);
-      const [level, setLevel] = React.useState(1);
-      const [currentShowIndex, setCurrentShowIndex] = React.useState(0);
-      
-      // Colors for the memory game
-      const colors = ['red', 'blue', 'green', 'yellow'];
-      
-      // Start a new test
-      const startTest = () => {
+      </div> /* */
+    ); /* */
+    const CognitiveTest = () => { /* */
+      const [gameState, setGameState] = React.useState('intro'); /* */
+ // intro, showing, playing, success, failure /* */
+      const [sequence, setSequence] = React.useState([]); /* */
+      const [userSequence, setUserSequence] = React.useState([]); /* */
+      const [level, setLevel] = React.useState(1); /* */
+      const [currentShowIndex, setCurrentShowIndex] = React.useState(0); /* */
+ // Colors for the memory game /* */
+      const colors = ['red', 'blue', 'green', 'yellow']; /* */
+ // Start a new test /* */
+      const startTest = () => { /* */
         // Generate random sequence based on level (level + 2 items)
-        const newSequence = Array.from({ length: level + 2 }, () => 
-          colors[Math.floor(Math.random() * colors.length)]
-        );
-        setSequence(newSequence);
-        setUserSequence([]);
-        setGameState('showing');
-        setCurrentShowIndex(0);
-        
+        const newSequence = Array.from({ length: level + 2 }, () => /* */
+          colors[Math.floor(Math.random() * colors.length)] /* */
+        ); /* */
+ setSequence(newSequence); /* */
+        setUserSequence([]); /* */
+        setGameState('showing'); /* */
+        setCurrentShowIndex(0); /* */
+
         // Start showing the sequence
-        showNextColor(newSequence, 0);
-      };
-      
-      // Function to display the sequence one color at a time
-      const showNextColor = (seq, index) => {
-        setCurrentShowIndex(index);
-        
-        // If we've shown all colors, move to playing state
-        if (index >= seq.length) {
-          setTimeout(() => {
-            setGameState('playing');
-            setCurrentShowIndex(-1);
-          }, 300);
-          return;
-        }
-        
+        showNextColor(newSequence, 0); /* */
+      }; /* */
+ // Function to display the sequence one color at a time /* */
+      const showNextColor = (seq, index) => { /* */
+        setCurrentShowIndex(index); /* */
+ // If we've shown all colors, move to playing state /* */
+        if (index >= seq.length) { /* */
+          setTimeout(() => { /* */
+            setGameState('playing'); /* */
+            setCurrentShowIndex(-1); /* */
+          }, 300); /* */
+ return; /* */
+        } /* */
+
         // Show the next color after a delay
-        setTimeout(() => {
-          showNextColor(seq, index + 1);
-        }, 800); // Show each color for 800ms
-      };
-      
-      // Handle user selection
-      const handleColorClick = (color) => {
-        if (gameState !== 'playing') return;
-        
-        const newUserSequence = [...userSequence, color];
-        setUserSequence(newUserSequence);
-        
+        setTimeout(() => { /* */
+          showNextColor(seq, index + 1); /* */
+        }, 800); /* */
+ // Show each color for 800ms /* */
+      }; /* */
+ // Handle user selection /* */
+      const handleColorClick = (color) => { /* */
+        if (gameState !== 'playing') return; /* */
+ const newUserSequence = [...userSequence, color]; /* */
+        setUserSequence(newUserSequence); /* */
+
         // Check if selection is correct
-        const index = userSequence.length;
-        if (color !== sequence[index]) {
-          setGameState('failure');
-          return;
-        }
-        
+        const index = userSequence.length; /* */
+ if (color !== sequence[index]) { /* */
+          setGameState('failure'); /* */
+          return; /* */
+ } /* */
+
         // Check if sequence is complete
-        if (newUserSequence.length === sequence.length) {
-          setGameState('success');
-          // Advance to next level after delay
-          setTimeout(() => {
-            setLevel(level + 1);
-            setGameState('intro');
-          }, 2000);
-        }
+        if (newUserSequence.length === sequence.length) { /* */
+          setGameState('success'); /* */
+ // Advance to next level after delay /* */
+          setTimeout(() => { /* */
+            setLevel(level + 1); /* */
+            setGameState('intro'); /* */
+          }, 2000); /* */
+ } /* */
       };
-      
+
       // Reset the test
-      const resetTest = () => {
-        setLevel(1);
-        setGameState('intro');
+      const resetTest = () => { /* */
+        setLevel(1); /* */
+ setGameState('intro'); /* */
       };
-      
-      return (
+
+      return ( /* */
         <div className="max-w-md mx-auto bg-gray-900 p-6 rounded-lg shadow-md">
-          <h2 className="text-xl font-semibold mb-2 text-white">Cognitive Assessment</h2>
-          <p className="text-sm text-gray-400 mb-4">Testing short-term memory and sequence recall abilities</p>
-          
-          {gameState === 'intro' && (
+          <h2 className="text-xl font-semibold mb-2 text-white">Cognitive Assessment</h2> /* */
+          <p className="text-sm text-gray-400 mb-4">Testing short-term memory and sequence recall abilities</p> /* */
+
+          {gameState === 'intro' && ( /* */
             <div>
+
               <p className="mb-4 text-gray-300">
-                This test evaluates your cognitive processing and memory function. Observe the sequence of colors and repeat it exactly. 
+                This test evaluates your cognitive processing and memory function. Observe the sequence of colors and repeat it exactly.
                 <br/><br/>
                 Current difficulty: Level {level} ({level + 2} elements)
-              </p>
-              <button 
-                onClick={startTest}
-                className="w-full py-2 bg-blue-600 text-white rounded hover:bg-blue-500"
+              </p> /* */
+
+             <button
+                onClick={startTest} /* */
+                className="w-full py-2 bg-blue-600 text-white rounded hover:bg-blue-500" /* */
               >
                 Begin Assessment
-              </button>
+              </button> /* */
             </div>
-          )}
-          
-          {gameState === 'showing' && (
+
+          )} /* */
+
+          {gameState === 'showing' && ( /* */
             <div>
-              <p className="mb-3 text-gray-300">Memorize this sequence:</p>
+              <p className="mb-3 text-gray-300">Memorize this sequence:</p> /* */
               <div className="grid grid-cols-2 gap-3 mb-4">
-                {colors.map((color, index) => (
+                {colors.map((color, index) => /* */
+ ( /* */
                   <button
-                    key={color}
-                    className={`h-24 rounded-lg border-2 ${
-                      sequence[currentShowIndex] === color ? 'border-white border-4 glow' : 'border-gray-800'
-                    } capitalize font-bold ${
-                      color === 'red' ? 'bg-red-600 text-white' :
-                      color === 'blue' ? 'bg-blue-600 text-white' :
-                      color === 'green' ? 'bg-green-600 text-white' :
-                      'bg-yellow-500 text-white'
+                    key={color} /* */
+                    className={`h-24 rounded-lg border-2 ${ /* */
+                      sequence[currentShowIndex] === color ? /* */
+ 'border-white border-4 glow' : 'border-gray-800' /* */
+                    } capitalize font-bold ${ /* */
+                      color === 'red' ? /* */
+ 'bg-red-600 text-white' : /* */
+                      color === 'blue' ? /* */
+ 'bg-blue-600 text-white' : /* */
+                      color === 'green' ? /* */
+ 'bg-green-600 text-white' : /* */
+                      'bg-yellow-500 text-white' /* */
                     }`}
-                    disabled={true}
+                    disabled={true} /* */
                   >
-                    {color}
+
+                     {color} /* */
                   </button>
                 ))}
               </div>
-              <p className="text-center text-gray-300">Pattern recording in progress...</p>
+              <p className="text-center text-gray-300">Pattern recording in progress...</p> /* */
             </div>
-          )}
-          
-          {gameState === 'playing' && (
+          )} /* */
+
+
+          {gameState === 'playing' && ( /* */
             <div>
-              <p className="mb-3 text-gray-300">Reproduce the sequence:</p>
+              <p className="mb-3 text-gray-300">Reproduce the sequence:</p> /* */
               <div className="grid grid-cols-2 gap-3 mb-4">
-                {colors.map((color) => (
+                {colors.map((color) => ( /* */
+
                   <button
-                    key={color}
-                    onClick={() => handleColorClick(color)}
-                    className={`h-24 rounded-lg border-2 border-gray-800 capitalize font-bold ${
-                      color === 'red' ? 'bg-red-600 text-white' :
-                      color === 'blue' ? 'bg-blue-600 text-white' :
-                      color === 'green' ? 'bg-green-600 text-white' :
-                      'bg-yellow-500 text-white'
+                    key={color} /* */
+                    onClick={() => handleColorClick(color)} /* */
+                    className={`h-24 rounded-lg border-2 border-gray-800 capitalize font-bold ${ /* */
+                      color === 'red' ? 'bg-red-600 text-white' : /* */
+
+                     color === 'blue' ? 'bg-blue-600 text-white' : /* */
+                      color === 'green' ? /* */
+ 'bg-green-600 text-white' : /* */
+                      'bg-yellow-500 text-white' /* */
                     }`}
                   >
-                    {color}
-                  </button>
+                    {color} /* */
+
+                  </button> /* */
                 ))}
               </div>
               <div className="flex justify-between items-center text-gray-300">
-                <span>Sequence: {userSequence.length}/{sequence.length}</span>
-                <button 
-                  onClick={resetTest}
-                  className="text-sm px-3 py-1 bg-gray-800 rounded hover:bg-gray-700"
+                <span>Sequence: {userSequence.length}/{sequence.length}</span> /* */
+                <button
+
+                   onClick={resetTest} /* */
+                  className="text-sm px-3 py-1 bg-gray-800 rounded hover:bg-gray-700" /* */
                 >
                   Reset
-                </button>
+                </button> /* */
               </div>
+
+            </div> /* */
+          )}
+
+          {gameState === 'success' && ( /* */
+            <div className="text-center py-6">
+              <p className="text-green-400 text-xl mb-2">Assessment Successful</p> /* */
+              <p className="text-gray-300">Cognitive functioning at level {level} performance.</p> /* */
+
+              <p className="text-sm mt-3 text-gray-400">Advancing to higher difficulty level...</p> /* */
             </div>
           )}
-          
-          {gameState === 'success' && (
+
+          {gameState === 'failure' && ( /* */
             <div className="text-center py-6">
-              <p className="text-green-400 text-xl mb-2">Assessment Successful</p>
-              <p className="text-gray-300">Cognitive functioning at level {level} performance.</p>
-              <p className="text-sm mt-3 text-gray-400">Advancing to higher difficulty level...</p>
-            </div>
-          )}
-          
-          {gameState === 'failure' && (
-            <div className="text-center py-6">
-              <p className="text-red-400 text-xl mb-2">Sequence Mismatch</p>
-              <p className="text-gray-300">Your cognitive assessment indicates level {level} function.</p>
-              <button 
-                onClick={resetTest}
-                className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-500"
+              <p className="text-red-400 text-xl mb-2">Sequence Mismatch</p> /* */
+              <p
+ className="text-gray-300">Your cognitive assessment indicates level {level} function.</p> /* */
+              <button
+                onClick={resetTest} /* */
+                className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-500" /* */
               >
                 Retest
-              </button>
+
+           </button> /* */
             </div>
           )}
-        </div>
-      );
-    };
+        </div> /* */
+      ); /* */
+ }; /* */
+    const CardiovascularTest = () => { /* */
+      const [heartRate, setHeartRate] = React.useState(''); /* */
+ const [age, setAge] = React.useState(''); /* */
+      const [result, setResult] = React.useState(null); /* */
+ const checkHeartRate = () => { /* */
+        const rate = parseInt(heartRate); /* */
+ const ageVal = parseInt(age); /* */
 
-    // CHEST: Cardiovascular (Pulse) Test
-    const CardiovascularTest = () => {
-      const [heartRate, setHeartRate] = React.useState('');
-      const [age, setAge] = React.useState('');
-      const [result, setResult] = React.useState(null);
-      
-      const checkHeartRate = () => {
-        const rate = parseInt(heartRate);
-        const ageVal = parseInt(age);
-        
-        if (isNaN(rate) || isNaN(ageVal)) {
-          setResult({
-            status: 'error',
-            message: 'Please enter valid numbers for heart rate and age.'
-          });
-          return;
-        }
-        
+        if (isNaN(rate) || isNaN(ageVal)) { /* */
+          setResult({ /* */
+            status: 'error', /* */
+            message: 'Please enter valid numbers for heart rate and age.' /* */
+          }); /* */
+ return; /* */
+        } /* */
+
         // Heart rate evaluation based on age
-        let status, message;
-        
-        if (ageVal < 18) {
-          if (rate < 60) {
-            status = 'warning';
-            message = 'Your heart rate appears to be below the typical range for your age group.';
-          } else if (rate > 100) {
-            status = 'warning';
-            message = 'Your heart rate appears to be elevated for your age group.';
-          } else {
-            status = 'good';
-            message = 'Your heart rate falls within normal parameters for your age group.';
-          }
-        } else if (ageVal >= 18 && ageVal < 65) {
-          if (rate < 60) {
-            status = 'warning';
-            message = 'Your resting heart rate is below typical adult range. This could be normal for athletes or those with high cardiovascular fitness.';
-          } else if (rate > 100) {
-            status = 'warning';
-            message = 'Your heart rate is elevated above the typical adult range.';
-          } else {
-            status = 'good';
-            message = 'Your cardiovascular indicators are within standard adult parameters.';
-          }
-        } else {
-          if (rate < 50) {
-            status = 'warning';
-            message = 'Your heart rate is below the typical range for your age demographic.';
-          } else if (rate > 90) {
-            status = 'warning';
-            message = 'Your heart rate appears elevated for your age demographic.';
-          } else {
-            status = 'good';
-            message = 'Your cardiovascular readings are within normal parameters for your age demographic.';
-          }
-        }
-        
-        setResult({ status, message, rate });
-      };
-      
-      return (
+        let status, message; /* */
+ if (ageVal < 18) { /* */
+          if (rate < 60) { /* */
+            status = 'warning'; /* */
+ message = 'Your heart rate appears to be below the typical range for your age group.'; /* */
+ } else if (rate > 100) { /* */
+            status = 'warning'; /* */
+ message = 'Your heart rate appears to be elevated for your age group.'; /* */
+ } else { /* */
+            status = 'good'; /* */
+ message = 'Your heart rate falls within normal parameters for your age group.'; /* */
+ } /* */
+        } else if (ageVal >= 18 && ageVal < 65) { /* */
+          if (rate < 60) { /* */
+            status = 'warning'; /* */
+ message = 'Your resting heart rate is below typical adult range. /* */
+ This could be normal for athletes or those with high cardiovascular fitness.'; /* */
+ } else if (rate > 100) { /* */
+            status = 'warning'; /* */
+ message = 'Your heart rate is elevated above the typical adult range.'; /* */
+ } else { /* */
+            status = 'good'; /* */
+ message = 'Your cardiovascular indicators are within standard adult parameters.'; /* */
+ } /* */
+        } else { /* */
+          if (rate < 50) { /* */
+            status = 'warning'; /* */
+ message = 'Your heart rate is below the typical range for your age demographic.'; /* */
+ } else if (rate > 90) { /* */
+            status = 'warning'; /* */
+ message = 'Your heart rate appears elevated for your age demographic.'; /* */
+ } else { /* */
+            status = 'good'; /* */
+ message = 'Your cardiovascular readings are within normal parameters for your age demographic.'; /* */
+ } /* */
+        } /* */
+
+        setResult({ status, message, rate }); /* */
+ }; /* */
+
+      return ( /* */
         <div className="max-w-md mx-auto bg-gray-900 p-6 rounded-lg shadow-md">
-          <h2 className="text-xl font-semibold mb-2 text-white">Cardiovascular Assessment</h2>
-          <p className="text-sm text-gray-400 mb-4">Analyzing heart rate indicators and cardiovascular health</p>
-          
+          <h2 className="text-xl font-semibold mb-2 text-white">Cardiovascular Assessment</h2> /* */
+          <p className="text-sm text-gray-400 mb-4">Analyzing heart rate indicators and cardiovascular health</p> /* */
+
           <div className="mb-4">
-            <label className="block text-gray-300 mb-2">Biological Age (years):</label>
-            <input
-              type="number"
-              value={age}
-              onChange={(e) => setAge(e.target.value)}
-              placeholder="Enter your age"
-              className="w-full p-2 border rounded bg-gray-800 text-white border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400"
-            />
-          </div>
-          
+            <label className="block text-gray-300 mb-2">Biological Age (years):</label> /* */
+
+             <input
+              type="number" /* */
+              value={age} /* */
+              onChange={(e) => setAge(e.target.value)} /* */
+              placeholder="Enter your age" /* */
+              className="w-full p-2 border rounded bg-gray-800 text-white border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400" /* */
+            /> /* */
+
+           </div> /* */
+
           <div className="mb-6">
-            <label className="block text-gray-300 mb-2">Resting Heart Rate (BPM):</label>
+            <label className="block text-gray-300 mb-2">Resting Heart Rate (BPM):</label> /* */
             <input
-              type="number"
-              value={heartRate}
-              onChange={(e) => setHeartRate(e.target.value)}
-              placeholder="Enter beats per minute"
-              className="w-full p-2 border rounded bg-gray-800 text-white border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              type="number" /* */
+              value={heartRate} /* */
+              onChange={(e) => /* */
+ setHeartRate(e.target.value)} /* */
+              placeholder="Enter beats per minute" /* */
+              className="w-full p-2 border rounded bg-gray-800 text-white border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400" /* */
             />
             <p className="text-sm text-gray-500 mt-1">
-              Measurement method: Locate radial or carotid pulse, count beats for 15 seconds and multiply by 4.
-            </p>
+              Measurement method: Locate radial or carotid pulse, count beats for 15 seconds and multiply by 4. /* */
+
+             </p> /* */
           </div>
-          
-          <button 
-            onClick={checkHeartRate}
-            className="w-full py-2 bg-blue-600 text-white rounded hover:bg-blue-500"
+
+          <button
+            onClick={checkHeartRate} /* */
+            className="w-full py-2 bg-blue-600 text-white rounded hover:bg-blue-500" /* */
           >
-            Analyze Cardiovascular Metrics
-          </button>
-          
-          {result && (
-            <div className={`mt-6 p-4 rounded-lg ${
-              result.status === 'good' ? 'bg-green-900 bg-opacity-30 border border-green-700' : 
-              result.status === 'warning' ? 'bg-yellow-900 bg-opacity-30 border border-yellow-700' :
-              'bg-red-900 bg-opacity-30 border border-red-700'
+            Analyze Cardiovascular Metrics /* */
+
+         </button> /* */
+
+          {result && ( /* */
+            <div className={`mt-6 p-4 rounded-lg ${ /* */
+              result.status === 'good' ? /* */
+ 'bg-green-900 bg-opacity-30 border border-green-700' : /* */
+              result.status === 'warning' ? /* */
+ 'bg-yellow-900 bg-opacity-30 border border-yellow-700' : /* */
+              'bg-red-900 bg-opacity-30 border border-red-700' /* */
             }`}>
               <div className="flex items-center mb-2">
                 <span className="text-2xl mr-2">
-                  {result.status === 'good' ? '✅' : 
-                  result.status === 'warning' ? '⚠️' : 
-                  '❌'}
+                  {result.status === 'good' ? /* */
+ ' ✅ ' : /* */
+                  result.status === 'warning' ? /* */
+ ' ⚠️ ' : /* */
+                  ' ❌ '} /* */
                 </span>
                 <h3 className="font-medium text-white">
-                  {result.status === 'good' ? 'Normal Parameters' : 
-                  result.status === 'warning' ? 'Further Monitoring Recommended' : 
-                  'Input Error'}
+                  {result.status === 'good' ? /* */
+ 'Normal Parameters' : /* */
+                  result.status === 'warning' ? /* */
+ 'Further Monitoring Recommended' : /* */
+                  'Input Error'} /* */
                 </h3>
               </div>
-              <p className={`${
-                result.status === 'good' ? 'text-green-300' : 
-                result.status === 'warning' ? 'text-yellow-300' :
-                'text-red-300'
+              <p className={`${ /* */
+                result.status === 'good' ? /* */
+ 'text-green-300' : /* */
+                result.status === 'warning' ? /* */
+ 'text-yellow-300' : /* */
+                'text-red-300' /* */
               }`}>
                 {result.message}
-              </p>
+              </p> /* */
               <p className="mt-3 text-sm text-gray-400">
-                <strong>Important:</strong> This is not a medical diagnosis. For accurate cardiovascular assessment, consult a qualified healthcare provider.
-              </p>
+                <strong>Important:</strong> This is not a medical /* */
+ diagnosis. For accurate cardiovascular assessment, consult a qualified healthcare provider. /* */
+ </p> /* */
             </div>
-          )}
-        </div>
-      );
-    };
-
-    // ABDOMEN: Body Composition Test
-    const BodyCompositionTest = () => {
-      const [height, setHeight] = React.useState('');
-      const [weight, setWeight] = React.useState('');
-      const [unit, setUnit] = React.useState('metric'); // metric or imperial
-      const [result, setResult] = React.useState(null);
-      
-      const calculateBMI = () => {
-        let bmi, heightVal, weightVal;
-        
-        if (unit === 'metric') {
+          )} /* */
+        </div> /* */
+      ); /* */
+ }; /* */
+    const BodyCompositionTest = () => { /* */
+      const [height, setHeight] = React.useState(''); /* */
+ const [weight, setWeight] = React.useState(''); /* */
+      const [unit, setUnit] = React.useState('metric'); /* */
+ // metric or imperial /* */
+      const [result, setResult] = React.useState(null); /* */
+ const calculateBMI = () => { /* */
+        let bmi, heightVal, weightVal; /* */
+ if (unit === 'metric') { /* */
           // Metric: weight in kg, height in cm
-          heightVal = parseFloat(height);
-          weightVal = parseFloat(weight);
-          
-          if (isNaN(heightVal) || isNaN(weightVal) || heightVal <= 0 || weightVal <= 0) {
-            setResult({ error: 'Please enter valid height and weight values' });
-            return;
-          }
-          
+          heightVal = parseFloat(height); /* */
+ weightVal = parseFloat(weight); /* */
+
+          if (isNaN(heightVal) || isNaN(weightVal) || heightVal <= 0 || weightVal <= 0) { /* */
+            setResult({ error: 'Please enter valid height and weight values' }); /* */
+ return; /* */
+          } /* */
+
           // Convert cm to meters and calculate BMI
-          bmi = weightVal / Math.pow(heightVal / 100, 2);
-        } else {
+          bmi = weightVal / Math.pow(heightVal / 100, 2); /* */
+ } else { /* */
           // Imperial: weight in lbs, height in inches
-          heightVal = parseFloat(height);
-          weightVal = parseFloat(weight);
-          
-          if (isNaN(heightVal) || isNaN(weightVal) || heightVal <= 0 || weightVal <= 0) {
-            setResult({ error: 'Please enter valid height and weight values' });
-            return;
-          }
-          
+          heightVal = parseFloat(height); /* */
+ weightVal = parseFloat(weight); /* */
+
+          if (isNaN(heightVal) || isNaN(weightVal) || heightVal <= 0 || weightVal <= 0) { /* */
+            setResult({ error: 'Please enter valid height and weight values' }); /* */
+ return; /* */
+          } /* */
+
           // Imperial BMI formula: (weight in pounds * 703) / (height in inches)²
-          bmi = (weightVal * 703) / Math.pow(heightVal, 2);
-        }
-        
+          bmi = (weightVal * 703) / Math.pow(heightVal, 2); /* */
+ } /* */
+
         // Round to one decimal place
-        bmi = Math.round(bmi * 10) / 10;
-        
-        // Determine BMI category
-        let category, color;
-        if (bmi < 18.5) {
-          category = 'Underweight';
-          color = 'text-blue-400';
-        } else if (bmi >= 18.5 && bmi < 25) {
-          category = 'Normal weight';
-          color = 'text-green-400';
-        } else if (bmi >= 25 && bmi < 30) {
-          category = 'Overweight';
-          color = 'text-yellow-400';
-        } else {
-          category = 'Obesity';
-          color = 'text-red-400';
-        }
-        
-        setResult({ bmi, category, color });
-      };
-      
-      return (
+        bmi = Math.round(bmi * 10) / 10; /* */
+ // Determine BMI category /* */
+        let category, color; /* */
+ if (bmi < 18.5) { /* */
+          category = 'Underweight'; /* */
+          color = 'text-blue-400'; /* */
+ } else if (bmi >= 18.5 && bmi < 25) { /* */
+          category = 'Normal weight'; /* */
+ color = 'text-green-400'; /* */
+        } else if (bmi >= 25 && bmi < 30) { /* */
+          category = 'Overweight'; /* */
+ color = 'text-yellow-400'; /* */
+        } else { /* */
+          category = 'Obesity'; /* */
+ color = 'text-red-400'; /* */
+        } /* */
+
+        setResult({ bmi, category, color }); /* */
+ }; /* */
+
+      return ( /* */
         <div className="max-w-md mx-auto bg-gray-900 p-6 rounded-lg shadow-md">
-          <h2 className="text-xl font-semibold mb-2 text-white">Body Composition Analysis</h2>
-          <p className="text-sm text-gray-400 mb-4">Evaluating body mass index and tissue composition</p>
-          
+          <h2 className="text-xl font-semibold mb-2 text-white">Body Composition Analysis</h2> /* */
+          <p className="text-sm text-gray-400 mb-4">Evaluating body mass index and tissue composition</p> /* */
+
           <div className="mb-4">
-            <label className="block text-gray-300 mb-2">Measurement System:</label>
-            <div className="flex">
-              <button 
-                onClick={() => setUnit('metric')}
-                className={`flex-1 py-2 ${unit === 'metric' ? 'bg-blue-600 text-white' : 'bg-gray-800 text-gray-300'} rounded-l`}
+            <label className="block text-gray-300 mb-2">Measurement System:</label> /* */
+
+             <div className="flex"> /* */
+              <button
+                onClick={() => setUnit('metric')} /* */
+                className={`flex-1 py-2 ${unit === 'metric' ? 'bg-blue-600 text-white' : 'bg-gray-800 text-gray-300'} rounded-l`} /* */
               >
-                Metric
-              </button>
-              <button 
-                onClick={() => setUnit('imperial')}
-                className={`flex-1 py-2 ${unit === 'imperial' ? 'bg-blue-600 text-white' : 'bg-gray-800 text-gray-300'} rounded-r`}
+                Metric /* */
+
+             </button> /* */
+              <button
+                onClick={() => setUnit('imperial')} /* */
+                className={`flex-1 py-2 ${unit === 'imperial' ? 'bg-blue-600 text-white' : 'bg-gray-800 text-gray-300'} rounded-r`} /* */
               >
-                Imperial
-              </button>
+                Imperial /* */
+
+             </button> /* */
             </div>
-          </div>
-          
+          </div> /* */
+
           <div className="mb-4">
             <label className="block text-gray-300 mb-2">
-              Height {unit === 'metric' ? '(cm)' : '(inches)'}:
+              Height {unit === 'metric' ? /* */
+ '(cm)' : '(inches)'}: /* */
             </label>
             <input
-              type="number"
-              value={height}
-              onChange={(e) => setHeight(e.target.value)}
-              placeholder={unit === 'metric' ? 'Enter height in cm' : 'Enter height in inches'}
-              className="w-full p-2 border rounded bg-gray-800 text-white border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              type="number" /* */
+              value={height} /* */
+              onChange={(e) => setHeight(e.target.value)} /* */
+              placeholder={unit === 'metric' ? /* */
+ 'Enter height in cm' : 'Enter height in inches'} /* */
+              className="w-full p-2 border rounded bg-gray-800 text-white border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400" /* */
             />
-          </div>
-          
+          </div> /* */
+
           <div className="mb-6">
             <label className="block text-gray-300 mb-2">
-              Weight {unit === 'metric' ? '(kg)' : '(lbs)'}:
+
+               Weight {unit === 'metric' ? '(kg)' : '(lbs)'}: /* */
             </label>
             <input
-              type="number"
-              value={weight}
-              onChange={(e) => setWeight(e.target.value)}
-              placeholder={unit === 'metric' ? 'Enter weight in kg' : 'Enter weight in lbs'}
-              className="w-full p-2 border rounded bg-gray-800 text-white border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              type="number" /* */
+              value={weight} /* */
+              onChange={(e) => setWeight(e.target.value)} /* */
+              placeholder={unit === 'metric' ? /* */
+ 'Enter weight in kg' : 'Enter weight in lbs'} /* */
+              className="w-full p-2 border rounded bg-gray-800 text-white border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400" /* */
             />
-          </div>
-          
-          <button 
-            onClick={calculateBMI}
-            className="w-full py-2 bg-blue-600 text-white rounded hover:bg-blue-500"
+          </div> /* */
+
+          <button
+            onClick={calculateBMI} /* */
+            className="w-full py-2 /* */
+ bg-blue-600 text-white rounded hover:bg-blue-500" /* */
           >
             Analyze Body Composition
-          </button>
-          
-          {result && !result.error && (
+          </button> /* */
+
+          {result && !result.error && ( /* */
             <div className="mt-6 p-4 bg-gray-800 rounded-lg border border-gray-700">
-              <h3 className="font-medium text-lg mb-3 text-white">Analysis Results</h3>
-              <div className="flex justify-between mb-2 text-gray-300">
-                <span>Body Mass Index:</span>
-                <span className="font-semibold text-white">{result.bmi}</span>
+              <h3 className="font-medium text-lg mb-3 text-white">Analysis Results</h3> /* */
+
+               <div className="flex justify-between mb-2 text-gray-300">
+                <span>Body Mass Index:</span> /* */
+                <span className="font-semibold text-white">{result.bmi}</span> /* */
               </div>
               <div className="flex justify-between text-gray-300">
-                <span>Classification:</span>
-                <span className={`font-semibold ${result.color}`}>{result.category}</span>
+                <span>Classification:</span> /* */
+
+                 <span className={`font-semibold ${result.color}`}>{result.category}</span> /* */
               </div>
               <div className="mt-4 pt-4 border-t border-gray-700">
-                <h4 className="font-medium mb-2 text-gray-300">BMI Classifications:</h4>
+                <h4 className="font-medium mb-2 text-gray-300">BMI Classifications:</h4> /* */
                 <ul className="text-sm space-y-1 text-gray-400">
-                  <li><span className="text-blue-400 font-medium">Below 18.5:</span> Underweight</li>
-                  <li><span className="text-green-400 font-medium">18.5 - 24.9:</span> Normal weight</li>
-                  <li><span className="text-yellow-400 font-medium">25 - 29.9:</span> Overweight</li>
-                  <li><span className="text-red-400 font-medium">30 and above:</span> Obesity</li>
-                </ul>
-              </div>
-            </div>
-          )}
-          
-          {result && result.error && (
-            <div className="mt-4 p-3 bg-red-900 bg-opacity-30 text-red-300 rounded border border-red-700">
-              {result.error}
-            </div>
-          )}
-        </div>
-      );
-    };
 
-    // HANDS/ARMS: Reaction Test
-    const ReactionTest = () => {
-      const [state, setState] = React.useState('ready'); // ready, waiting, click, results
-      const [startTime, setStartTime] = React.useState(null);
-      const [reactionTime, setReactionTime] = React.useState(null);
-      const [results, setResults] = React.useState([]);
-      
+                   <li><span className="text-blue-400 font-medium">Below 18.5:</span> Underweight</li> /* */
+                  <li><span className="text-green-400 font-medium">18.5 - 24.9:</span> Normal weight</li> /* */
+                  <li><span className="text-yellow-400 font-medium">25 - 29.9:</span> Overweight</li> /* */
+                  <li><span className="text-red-400 font-medium">30 and above:</span> Obesity</li> /* */
+                </ul>
+
+                 </div> /* */
+            </div>
+          )} /* */
+
+          {result && result.error && ( /* */
+            <div className="mt-4 p-3 bg-red-900 bg-opacity-30 text-red-300 rounded border border-red-700">
+              {result.error} /* */
+
+             </div> /* */
+          )}
+        </div> /* */
+      ); /* */
+ }; /* */
+    const ReactionTest = () => { /* */
+      const [state, setState] = React.useState('ready'); /* */
+ // ready, waiting, click, results /* */
+      const [startTime, setStartTime] = React.useState(null); /* */
+      const [reactionTime, setReactionTime] = React.useState(null); /* */
+ const [results, setResults] = React.useState([]); /* */
+
       // Start the test
-      const startTest = () => {
-        setState('waiting');
-        
-        // Random delay between 1-5 seconds
-        const delay = 1000 + Math.random() * 4000;
-        
-        setTimeout(() => {
-          setStartTime(Date.now());
-          setState('click');
-        }, delay);
-      };
-      
+      const startTest = () => { /* */
+        setState('waiting'); /* */
+ // Random delay between 1-5 seconds /* */
+        const delay = 1000 + Math.random() * 4000; /* */
+ setTimeout(() => { /* */
+          setStartTime(Date.now()); /* */
+          setState('click'); /* */
+        }, delay); /* */
+ }; /* */
+
       // Handle user click
-      const handleClick = () => {
-        if (state === 'waiting') {
+      const handleClick = () => { /* */
+        if (state === 'waiting') { /* */
           // Clicked too early
-          setState('ready');
-          alert('Early response detected. Wait for the green signal before responding.');
-        } else if (state === 'click') {
+          setState('ready'); /* */
+ alert('Early response detected. Wait for the green signal before responding.'); /* */
+ } else if (state === 'click') { /* */
           // Measure reaction time
-          const endTime = Date.now();
-          const time = endTime - startTime;
-          setReactionTime(time);
-          
+          const endTime = Date.now(); /* */
+ const time = endTime - startTime; /* */
+          setReactionTime(time); /* */
+
           // Add to results history (keep last 5)
-          const newResults = [time, ...results].slice(0, 5);
-          setResults(newResults);
-          
-          setState('results');
-        }
+          const newResults = [time, ...results].slice(0, 5); /* */
+ setResults(newResults); /* */
+
+          setState('results'); /* */
+        } /* */
       };
-      
+
       // Get feedback based on reaction time
-      const getFeedback = (time) => {
-        if (time < 200) return { text: 'Exceptional response time!', color: 'text-purple-400' };
-        if (time < 250) return { text: 'Excellent neural response!', color: 'text-indigo-400' };
-        if (time < 300) return { text: 'Very Good reflexes!', color: 'text-blue-400' };
-        if (time < 350) return { text: 'Good response time', color: 'text-green-400' };
-        if (time < 400) return { text: 'Average reaction speed', color: 'text-yellow-400' };
-        return { text: 'Response time could be improved', color: 'text-red-400' };
-      };
-      
-      // Calculate average reaction time
-      const getAverage = () => {
-        if (results.length === 0) return null;
-        const sum = results.reduce((a, b) => a + b, 0);
-        return Math.round(sum / results.length);
-      };
-      
-      // Get background color based on state
-      const getBackgroundColor = () => {
-        if (state === 'ready') return 'bg-blue-900 hover:bg-blue-800';
-        if (state === 'waiting') return 'bg-red-700';
-        if (state === 'click') return 'bg-green-700';
-        return 'bg-gray-800';
-      };
-      
-      return (
+      const getFeedback = (time) => { /* */
+        if (time < 200) return { text: 'Exceptional response time!', color: 'text-purple-400' }; /* */
+ if (time < 250) return { text: 'Excellent neural response!', color: 'text-indigo-400' }; /* */
+ if (time < 300) return { text: 'Very Good reflexes!', color: 'text-blue-400' }; /* */
+ if (time < 350) return { text: 'Good response time', color: 'text-green-400' }; /* */
+ if (time < 400) return { text: 'Average reaction speed', color: 'text-yellow-400' }; /* */
+ return { text: 'Response time could be improved', color: 'text-red-400' }; /* */
+      }; /* */
+ // Calculate average reaction time /* */
+      const getAverage = () => { /* */
+        if (results.length === 0) return null; /* */
+ const sum = results.reduce((a, b) => a + b, 0); /* */
+        return Math.round(sum / results.length); /* */
+      }; /* */
+ // Get background color based on state /* */
+      const getBackgroundColor = () => { /* */
+        if (state === 'ready') return 'bg-blue-900 hover:bg-blue-800'; /* */
+ if (state === 'waiting') return 'bg-red-700'; /* */
+        if (state === 'click') return 'bg-green-700'; /* */
+        return 'bg-gray-800'; /* */
+      }; /* */
+ return ( /* */
         <div className="max-w-md mx-auto bg-gray-900 p-6 rounded-lg shadow-md">
-          <h2 className="text-xl font-semibold mb-2 text-white">Reaction Speed Assessment</h2>
-          <p className="text-sm text-gray-400 mb-4">Measuring neural pathway response and motor function</p>
-          
-          <div 
-            onClick={state === 'ready' ? startTest : handleClick}
-            className={`w-full h-64 rounded-lg flex items-center justify-center cursor-pointer transition-colors ${getBackgroundColor()}`}
+          <h2 className="text-xl font-semibold mb-2 text-white">Reaction Speed Assessment</h2> /* */
+          <p className="text-sm text-gray-400 mb-4">Measuring neural pathway response and motor function</p> /* */
+
+          <div
+            onClick={state === 'ready' ? startTest : handleClick} /* */
+
+             className={`w-full h-64 rounded-lg flex items-center justify-center cursor-pointer transition-colors ${getBackgroundColor()}`} /* */
           >
             <div className="text-center p-4">
-              {state === 'ready' && (
+              {state === 'ready' && ( /* */
                 <div>
-                  <p className="font-medium mb-2 text-white">Tap to begin reaction assessment</p>
-                  <p className="text-sm text-gray-300">Wait for the red screen to turn green, then tap as quickly as possible.</p>
+                  <p className="font-medium mb-2 text-white">Tap to begin reaction assessment</p> /* */
+
+                   <p className="text-sm text-gray-300">Wait for the red screen to turn green, then tap as quickly as possible.</p> /* */
                 </div>
+              )} /* */
+
+              {state === 'waiting' && ( /* */
+
+                 <p className="font-medium text-white">Wait for green signal...</p> /* */
               )}
-              
-              {state === 'waiting' && (
-                <p className="font-medium text-white">Wait for green signal...</p>
+
+              {state === 'click' && ( /* */
+                <p className="font-medium text-white pulse-animation">TAP NOW!</p> /* */
               )}
-              
-              {state === 'click' && (
-                <p className="font-medium text-white pulse-animation">TAP NOW!</p>
-              )}
-              
-              {state === 'results' && (
+
+
+              {state === 'results' && ( /* */
                 <div>
-                  <p className="text-2xl font-bold mb-1 text-white">{reactionTime} ms</p>
-                  {reactionTime && (
-                    <p className={`font-medium ${getFeedback(reactionTime).color}`}>
+                  <p className="text-2xl font-bold mb-1 text-white">{reactionTime} ms</p> /* */
+                  {reactionTime && ( /* */
+                    <p
+ className={`font-medium ${getFeedback(reactionTime).color}`}> /* */
                       {getFeedback(reactionTime).text}
-                    </p>
+                    </p> /* */
                   )}
-                  <button 
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setState('ready');
+                  <button
+
+                     onClick={(e) => { /* */
+                      e.stopPropagation(); /* */
+ setState('ready'); /* */
                     }}
-                    className="mt-3 px-4 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-500"
+                    className="mt-3 px-4 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-500" /* */
                   >
                     Assess Again
-                  </button>
-                </div>
+                  </button> /* */
+
+               </div> /* */
               )}
             </div>
-          </div>
-          
-          {results.length > 0 && (
+          </div> /* */
+
+          {results.length > 0 && ( /* */
             <div className="mt-5">
-              <h3 className="font-medium mb-2 text-gray-300">Response time history:</h3>
-              <div className="flex flex-wrap gap-2">
-                {results.map((time, index) => (
+              <h3 className="font-medium mb-2 text-gray-300">Response time history:</h3> /* */
+
+               <div className="flex flex-wrap gap-2">
+                {results.map((time, index) => ( /* */
                   <div key={index} className="px-3 py-1 bg-gray-800 rounded text-sm text-gray-300">
                     {time} ms
-                  </div>
-                ))}
-              </div>
-              {results.length > 1 && (
-                <p className="mt-3 text-sm text-gray-300">
-                  Average response: <span className="font-medium text-white">{getAverage()} ms</span>
-                </p>
-              )}
-            </div>
-          )}
-        </div>
-      );
-    };
+                  </div> /* */
 
-    // LEGS: Stability Test
-    const StabilityTest = () => {
-      const [timerRunning, setTimerRunning] = React.useState(false);
-      const [startTime, setStartTime] = React.useState(null);
-      const [elapsedTime, setElapsedTime] = React.useState(0);
-      const [bestTime, setBestTime] = React.useState(0);
-      const [leg, setLeg] = React.useState('right');
-      const [feedbackVisible, setFeedbackVisible] = React.useState(false);
-      const [intervalId, setIntervalId] = React.useState(null);
-      
-      // Start the timer
-      const startTimer = () => {
-        setTimerRunning(true);
-        const now = Date.now();
-        setStartTime(now);
-        setElapsedTime(0);
-        setFeedbackVisible(false);
-        
+                 ))} /* */
+              </div>
+              {results.length > 1 && ( /* */
+                <p className="mt-3 text-sm text-gray-300">
+                  Average response: <span className="font-medium text-white">{getAverage()} ms</span> /* */
+                </p> /* */
+
+               )} /* */
+            </div>
+          )} /* */
+        </div> /* */
+      ); /* */
+ }; /* */
+    const StabilityTest = () => { /* */
+      const [timerRunning, setTimerRunning] = React.useState(false); /* */
+ const [startTime, setStartTime] = React.useState(null); /* */
+      const [elapsedTime, setElapsedTime] = React.useState(0); /* */
+      const [bestTime, setBestTime] = React.useState(0); /* */
+      const [leg, setLeg] = React.useState('right'); /* */
+ const [feedbackVisible, setFeedbackVisible] = React.useState(false); /* */
+      const [intervalId, setIntervalId] = React.useState(null); /* */
+ // Start the timer /* */
+      const startTimer = () => { /* */
+        setTimerRunning(true); /* */
+ const now = Date.now(); /* */
+        setStartTime(now); /* */
+        setElapsedTime(0); /* */
+        setFeedbackVisible(false); /* */
+
         // Update timer every 100ms
-        const newIntervalId = setInterval(() => {
-          const currentTime = Date.now();
-          const newElapsedTime = (currentTime - now) / 1000;
-          setElapsedTime(newElapsedTime);
-        }, 100);
-        
-        setIntervalId(newIntervalId);
+        const newIntervalId = setInterval(() => { /* */
+          const currentTime = Date.now(); /* */
+          const newElapsedTime = (currentTime - now) / 1000; /* */
+          setElapsedTime(newElapsedTime); /* */
+        }, 100); /* */
+ setIntervalId(newIntervalId); /* */
       };
-      
+
       // Stop the timer
-      const stopTimer = () => {
-        setTimerRunning(false);
-        
-        // Clear the interval
-        if (intervalId) {
-          clearInterval(intervalId);
-          setIntervalId(null);
-        }
-        
+      const stopTimer = () => { /* */
+        setTimerRunning(false); /* */
+ // Clear the interval /* */
+        if (intervalId) { /* */
+          clearInterval(intervalId); /* */
+ setIntervalId(null); /* */
+        } /* */
+
         // Update best time if current time is better
-        if (elapsedTime > bestTime) {
-          setBestTime(elapsedTime);
-        }
-        
-        setFeedbackVisible(true);
-      };
-      
-      // Clean up interval on unmount
-      React.useEffect(() => {
-        return () => {
-          if (intervalId) {
-            clearInterval(intervalId);
-          }
-        };
-      }, [intervalId]);
-      
-      // Get feedback based on balance time
-      const getFeedback = () => {
+        if (elapsedTime > bestTime) { /* */
+          setBestTime(elapsedTime); /* */
+ } /* */
+
+        setFeedbackVisible(true); /* */
+      }; /* */
+ // Clean up interval on unmount /* */
+      React.useEffect(() => { /* */
+        return () => { /* */
+          if (intervalId) { /* */
+            clearInterval(intervalId); /* */
+          } /* */
+        }; /* */
+      }, [intervalId]); /* */
+ // Get feedback based on balance time /* */
+      const getFeedback = () => { /* */
         // Simplified feedback thresholds
-        if (elapsedTime < 10) {
-          return {
-            text: 'Vestibular system shows potential for improvement. Regular balance exercises recommended.',
-            color: 'text-red-400'
-          };
-        } else if (elapsedTime < 20) {
-          return {
-            text: 'Adequate stability detected. Further enhancement possible with targeted exercises.',
-            color: 'text-yellow-400'
-          };
-        } else if (elapsedTime < 30) {
-          return {
-            text: 'Good proprioceptive function observed. Your stability systems are performing well.',
-            color: 'text-green-400'
-          };
-        } else {
-          return {
-            text: 'Exceptional balance and stability detected. Superior vestibular system function.',
-            color: 'text-blue-400'
-          };
-        }
+        if (elapsedTime < 10) { /* */
+          return { /* */
+            text: 'Vestibular system shows potential for improvement. /* */
+ Regular balance exercises recommended.', /* */
+            color: 'text-red-400' /* */
+          }; /* */
+ } else if (elapsedTime < 20) { /* */
+          return { /* */
+            text: 'Adequate stability detected. /* */
+ Further enhancement possible with targeted exercises.', /* */
+            color: 'text-yellow-400' /* */
+          }; /* */
+ } else if (elapsedTime < 30) { /* */
+          return { /* */
+            text: 'Good proprioceptive function observed. /* */
+ Your stability systems are performing well.', /* */
+            color: 'text-green-400' /* */
+          }; /* */
+ } else { /* */
+          return { /* */
+            text: 'Exceptional balance and stability detected. /* */
+ Superior vestibular system function.', /* */
+            color: 'text-blue-400' /* */
+          }; /* */
+ } /* */
       };
-      
-      return (
+
+      return ( /* */
         <div className="max-w-md mx-auto bg-gray-900 p-6 rounded-lg shadow-md">
-          <h2 className="text-xl font-semibold mb-2 text-white">Stability Assessment</h2>
-          <p className="text-sm text-gray-400 mb-4">Evaluating vestibular function and proprioceptive systems</p>
-          
+          <h2 className="text-xl font-semibold mb-2 text-white">Stability Assessment</h2> /* */
+          <p className="text-sm text-gray-400 mb-4">Evaluating vestibular function and proprioceptive systems</p> /* */
+
           <div className="mb-4 flex justify-center">
             <div className="inline-flex rounded-md shadow-sm" role="group">
-              <button
-                type="button"
-                onClick={() => setLeg('right')}
-                className={`px-4 py-2 text-sm font-medium rounded-l-lg ${
-                  leg === 'right' 
-                    ? 'bg-blue-600 text-white' 
-                    : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+
+               <button
+                type="button" /* */
+                onClick={() => setLeg('right')} /* */
+                className={`px-4 py-2 text-sm font-medium rounded-l-lg ${ /* */
+                  leg === 'right' /* */
+
+                     ? 'bg-blue-600 text-white' /* */
+                    : 'bg-gray-800 text-gray-300 hover:bg-gray-700' /* */
                 }`}
               >
                 Right Leg
-              </button>
-              <button
-                type="button"
-                onClick={() => setLeg('left')}
-                className={`px-4 py-2 text-sm font-medium rounded-r-lg ${
-                  leg === 'left' 
-                    ? 'bg-blue-600 text-white' 
-                    : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+              </button> /* */
+
+             <button
+                type="button" /* */
+                onClick={() => setLeg('left')} /* */
+                className={`px-4 py-2 text-sm font-medium rounded-r-lg ${ /* */
+                  leg === 'left' /* */
+
+                   ? 'bg-blue-600 text-white' /* */
+                    : 'bg-gray-800 text-gray-300 hover:bg-gray-700' /* */
                 }`}
               >
                 Left Leg
-              </button>
-            </div>
+              </button> /* */
+
+            </div> /* */
           </div>
-          
+
           <div id="timer-container" className="text-center py-4">
-            <div className="text-5xl font-bold mb-4 text-white">{elapsedTime.toFixed(2)}</div>
+            <div className="text-5xl font-bold mb-4 text-white">{elapsedTime.toFixed(2)}</div> /* */
             <p className="text-sm text-gray-300 mb-4">
-              Stand on your {leg} leg in a safe, level area. Press start when ready, and stop when balance is compromised.
-            </p>
-            
-            {!timerRunning ? (
-              <button 
-                onClick={startTimer}
-                className="w-full py-3 bg-green-600 text-white rounded-lg text-lg hover:bg-green-500"
+              Stand on your {leg} leg in a safe, level area. /* */
+ Press start when ready, and stop when balance is compromised. /* */
+ </p> /* */
+
+            {!timerRunning ? /* */
+ ( /* */
+              <button
+                onClick={startTimer} /* */
+                className="w-full py-3 bg-green-600 text-white rounded-lg text-lg hover:bg-green-500" /* */
               >
                 Begin Assessment
-              </button>
-            ) : (
-              <button 
-                onClick={stopTimer}
-                className="w-full py-3 bg-red-600 text-white rounded-lg text-lg hover:bg-red-500"
+              </button> /* */
+
+             ) : ( /* */
+              <button
+                onClick={stopTimer} /* */
+                className="w-full py-3 bg-red-600 text-white rounded-lg text-lg hover:bg-red-500" /* */
               >
                 End Assessment
-              </button>
+
+             </button> /* */
             )}
-            
-            {bestTime > 0 && (
+
+            {bestTime > 0 && ( /* */
               <p className="mt-3 text-sm font-medium text-gray-300">
-                Best stability: <span className="text-white">{bestTime.toFixed(2)}</span> seconds
-              </p>
+                Best stability: <span className="text-white">{bestTime.toFixed(2)}</span> seconds /* */
+
+               </p> /* */
             )}
-          </div>
-          
-          {feedbackVisible && (
+          </div> /* */
+
+          {feedbackVisible && ( /* */
             <div className="mt-4 p-4 rounded-lg bg-gray-800 border border-gray-700">
-              <h3 className="font-medium mb-2 text-white">Stability Analysis</h3>
-              <p className={getFeedback().color}>{getFeedback().text}</p>
-              <div className="mt-4 text-sm text-gray-400">
-                <p className="mb-1"><strong>Balance Parameters:</strong></p>
+              <h3 className="font-medium mb-2 text-white">Stability Analysis</h3> /* */
+              <p className={getFeedback().color}>{getFeedback().text}</p> /* */
+
+               <div className="mt-4 text-sm text-gray-400">
+                <p className="mb-1"><strong>Balance Parameters:</strong></p> /* */
                 <ul className="list-disc list-inside space-y-1">
-                  <li><span className="text-red-400 font-medium">Less than 10 seconds:</span> Stability enhancement recommended</li>
-                  <li><span className="text-yellow-400 font-medium">10-20 seconds:</span> Adequate stability</li>
-                  <li><span className="text-green-400 font-medium">20-30 seconds:</span> Good stability</li>
-                  <li><span className="text-blue-400 font-medium">More than 30 seconds:</span> Excellent stability</li>
+                  <li><span className="text-red-400 font-medium">Less than 10 seconds:</span> Stability enhancement recommended</li> /* */
+                  <li><span className="text-yellow-400 font-medium">10-20 seconds:</span> Adequate /* */
+ stability</li> /* */
+                  <li><span className="text-green-400 font-medium">20-30 seconds:</span> Good stability</li> /* */
+                  <li><span className="text-blue-400 font-medium">More than 30 seconds:</span> Excellent stability</li> /* */
                 </ul>
-                <p className="mt-3">Compare results between legs to identify potential asymmetries in your vestibular system.</p>
-              </div>
+                <p className="mt-3">Compare results between legs to identify potential asymmetries in your vestibular system.</p> /* */
+
+               </div> /* */
             </div>
-          )}
-        </div>
-      );
-    };
+          )} /* */
+        </div> /* */
+      ); /* */
+ }; /* */
 
     // Render the main TestManager component to the DOM
-    ReactDOM.render(
-      <TestManager />,
-      document.getElementById('test-container')
-    );
+    ReactDOM.render( /* */
+      <TestManager />, /* */
+      document.getElementById('test-container') /* */
+    ); /* */
   </script>
 
   <script type="importmap">
@@ -1293,852 +1317,935 @@
   </script>
 
   <script type="module">
-    import * as THREE from 'three';
-    import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-    import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-    import { RGBELoader } from 'three/addons/loaders/RGBELoader.js';
-    import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
-    import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
-    import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
-    import { OutlinePass } from 'three/addons/postprocessing/OutlinePass.js';
-
+    // ============================================
+    // Main Body Model Three.js Code
+    // [Your existing Three.js code for the body model remains here - unchanged]
+    // [Import statements, init(), setup functions, loadModel(), event listeners, animate(), etc.]
+    // ============================================
+    import * as THREE from 'three'; /* */
+    import { OrbitControls } from 'three/addons/controls/OrbitControls.js'; /* */
+    import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'; /* */
+    import { RGBELoader } from 'three/addons/loaders/RGBELoader.js'; /* */
+    import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js'; /* */
+    import { RenderPass } from 'three/addons/postprocessing/RenderPass.js'; /* */
+    import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js'; /* */
+    import { OutlinePass } from 'three/addons/postprocessing/OutlinePass.js'; /* */
     // --- Global Variables ---
-    let scene, camera, renderer, controls, composer;
-    let raycaster, mouse;
-    let model;
-    let bloomPass, outlinePass;
-    let selectedPart = null;
-    let initialCameraPosition = new THREE.Vector3();
-    let initialControlsTarget = new THREE.Vector3();
-    let arLabels = {};
-    let tracker = document.getElementById('body-tracker');
-    let audioEnabled = true;
-
-    // DOM elements
-    const canvasContainer = document.getElementById('canvas-container');
-    const infoContent = document.getElementById('info-content');
-    const loadingOverlay = document.getElementById('loading-overlay');
-    const progressBar = document.getElementById('progress-bar');
-    const loadingText = document.getElementById('loading-text');
-    const panelToggle = document.getElementById('panel-toggle');
-    const infoPanel = document.getElementById('info-panel');
-    const systemStatus = document.getElementById('system-status');
-
-    // Audio elements
-    const soundClick = document.getElementById('sound-click');
-    const soundHover = document.getElementById('sound-hover');
-    const soundScan = document.getElementById('sound-scan');
-
-    // Detailed information for each body part with improved zone coordinates
-    const bodyPartsData = {
+    let scene, camera, renderer, controls, composer; /* */
+    let raycaster, mouse; /* */
+    let model; /* */
+    let bloomPass, outlinePass; /* */
+    let selectedPart = null; /* */
+    let initialCameraPosition = new THREE.Vector3(); /* */
+    let initialControlsTarget = new THREE.Vector3(); /* */
+    let arLabels = {}; /* */
+    let tracker = document.getElementById('body-tracker'); /* */
+    let audioEnabled = true; /* */
+ // DOM elements /* */
+    const canvasContainer = document.getElementById('canvas-container'); /* */
+    const infoContent = document.getElementById('info-content'); /* */
+    const loadingOverlay = document.getElementById('loading-overlay'); /* */
+    const progressBar = document.getElementById('progress-bar'); /* */
+    const loadingText = document.getElementById('loading-text'); /* */
+    const panelToggle = document.getElementById('panel-toggle'); /* */
+    const infoPanel = document.getElementById('info-panel'); /* */
+    const systemStatus = document.getElementById('system-status'); /* */
+ // Audio elements /* */
+    const soundClick = document.getElementById('sound-click'); /* */
+    const soundHover = document.getElementById('sound-hover'); /* */
+    const soundScan = document.getElementById('sound-scan'); /* */
+ // Detailed information for each body part with improved zone coordinates /* */
+    const bodyPartsData = { /* */
       head: {
-        name: "Cognitive Assessment",  // Renamed from "Head"
-        system: "Neural Function",  // Renamed from "Nervous System"
-        description: "Analysis of memory function and cognitive processing abilities.",
-        zone: new THREE.Box3(
-          new THREE.Vector3(-0.5, 2.6, -0.5),
-          new THREE.Vector3(0.5, 3.5, 0.5)
-        )
+        name: "Cognitive Assessment",  // Renamed from "Head" /* */
+        system: "Neural Function",  // Renamed from "Nervous System" /* */
+        description: "Analysis of memory function and cognitive processing abilities.", /* */
+        zone: new THREE.Box3( /* */
+          new THREE.Vector3(-0.5, 2.6, -0.5), /* */
+
+           new THREE.Vector3(0.5, 3.5, 0.5) /* */
+        ) /* */
       },
       chest: {
-        name: "Cardiovascular Test",  // Renamed from "Chest/Torso"
-        system: "Circulatory Function",  // Renamed from "Respiratory & Cardiovascular Systems"
-        description: "Evaluation of heart rate patterns and cardiovascular health indicators.",
-        zone: new THREE.Box3(
-          new THREE.Vector3(-0.8, 1.5, -0.5),
-          new THREE.Vector3(0.8, 2.6, 0.5)
-        )
+        name: "Cardiovascular Test",  // Renamed from "Chest/Torso" /* */
+        system: "Circulatory Function",  // Renamed from "Respiratory & Cardiovascular Systems" /* */
+        description: "Evaluation of heart rate patterns and cardiovascular health indicators.", /* */
+        zone: new THREE.Box3( /* */
+          new THREE.Vector3(-0.8, /* */
+ 1.5, -0.5), /* */
+          new THREE.Vector3(0.8, 2.6, 0.5) /* */
+        ) /* */
       },
       abdomen: {
-        name: "Body Composition",  // Renamed from "Abdomen"
-        system: "Metabolic Status",  // Renamed from "Digestive & Urinary Systems"
-        description: "Assessment of body mass index and tissue composition metrics.",
-        zone: new THREE.Box3(
-          new THREE.Vector3(-0.4, 1.0, -0.3),
-          new THREE.Vector3(0.4, 1.8, 0.3)
-        )
+        name: "Body Composition",  // Renamed from "Abdomen" /* */
+        system: "Metabolic Status",  // Renamed from "Digestive & Urinary Systems" /* */
+        description: "Assessment of body mass index and tissue composition metrics.", /* */
+        zone: new THREE.Box3( /* */
+
+           new THREE.Vector3(-0.4, 1.0, -0.3), /* */
+          new THREE.Vector3(0.4, 1.8, 0.3) /* */
+        ) /* */
       },
       leftArm: {
-        name: "Reaction Assessment",  // Renamed from "Left Arm"
-        system: "Neural Responsiveness",  // Renamed from "Musculoskeletal System"
-        description: "Measurement of neural pathway efficiency and response time.",
-        zone: new THREE.Box3(
-          new THREE.Vector3(-1.5, 1.2, -0.6),
-          new THREE.Vector3(-0.5, 2.6, 0.6)
-        )
+        name: "Reaction Assessment",  // Renamed from "Left Arm" /* */
+        system: "Neural Responsiveness",  // Renamed from "Musculoskeletal System" /* */
+        description: "Measurement of neural pathway efficiency and response time.", /* */
+        zone: new /* */
+ THREE.Box3( /* */
+          new THREE.Vector3(-1.5, 1.2, -0.6), /* */
+          new THREE.Vector3(-0.5, 2.6, 0.6) /* */
+        ) /* */
       },
       rightArm: {
-        name: "Reaction Assessment",  // Renamed from "Right Arm"
-        system: "Neural Responsiveness",  // Renamed from "Musculoskeletal System"
-        description: "Measurement of neural pathway efficiency and response time.",
-        zone: new THREE.Box3(
-          new THREE.Vector3(0.5, 1.2, -0.6),
-          new THREE.Vector3(1.5, 2.6, 0.6)
-        )
+        name: "Reaction Assessment",  // Renamed from "Right Arm" /* */
+        system: "Neural Responsiveness",  // Renamed from "Musculoskeletal System" /* */
+        description: "Measurement of neural pathway efficiency and response time.", /* */
+
+           zone: new THREE.Box3( /* */
+          new THREE.Vector3(0.5, 1.2, -0.6), /* */
+          new THREE.Vector3(1.5, 2.6, 0.6) /* */
+        ) /* */
       },
       leftLeg: {
-        name: "Stability Assessment",  // Renamed from "Left Leg"
-        system: "Vestibular Function",  // Renamed from "Musculoskeletal System"
-        description: "Evaluation of balance, proprioception, and vestibular system performance.",
-        zone: new THREE.Box3(
-          new THREE.Vector3(-0.6, -0.2, -0.5),
-          new THREE.Vector3(-0.1, 1.0, 0.5)
-        )
+        name: "Stability Assessment",  // Renamed from "Left Leg" /* */
+        system: "Vestibular Function",  // Renamed from "Musculoskeletal System" /* */
+        description: "Evaluation of balance, proprioception, and vestibular system /* */
+ performance.", /* */
+        zone: new THREE.Box3( /* */
+          new THREE.Vector3(-0.6, -0.2, -0.5), /* */
+          new THREE.Vector3(-0.1, 1.0, 0.5) /* */
+        ) /* */
       },
       rightLeg: {
-        name: "Stability Assessment",  // Renamed from "Right Leg"
-        system: "Vestibular Function",  // Renamed from "Musculoskeletal System"
-        description: "Evaluation of balance, proprioception, and vestibular system performance.",
-        zone: new THREE.Box3(
-          new THREE.Vector3(0.1, -0.2, -0.5),
-          new THREE.Vector3(0.6, 1.0, 0.5)
-        )
+        name: "Stability Assessment",  // Renamed from "Right Leg" /* */
+        system: "Vestibular Function",  // Renamed from "Musculoskeletal System" /* */
+        description: "Evaluation of /* */
+ balance, proprioception, and vestibular system performance.", /* */
+        zone: new THREE.Box3( /* */
+          new THREE.Vector3(0.1, -0.2, -0.5), /* */
+          new THREE.Vector3(0.6, 1.0, 0.5) /* */
+        ) /* */
       }
-    };
-
-    // --- Initialization ---
-    function init() {
-     initSceneAndCamera();
-      setupRenderer();
-      setupLighting();
-      setupPostProcessing();
-      setupControls();
-      setupRaycaster();
-      setupARElements();
-      loadEnvironmentMap();
-      loadModel();
-      setupEventListeners();
-      animate();
+    }; /* */
+ // --- Initialization --- /* */
+    function init() { /* */
+     initSceneAndCamera(); /* */
+      setupRenderer(); /* */
+      setupLighting(); /* */
+      setupPostProcessing(); /* */
+      setupControls(); /* */
+      setupRaycaster(); /* */
+ setupARElements(); /* */
+      loadEnvironmentMap(); /* */
+      loadModel(); /* */
+      setupEventListeners(); /* */
+      animate(); /* */
     }
-
     // --- Setup Scene and Camera ---
-    function initSceneAndCamera() {
-      scene = new THREE.Scene();
-      scene.background = new THREE.Color(0x0f172a);
-      scene.fog = new THREE.FogExp2(0x0f172a, 0.005);
-      camera = new THREE.PerspectiveCamera(60, canvasContainer.clientWidth / canvasContainer.clientHeight, 0.1, 1000);
-      camera.position.set(0, 1.2, 5);
+    function initSceneAndCamera() { /* */
+      scene = new THREE.Scene(); /* */
+ scene.background = new THREE.Color(0x0f172a); /* */
+      scene.fog = new THREE.FogExp2(0x0f172a, 0.005); /* */
+      camera = new THREE.PerspectiveCamera(60, canvasContainer.clientWidth / canvasContainer.clientHeight, 0.1, 1000); /* */
+ camera.position.set(0, 1.2, 5); /* */
     }
-
     // --- Setup Renderer ---
-    function setupRenderer() {
-      renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-      renderer.setSize(canvasContainer.clientWidth, canvasContainer.clientHeight);
-      renderer.outputEncoding = THREE.sRGBEncoding;
-      renderer.toneMapping = THREE.ACESFilmicToneMapping;
-      renderer.toneMappingExposure = 1.2;
-      renderer.shadowMap.enabled = true;
-      renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-      canvasContainer.appendChild(renderer.domElement);
-    }
-
+    function setupRenderer() { /* */
+      renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" }); /* */
+ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); /* */
+      renderer.setSize(canvasContainer.clientWidth, canvasContainer.clientHeight); /* */
+      renderer.outputEncoding = THREE.sRGBEncoding; /* */
+      renderer.toneMapping = THREE.ACESFilmicToneMapping; /* */
+      renderer.toneMappingExposure = 1.2; /* */
+      renderer.shadowMap.enabled = true; /* */
+      renderer.shadowMap.type = THREE.PCFSoftShadowMap; /* */
+      canvasContainer.appendChild(renderer.domElement); /* */
+ } /* */
     // --- Setup Lighting ---
-    function setupLighting() {
-      const ambientLight = new THREE.AmbientLight(0x303060, 0.5);
-      scene.add(ambientLight);
-      const mainLight = new THREE.DirectionalLight(0x6080ff, 1.0);
-      mainLight.position.set(5, 10, 7.5);
-      mainLight.castShadow = true;
-      mainLight.shadow.mapSize.width = 1024;
-      mainLight.shadow.mapSize.height = 1024;
-      scene.add(mainLight);
-      const fillLight = new THREE.DirectionalLight(0x3040c0, 0.5);
-      fillLight.position.set(-5, 0, -7.5);
-      scene.add(fillLight);
-      const pointLight1 = new THREE.PointLight(0x3060ff, 1, 10);
-      pointLight1.position.set(3, 1, 3);
-      scene.add(pointLight1);
-      const pointLight2 = new THREE.PointLight(0x60ffff, 1, 10);
-      pointLight2.position.set(-3, 1, -3);
-      scene.add(pointLight2);
-    }
-
+    function setupLighting() { /* */
+      const ambientLight = new THREE.AmbientLight(0x303060, 0.5); /* */
+ scene.add(ambientLight); /* */
+      const mainLight = new THREE.DirectionalLight(0x6080ff, 1.0); /* */
+      mainLight.position.set(5, 10, 7.5); /* */
+      mainLight.castShadow = true; /* */
+      mainLight.shadow.mapSize.width = 1024; /* */
+      mainLight.shadow.mapSize.height = 1024; /* */
+      scene.add(mainLight); /* */
+ const fillLight = new THREE.DirectionalLight(0x3040c0, 0.5); /* */
+      fillLight.position.set(-5, 0, -7.5); /* */
+      scene.add(fillLight); /* */
+      const pointLight1 = new THREE.PointLight(0x3060ff, 1, 10); /* */
+      pointLight1.position.set(3, 1, 3); /* */
+ scene.add(pointLight1); /* */
+      const pointLight2 = new THREE.PointLight(0x60ffff, 1, 10); /* */
+      pointLight2.position.set(-3, 1, -3); /* */
+      scene.add(pointLight2); /* */
+ } /* */
     // --- Setup Post-Processing Effects ---
-    function setupPostProcessing() {
-      composer = new EffectComposer(renderer);
-      const renderPass = new RenderPass(scene, camera);
-      composer.addPass(renderPass);
-      bloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 0.2, 0.2, 0.9);
-      composer.addPass(bloomPass);
-      outlinePass = new OutlinePass(new THREE.Vector2(window.innerWidth, window.innerHeight), scene, camera);
-      outlinePass.edgeStrength = 3.0;
-      outlinePass.edgeGlow = 1.0;
-      outlinePass.edgeThickness = 1.5;
-      outlinePass.pulsePeriod = 2;
-      outlinePass.visibleEdgeColor.set(0x3b82f6);
-      outlinePass.hiddenEdgeColor.set(0x3b82f6);
-      composer.addPass(outlinePass);
+    function setupPostProcessing() { /* */
+      composer = new EffectComposer(renderer); /* */
+ const renderPass = new RenderPass(scene, camera); /* */
+      composer.addPass(renderPass); /* */
+      bloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 0.2, 0.2, 0.9); /* */
+      composer.addPass(bloomPass); /* */
+ outlinePass = new OutlinePass(new THREE.Vector2(window.innerWidth, window.innerHeight), scene, camera); /* */
+      outlinePass.edgeStrength = 3.0; /* */
+      outlinePass.edgeGlow = 1.0; /* */
+      outlinePass.edgeThickness = 1.5; /* */
+      outlinePass.pulsePeriod = 2; /* */
+ outlinePass.visibleEdgeColor.set(0x3b82f6); /* */
+      outlinePass.hiddenEdgeColor.set(0x3b82f6); /* */
+      composer.addPass(outlinePass); /* */
     }
-
     // --- Setup Controls ---
-    function setupControls() {
-      controls = new OrbitControls(camera, renderer.domElement);
-      controls.target.set(0, 1.0, 0);
-      controls.enableDamping = true;
-      controls.dampingFactor = 0.05;
-      controls.screenSpacePanning = true;
-      controls.minDistance = 1;
-      controls.maxDistance = 20;
-      controls.autoRotate = false;
-      controls.autoRotateSpeed = 0.5;
-      controls.update();
+    function setupControls() { /* */
+      controls = new OrbitControls(camera, renderer.domElement); /* */
+ controls.target.set(0, 1.0, 0); /* */
+      controls.enableDamping = true; /* */
+      controls.dampingFactor = 0.05; /* */
+      controls.screenSpacePanning = true; /* */
+      controls.minDistance = 1; /* */
+      controls.maxDistance = 20; /* */
+ controls.autoRotate = false; /* */
+      controls.autoRotateSpeed = 0.5; /* */
+      controls.update(); /* */
     }
-
     // --- Setup Raycaster ---
-    function setupRaycaster() {
-      raycaster = new THREE.Raycaster();
-      mouse = new THREE.Vector2();
+    function setupRaycaster() { /* */
+      raycaster = new THREE.Raycaster(); /* */
+ mouse = new THREE.Vector2(); /* */
     }
-
     // --- Setup AR Elements ---
-    function setupARElements() {
-      arLabels = {
-        head: document.getElementById('head-label'),
-        torso: document.getElementById('torso-label'),
-        arm: document.getElementById('arm-label'),
-        leg: document.getElementById('leg-label'),
-        abdomen: document.getElementById('abdomen-label')
-      };
-    }
-
+    function setupARElements() { /* */
+      arLabels = { /* */
+        head: document.getElementById('head-label'), /* */
+        torso: document.getElementById('torso-label'), /* */
+        arm: document.getElementById('arm-label'), /* */
+        leg: document.getElementById('leg-label'), /* */
+        abdomen: document.getElementById('abdomen-label') /* */
+      }; /* */
+ } /* */
     // --- Load Environment Map for Reflections ---
-    function loadEnvironmentMap() {
-      new RGBELoader()
-        .setPath('https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/')
-        .load('royal_esplanade_1k.hdr', function(texture) {
-          texture.mapping = THREE.EquirectangularReflectionMapping;
-          scene.environment = texture;
-        });
-    }
+    function loadEnvironmentMap() { /* */
+      new RGBELoader() /* */
+        .setPath('https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/') /* */
+        .load('royal_esplanade_1k.hdr', function(texture) { /* */
+          texture.mapping = THREE.EquirectangularReflectionMapping; /* */
+          scene.environment = texture; /* */
+        }); /* */
+ } /* */
+    // --- Load 3D Model (Body) ---
+    function loadModel() { /* */
+      const loader = new GLTFLoader(); /* */
+ const modelUrl = './human_body.glb'; /* */
+      progressBar.style.width = '5%'; /* */
+      loadingText.textContent = 'Initializing biometric scanner...'; /* */
+ // Simulate a more extensive scanning process /* */
+      let scanPhase = 0; /* */
+ const scanMessages = [ /* */
+        'Calibrating sensors...', /* */
+        'Initializing body composition scan...', /* */
+        'Mapping skeletal structure...', /* */
+        'Analyzing muscle tissue density...', /* */
+        'Evaluating cardiovascular metrics...', /* */
+        'Measuring neural response patterns...', /* */
+        'Assessing cognitive parameters...', /* */
+        'Compiling biometric profile...', /* */
+        'Identifying assessment requirements...', /* */
 
-    // --- Load 3D Model ---
-    function loadModel() {
-      const loader = new GLTFLoader();
-      const modelUrl = './human_body.glb';
-      progressBar.style.width = '5%';
-      loadingText.textContent = 'Initializing biometric scanner...';
-      
-      // Simulate a more extensive scanning process
-      let scanPhase = 0;
-      const scanMessages = [
-        'Calibrating sensors...',
-        'Initializing body composition scan...',
-        'Mapping skeletal structure...',
-        'Analyzing muscle tissue density...',
-        'Evaluating cardiovascular metrics...',
-        'Measuring neural response patterns...',
-        'Assessing cognitive parameters...',
-        'Compiling biometric profile...',
-        'Identifying assessment requirements...',
-        'Finalizing diagnostic recommendations...'
-      ];
-      
-      const scanInterval = setInterval(() => {
-        scanPhase++;
-        const progress = 5 + (scanPhase * 8);
-        progressBar.style.width = `${Math.min(progress, 95)}%`;
-        
-        if (scanPhase < scanMessages.length) {
-          loadingText.textContent = scanMessages[scanPhase];
-        } else {
-          clearInterval(scanInterval);
-        }
-      }, 800);
-      
-      loader.load(
-        modelUrl,
-        function (gltf) {
-          clearInterval(scanInterval);
-          progressBar.style.width = '100%';
-          loadingText.textContent = 'Biometric scan complete. Preparing results...';
-          
-          model = gltf.scene;
-          optimizeAndCenterModel(model);
-          applyBioScanMaterial(model);
-          scene.add(model);
-          updateControlsForModel();
-          
+         'Finalizing diagnostic recommendations...' /* */
+      ]; /* */
+ const scanInterval = setInterval(() => { /* */
+        scanPhase++; /* */
+        const progress = 5 + (scanPhase * 8); /* */
+        progressBar.style.width = `${Math.min(progress, 95)}%`; /* */
+
+        if (scanPhase < scanMessages.length) { /* */
+          loadingText.textContent = scanMessages[scanPhase]; /* */
+        } else { /* */
+          clearInterval(scanInterval); /* */
+        } /* */
+
+       }, 800); /* */
+
+      loader.load( /* */
+        modelUrl, /* */
+        function (gltf) { /* */
+          clearInterval(scanInterval); /* */
+          progressBar.style.width = '100%'; /* */
+          loadingText.textContent = 'Biometric scan complete. Preparing results...'; /* */
+
+          model = gltf.scene; /* */
+          optimizeAndCenterModel(model); /* */
+
+           applyBioScanMaterial(model); /* */
+          scene.add(model); /* */
+          updateControlsForModel(); /* */
+
           // Delay completion slightly to enhance the "scanning" experience
-          setTimeout(completeLoading, 1500);
+          setTimeout(completeLoading, 1500); /* */
         },
-        function (xhr) {
-          // Progress is handled by our custom scan animation above
+        function (xhr) { /* */
+          // Progress is handled by our custom scan /* */
+ animation above /* */
         },
-        function (error) {
-          clearInterval(scanInterval);
+        function (error) { /* */
+          clearInterval(scanInterval); /* */
           loadingOverlay.innerHTML = `
             <div class="text-center p-6">
               <h2 class="text-2xl font-bold text-red-500 mb-4">Scan Error Detected</h2>
               <p class="text-gray-300 mb-4">We encountered a problem while processing your biometric data.</p>
-              <p class="text-sm text-gray-400 mb-6">${error.message || 'Diagnostic system failure'}</p>
+
+              <p class="text-sm text-gray-400 mb-6">${error.message || /* */
+ 'Diagnostic system failure'}</p> /* */
               <button onclick="location.reload()" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md">
                 Restart Assessment
               </button>
             </div>
-          `;
-        }
-      );
+          `; /* */
+ } /* */
+      ); /* */
     }
-
     // --- Optimize and Center Model with improved zone handling ---
-    function optimizeAndCenterModel(model) {
-      const box = new THREE.Box3().setFromObject(model);
-      const center = box.getCenter(new THREE.Vector3());
-      const size = box.getSize(new THREE.Vector3());
-      const maxDim = Math.max(size.x, size.y, size.z);
-      const desiredHeight = 3.0;
-      const scale = desiredHeight / maxDim;
-      
-      model.scale.set(scale, scale, scale);
-      box.setFromObject(model);
-      box.getCenter(center);
-      model.position.sub(center);
-      model.position.y += box.max.y - center.y;
-      
-      // Store the model's final position and scale
-      model.userData.finalScale = scale;
-      model.userData.finalPosition = model.position.clone();
-      
-      console.log('Model scaled and centered. Scale:', scale, 'Position:', model.position);
-      console.log('Model bounding box:', box.min, box.max);
-      
-      // No need to update zones - we've manually defined them to match the model
+    function optimizeAndCenterModel(model) { /* */
+      const box = new THREE.Box3().setFromObject(model); /* */
+ const center = box.getCenter(new THREE.Vector3()); /* */
+      const size = box.getSize(new THREE.Vector3()); /* */
+      const maxDim = Math.max(size.x, size.y, size.z); /* */
+      const desiredHeight = 3.0; /* */
+ const scale = desiredHeight / maxDim; /* */
+
+      model.scale.set(scale, scale, scale); /* */
+      box.setFromObject(model); /* */
+      box.getCenter(center); /* */
+      model.position.sub(center); /* */
+      model.position.y += box.max.y - center.y; /* */
+ // Store the model's final position and scale /* */
+      model.userData.finalScale = scale; /* */
+      model.userData.finalPosition = model.position.clone(); /* */
+ console.log('Model scaled and centered. Scale:', scale, 'Position:', model.position); /* */
+      console.log('Model bounding box:', box.min, box.max); /* */
+ // No need to update zones - we've manually defined them to match the model /* */
       // Just apply the model position offset to all zones
-      Object.keys(bodyPartsData).forEach(part => {
-        const zone = bodyPartsData[part].zone;
-        zone.translate(model.position);
-      });
-    }
-
+      Object.keys(bodyPartsData).forEach(part => { /* */
+        const zone = bodyPartsData[part].zone; /* */
+        zone.translate(model.position); /* */
+      }); /* */
+ } /* */
     // --- Add visual debug box for zones ---
-    function addDebugBox(partId, box) {
-      const size = new THREE.Vector3();
-      box.getSize(size);
-      
-      const center = new THREE.Vector3();
-      box.getCenter(center);
-      
+    function addDebugBox(partId, box) { /* */
+      const size = new THREE.Vector3(); /* */
+ box.getSize(size); /* */
+
+      const center = new THREE.Vector3(); /* */
+      box.getCenter(center); /* */
+
       // Create different colors for different body parts
-      let color = 0xff0000; // Default red
-      if (partId.includes('Arm')) {
-        color = 0x00ff00; // Green for arms
-      } else if (partId.includes('Leg')) {
-        color = 0x0000ff; // Blue for legs
-      } else if (partId === 'head') {
-        color = 0xffff00; // Yellow for head
-      } else if (partId === 'abdomen') {
-        color = 0xff00ff; // Magenta for abdomen
-      }
-      
-      const geometry = new THREE.BoxGeometry(size.x, size.y, size.z);
-      const material = new THREE.MeshBasicMaterial({
-        color: color,
-        wireframe: true,
-        transparent: true,
-        opacity: 0.5
-      });
-      
-      const debugBox = new THREE.Mesh(geometry, material);
-      debugBox.position.copy(center);
-      debugBox.name = 'debug_' + partId;
-      scene.add(debugBox);
-      
-      console.log(`Added debug box for ${partId} at position ${center.x}, ${center.y}, ${center.z}`);
-    }
+      let color = 0xff0000; /* */
+ // Default red /* */
+      if (partId.includes('Arm')) { /* */
+        color = 0x00ff00; /* */
+ // Green for arms /* */
+      } else if (partId.includes('Leg')) { /* */
+        color = 0x0000ff; /* */
+ // Blue for legs /* */
+      } else if (partId === 'head') { /* */
+        color = 0xffff00; /* */
+ // Yellow for head /* */
+      } else if (partId === 'abdomen') { /* */
+        color = 0xff00ff; /* */
+ // Magenta for abdomen /* */
+      } /* */
 
+      const geometry = new THREE.BoxGeometry(size.x, size.y, size.z); /* */
+ const material = new THREE.MeshBasicMaterial({ /* */
+        color: color, /* */
+        wireframe: true, /* */
+        transparent: true, /* */
+        opacity: 0.5 /* */
+      }); /* */
+ const debugBox = new THREE.Mesh(geometry, material); /* */
+      debugBox.position.copy(center); /* */
+      debugBox.name = 'debug_' + partId; /* */
+      scene.add(debugBox); /* */
+ console.log(`Added debug box for ${partId} at position ${center.x}, ${center.y}, ${center.z}`); /* */
+ } /* */
     // --- Apply Biotech Material Effect for a more medical/futuristic look ---
-    function applyBioScanMaterial(model) {
-      model.traverse((node) => {
-        if (node.isMesh) {
-          node.castShadow = true;
-          node.receiveShadow = true;
-          const material = node.material.clone();
-          material.metalness = 0.3;
-          material.roughness = 0.2;
-          material.envMapIntensity = 1.2;
-          
+    function applyBioScanMaterial(model) { /* */
+      model.traverse((node) => { /* */
+        if (node.isMesh) { /* */
+          node.castShadow = true; /* */
+          node.receiveShadow = true; /* */
+          const material = node.material.clone(); /* */
+          material.metalness = 0.3; /* */
+          material.roughness = /* */
+ 0.2; /* */
+          material.envMapIntensity = 1.2; /* */
+
           // Cool blue medical scan look
-          if (material.color) {
-            material.color.set(0x6090ff);
-            material.emissive.set(0x2050c0);
-            material.emissiveIntensity = 0.2;
-          }
-          
+          if (material.color) { /* */
+            material.color.set(0x6090ff); /* */
+            material.emissive.set(0x2050c0); /* */
+            material.emissiveIntensity = 0.2; /* */
+          } /* */
+
+
           // Add some transparency for a holographic effect
-          material.transparent = true;
-          material.opacity = 0.9;
-          
-          node.material = material;
-        }
-      });
-    }
+          material.transparent = true; /* */
+          material.opacity = 0.9; /* */
 
+          node.material = material; /* */
+        } /* */
+      }); /* */
+ } /* */
     // --- Update Controls For Model ---
-    function updateControlsForModel() {
-      controls.target.set(model.position.x, model.position.y + 1.0, model.position.z);
-      controls.update();
-      initialCameraPosition.copy(camera.position);
-      initialControlsTarget.copy(controls.target);
+    function updateControlsForModel() { /* */
+      controls.target.set(model.position.x, model.position.y + 1.0, model.position.z); /* */
+ controls.update(); /* */
+      initialCameraPosition.copy(camera.position); /* */
+      initialControlsTarget.copy(controls.target); /* */
     }
-
     // --- Complete Loading Process ---
-    function completeLoading() {
-      setTimeout(startScanAnimation, 1000);
-      loadingOverlay.style.transition = 'opacity 1s';
-      loadingOverlay.style.opacity = '0';
-      setTimeout(() => {
-        loadingOverlay.style.display = 'none';
-      }, 1000);
-      updateSystemStatus('ANALYZING', 'green');
+    function completeLoading() { /* */
+      setTimeout(startScanAnimation, 1000); /* */
+ loadingOverlay.style.transition = 'opacity 1s'; /* */
+      loadingOverlay.style.opacity = '0'; /* */
+      setTimeout(() => { /* */
+        loadingOverlay.style.display = 'none'; /* */
+      }, 1000); /* */
+ updateSystemStatus('ANALYZING', 'green'); /* */
     }
-
     // --- Start Scan Animation ---
-    function startScanAnimation() {
-      if (audioEnabled) {
-        soundScan.volume = 0.3;
-        soundScan.play().catch(e => {
-          console.warn("Auto-play prevented:", e);
-          audioEnabled = false;
-        });
-      }
-      controls.autoRotate = true;
-      setTimeout(() => { controls.autoRotate = false; }, 5000);
-      setTimeout(() => showLabel('head'), 500);
-      setTimeout(() => showLabel('torso'), 1000);
-      setTimeout(() => showLabel('arm'), 1500);
-      setTimeout(() => showLabel('leg'), 2000);
-      setTimeout(() => showLabel('abdomen'), 1300);
-      setTimeout(() => { updateSystemStatus('ASSESSMENT READY', 'green'); }, 3000);
+    function startScanAnimation() { /* */
+      if (audioEnabled) { /* */
+        soundScan.volume = 0.3; /* */
+ soundScan.play().catch(e => { /* */
+          console.warn("Auto-play prevented:", e); /* */
+          audioEnabled = false; /* */
+        }); /* */
+ } /* */
+      controls.autoRotate = true; /* */
+      setTimeout(() => { controls.autoRotate = false; }, 5000); /* */
+ setTimeout(() => showLabel('head'), 500); /* */
+      setTimeout(() => showLabel('torso'), 1000); /* */
+      setTimeout(() => showLabel('arm'), 1500); /* */
+      setTimeout(() => showLabel('leg'), 2000); /* */
+      setTimeout(() => showLabel('abdomen'), 1300); /* */
+ setTimeout(() => { updateSystemStatus('ASSESSMENT READY', 'green'); }, 3000); /* */
     }
-
     // --- Show AR Label ---
-    function showLabel(label) {
-      if (arLabels[label]) {
-        arLabels[label].style.opacity = '1';
-      }
+    function showLabel(label) { /* */
+      if (arLabels[label]) { /* */
+        arLabels[label].style.opacity = '1'; /* */
+ } /* */
     }
-
     // --- Update System Status ---
-    function updateSystemStatus(status, color) {
-      systemStatus.textContent = status;
-      systemStatus.className = '';
-      if (color === 'green') {
-        systemStatus.classList.add('text-green-400');
-      } else if (color === 'yellow') {
-        systemStatus.classList.add('text-yellow-400');
-      } else if (color === 'red') {
-        systemStatus.classList.add('text-red-400');
-      }
+    function updateSystemStatus(status, color) { /* */
+      systemStatus.textContent = status; /* */
+ systemStatus.className = ''; /* */
+      if (color === 'green') { /* */
+        systemStatus.classList.add('text-green-400'); /* */
+ } else if (color === 'yellow') { /* */
+        systemStatus.classList.add('text-yellow-400'); /* */
+ } else if (color === 'red') { /* */
+        systemStatus.classList.add('text-red-400'); /* */
+ } /* */
     }
-
     // --- Setup Event Listeners ---
-    function setupEventListeners() {
-      window.addEventListener('resize', onWindowResize);
-      canvasContainer.addEventListener('click', onClick);
-      canvasContainer.addEventListener('dblclick', onDoubleClick);
-      canvasContainer.addEventListener('mousemove', onMouseMove);
-      if (panelToggle) {
-        panelToggle.addEventListener('click', () => {
-          infoPanel.classList.toggle('collapsed');
-        });
-      }
-      
+    function setupEventListeners() { /* */
+      window.addEventListener('resize', onWindowResize); /* */
+ canvasContainer.addEventListener('click', onClick); /* */
+      canvasContainer.addEventListener('dblclick', onDoubleClick); /* */
+      canvasContainer.addEventListener('mousemove', onMouseMove); /* */
+      if (panelToggle) { /* */
+        panelToggle.addEventListener('click', () => { /* */
+          infoPanel.classList.toggle('collapsed'); /* */
+        }); /* */
+ } /* */
+
       // Add keyboard listener for zone visualization toggle
-      document.addEventListener('keydown', function(event) {
-        if (event.key === 'z' || event.key === 'Z') {
-          let zonesVisible = scene.children.some(child => 
-            child.name && child.name.startsWith('debug_')
-          );
-          
-          if (zonesVisible) {
+      document.addEventListener('keydown', function(event) { /* */
+        if (event.key === 'z' || event.key === 'Z') { /* */
+          let zonesVisible = scene.children.some(child => /* */
+            child.name && child.name.startsWith('debug_') /* */
+          ); /* */
+
+
+         if (zonesVisible) { /* */
             // Hide zones
-            scene.children.forEach(child => {
-              if (child.name && child.name.startsWith('debug_')) {
-                scene.remove(child);
-              }
-            });
-            console.log('Zone visualization disabled');
-          } else {
+            scene.children.forEach(child => { /* */
+              if (child.name && child.name.startsWith('debug_')) { /* */
+                scene.remove(child); /* */
+              } /* */
+            }); /* */
+
+           console.log('Zone visualization disabled'); /* */
+          } else { /* */
             // Show zones
-            showAllZones();
-          }
-        }
-      });
-    }
-
+            showAllZones(); /* */
+          } /* */
+        } /* */
+      }); /* */
+ } /* */
     // --- Visualization of all zones for debugging ---
-    function showAllZones() {
+    function showAllZones() { /* */
       // First clear any existing debug boxes
-      scene.children.forEach(child => {
-        if (child.name && child.name.startsWith('debug_')) {
-          scene.remove(child);
-        }
-      });
-      
-      // Create a debug box for each body part zone
-      Object.keys(bodyPartsData).forEach(part => {
-        const zone = bodyPartsData[part].zone;
-        addDebugBox(part, zone);
-      });
-      
-      console.log('Zone visualization enabled');
+      scene.children.forEach(child => { /* */
+        if (child.name && child.name.startsWith('debug_')) { /* */
+          scene.remove(child); /* */
+        } /* */
+      }); /* */
+ // Create a debug box for each body part zone /* */
+      Object.keys(bodyPartsData).forEach(part => { /* */
+        const zone = bodyPartsData[part].zone; /* */
+        addDebugBox(part, zone); /* */
+      }); /* */
+ console.log('Zone visualization enabled'); /* */
     }
-
     // --- Handle Window Resize ---
-    function onWindowResize() {
-      if (!renderer || !camera || !canvasContainer) return;
-      camera.aspect = canvasContainer.clientWidth / canvasContainer.clientHeight;
-      camera.updateProjectionMatrix();
-      renderer.setSize(canvasContainer.clientWidth, canvasContainer.clientHeight);
-      composer.setSize(canvasContainer.clientWidth, canvasContainer.clientHeight);
-      updateARLabelsPositions();
-    }
-
+    function onWindowResize() { /* */
+      if (!renderer || !camera || !canvasContainer) return; /* */
+ camera.aspect = canvasContainer.clientWidth / canvasContainer.clientHeight; /* */
+      camera.updateProjectionMatrix(); /* */
+      renderer.setSize(canvasContainer.clientWidth, canvasContainer.clientHeight); /* */
+      composer.setSize(canvasContainer.clientWidth, canvasContainer.clientHeight); /* */
+      updateARLabelsPositions(); /* */
+ } /* */
     // --- Handle Double Click (Reset View) ---
-    function onDoubleClick() {
-      if (!controls || !initialCameraPosition || !initialControlsTarget) return;
-      if (audioEnabled) {
-        soundClick.volume = 0.2;
-        soundClick.play().catch(e => console.warn("Audio play prevented:", e));
-      }
-      camera.position.copy(initialCameraPosition);
-      controls.target.copy(initialControlsTarget);
-      controls.update();
-      updateSystemStatus('VIEW RESET', 'yellow');
-      setTimeout(() => updateSystemStatus('ASSESSMENT READY', 'green'), 2000);
-    }
-
+    function onDoubleClick() { /* */
+      if (!controls || !initialCameraPosition || !initialControlsTarget) return; /* */
+ if (audioEnabled) { /* */
+        soundClick.volume = 0.2; /* */
+        soundClick.play().catch(e => console.warn("Audio play prevented:", e)); /* */
+ } /* */
+      camera.position.copy(initialCameraPosition); /* */
+      controls.target.copy(initialControlsTarget); /* */
+      controls.update(); /* */
+      updateSystemStatus('VIEW RESET', 'yellow'); /* */
+      setTimeout(() => updateSystemStatus('ASSESSMENT READY', 'green'), 2000); /* */
+ } /* */
     // --- Handle Mouse Move ---
-    function onMouseMove(event) {
-      if (!model) return;
-      const rect = renderer.domElement.getBoundingClientRect();
-      mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
-      mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
-      raycaster.setFromCamera(mouse, camera);
-      const intersects = raycaster.intersectObject(model, true);
-      if (intersects.length > 0) {
-        document.body.style.cursor = 'pointer';
-        const clickPoint = intersects[0].point;
-        const hoveredPart = getBodyPartAtPoint(clickPoint);
-        if (hoveredPart && hoveredPart !== selectedPart) {
-          updateTrackerPosition(clickPoint);
-          if (audioEnabled && Math.random() > 0.95) {
-            soundHover.volume = 0.1;
-            soundHover.play().catch(e => console.warn("Audio play prevented:", e));
-          }
-        }
-      } else {
-        document.body.style.cursor = 'default';
-        hideTracker();
-      }
+    function onMouseMove(event) { /* */
+      if (!model) return; /* */
+ const rect = renderer.domElement.getBoundingClientRect(); /* */
+      mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1; /* */
+ mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1; /* */
+      raycaster.setFromCamera(mouse, camera); /* */
+      const intersects = raycaster.intersectObject(model, true); /* */
+ if (intersects.length > 0) { /* */
+        document.body.style.cursor = 'pointer'; /* */
+        const clickPoint = intersects[0].point; /* */
+ const hoveredPart = getBodyPartAtPoint(clickPoint); /* */
+        if (hoveredPart && hoveredPart !== selectedPart) { /* */
+          updateTrackerPosition(clickPoint); /* */
+ if (audioEnabled && Math.random() > 0.95) { /* */
+            soundHover.volume = 0.1; /* */
+ soundHover.play().catch(e => console.warn("Audio play prevented:", e)); /* */
+          } /* */
+        } /* */
+      } else { /* */
+        document.body.style.cursor = 'default'; /* */
+ hideTracker(); /* */
+      } /* */
     }
-
     // --- Update Tracker Position ---
-    function updateTrackerPosition(position) {
-      if (!tracker) return;
-      const vector = new THREE.Vector3(position.x, position.y, position.z);
-      vector.project(camera);
-      const x = (vector.x * 0.5 + 0.5) * canvasContainer.clientWidth;
-      const y = (-(vector.y * 0.5) + 0.5) * canvasContainer.clientHeight;
-      tracker.style.left = x + 'px';
-      tracker.style.top = y + 'px';
-      tracker.style.opacity = '1';
+    function updateTrackerPosition(position) { /* */
+      if (!tracker) return; /* */
+ const vector = new THREE.Vector3(position.x, position.y, position.z); /* */
+      vector.project(camera); /* */
+      const x = (vector.x * 0.5 + 0.5) * canvasContainer.clientWidth; /* */
+ const y = (-(vector.y * 0.5) + 0.5) * canvasContainer.clientHeight; /* */
+      tracker.style.left = x + 'px'; /* */
+      tracker.style.top = y + 'px'; /* */
+ tracker.style.opacity = '1'; /* */
     }
-
     // --- Hide Tracker ---
-    function hideTracker() {
-      if (tracker) {
-        tracker.style.opacity = '0';
-      }
+    function hideTracker() { /* */
+      if (tracker) { /* */
+        tracker.style.opacity = '0'; /* */
+ } /* */
     }
-
     // --- Improved Click Handler - Now loads tests ---
-    function onClick(event) {
-      if (!model) return;
-      
-      const rect = renderer.domElement.getBoundingClientRect();
-      mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
-      mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
-      
-      raycaster.setFromCamera(mouse, camera);
-      const intersects = raycaster.intersectObject(model, true);
-      
-      if (intersects.length > 0) {
-        const clickPoint = intersects[0].point;
-        console.log('Click Point:', clickPoint);
-        
-        // Try to get body part using the improved function
-        const partId = getBodyPartAtPoint(clickPoint);
-        
-        if (partId) {
-          selectBodyPart(partId, clickPoint);
-          
-          // Load the appropriate test using the window.loadTest function exposed by React
-          if (window.loadTest) {
-            window.loadTest(partId);
-          }
-        } else {
-          console.log('Clicked on model but no part identified');
-        }
-      } else {
-        clearBodyPartSelection();
-      }
-    }
+    function onClick(event) { /* */
+      if (!model) return; /* */
+ const rect = renderer.domElement.getBoundingClientRect(); /* */
+      mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1; /* */
+ mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1; /* */
 
+      raycaster.setFromCamera(mouse, camera); /* */
+      const intersects = raycaster.intersectObject(model, true); /* */
+ if (intersects.length > 0) { /* */
+        const clickPoint = intersects[0].point; /* */
+        console.log('Click Point:', clickPoint); /* */
+ // Try to get body part using the improved function /* */
+        const partId = getBodyPartAtPoint(clickPoint); /* */
+ if (partId) { /* */
+          selectBodyPart(partId, clickPoint); /* */
+ // Load the appropriate test using the window.loadTest function exposed by React /* */
+          if (window.loadTest) { /* */
+            window.loadTest(partId); /* */
+ } /* */
+        } else { /* */
+          console.log('Clicked on model but no part identified'); /* */
+ } /* */
+      } else { /* */
+        clearBodyPartSelection(); /* */
+ } /* */
+    }
     // --- Get Body Part At Point with EXTREMELY aggressive arm and abdomen detection ---
-    function getBodyPartAtPoint(point) {
+    function getBodyPartAtPoint(point) { /* */
       // Debug: Log the point coordinates for troubleshooting
-      console.log('Checking point:', point);
-      
-      const y = point.y;
-      const x = point.x;
-      
+      console.log('Checking point:', point); /* */
+ const y = point.y; /* */
+      const x = point.x; /* */
+
       // EXTREMELY AGGRESSIVE ARM DETECTION
       // This will override the chest detection when x is far enough from center
-      if (y > 1.2 && y < 2.6) {  // FIXED: Raised lower bound from 0.5 to 1.2 to match arm zone
+      if (y > 1.2 && y < 2.6) {  // FIXED: Raised lower bound from 0.5 to 1.2 to match arm zone /* */
         // Far left = left arm (no matter what other detections say)
-        if (x < -0.5) {
-          console.log('Aggressive arm detection: leftArm');
-          return 'leftArm';
+        if (x < -0.5) { /* */
+
+
+ console.log('Aggressive arm detection: leftArm'); /* */
+          return 'leftArm'; /* */
         }
-        
+
         // Far right = right arm (no matter what other detections say)
-        if (x > 0.5) {
-          console.log('Aggressive arm detection: rightArm');
-          return 'rightArm';
-        }
+        if (x > 0.5) { /* */
+          console.log('Aggressive arm detection: rightArm'); /* */
+ return 'rightArm'; /* */
+        } /* */
       }
-      
+
       // Special case for abdomen to make it more central - with CORRECTED height
-      if (Math.abs(x) < 0.4 && y > 1.0 && y < 1.8) {  // Fixed height
-        console.log('Direct abdomen detection');
-        return 'abdomen';
+      if (Math.abs(x) < 0.4 && y > 1.0 && y < 1.8) {  // Fixed height /* */
+        console.log('Direct abdomen detection'); /* */
+ return 'abdomen'; /* */
       }
-      
+
       // Standard detection for all parts
-      const tolerance = 0.3;
-      for (const partId in bodyPartsData) {
-        const zone = bodyPartsData[partId].zone.clone();
-        zone.expandByScalar(tolerance);
-        
-        if (zone.containsPoint(point)) {
-          console.log('Direct hit on zone:', partId);
-          return partId;
-        }
+      const tolerance = 0.3; /* */
+ for (const partId in bodyPartsData) { /* */
+        const zone = bodyPartsData[partId].zone.clone(); /* */
+        zone.expandByScalar(tolerance); /* */
+ if (zone.containsPoint(point)) { /* */
+          console.log('Direct hit on zone:', partId); /* */
+          return partId; /* */
+ } /* */
       }
-      
+
       // Find closest part if no direct hit
-      let closestPart = null;
-      let minDistance = Infinity;
-      
-      for (const partId in bodyPartsData) {
-        const zoneCenter = new THREE.Vector3();
-        bodyPartsData[partId].zone.getCenter(zoneCenter);
-        
-        const distance = point.distanceTo(zoneCenter);
-        console.log(`Distance to ${partId}: ${distance.toFixed(3)}`);
-        
-        if (distance < minDistance) {
-          minDistance = distance;
-          closestPart = partId;
-        }
+      let closestPart = null; /* */
+ let minDistance = Infinity; /* */
+
+      for (const partId in bodyPartsData) { /* */
+        const zoneCenter = new THREE.Vector3(); /* */
+ bodyPartsData[partId].zone.getCenter(zoneCenter); /* */
+
+        const distance = point.distanceTo(zoneCenter); /* */
+        console.log(`Distance to ${partId}: ${distance.toFixed(3)}`); /* */
+
+        if (distance < minDistance) { /* */
+          minDistance = distance; /* */
+ closestPart = partId; /* */
+        } /* */
       }
-      
+
       // Use closest part if it's within a reasonable distance
-      if (minDistance < 1.5) {
-        console.log(`Using closest part: ${closestPart}, distance: ${minDistance.toFixed(3)}`);
-        return closestPart;
+      if (minDistance < 1.5) { /* */
+        console.log(`Using closest part: ${closestPart}, distance: ${minDistance.toFixed(3)}`); /* */
+ return closestPart; /* */
       }
-      
-      console.log('No body part found at point');
-      return null;
-    }
 
+      console.log('No body part found at point'); /* */
+ return null; /* */
+    }
     // --- Select Body Part with improved highlighting ---
-    function selectBodyPart(partId, clickPoint) {
-      if (audioEnabled) {
-        soundClick.volume = 0.3;
-        soundClick.currentTime = 0;
-        soundClick.play().catch(e => console.warn("Audio play prevented:", e));
-      }
-      if (selectedPart === partId) return;
-      selectedPart = partId;
-      updateSystemStatus('INITIALIZING TEST', 'yellow');
-      
+    function selectBodyPart(partId, clickPoint) { /* */
+      if (audioEnabled) { /* */
+        soundClick.volume = 0.3; /* */
+ soundClick.currentTime = 0; /* */
+        soundClick.play().catch(e => console.warn("Audio play prevented:", e)); /* */
+      } /* */
+      if (selectedPart === partId) return; /* */
+ selectedPart = partId; /* */
+      updateSystemStatus('INITIALIZING TEST', 'yellow'); /* */
+
       // Try to select meshes that are within the zone of the selected part
-      const selectedObjects = [];
-      
-      // For arm parts, use special handling
-      if (partId === 'leftArm' || partId === 'rightArm') {
+      const selectedObjects = []; /* */
+ // For arm parts, use special handling /* */
+      if (partId === 'leftArm' || partId === 'rightArm') { /* */
         // Determine which side to check
-        const isLeft = partId === 'leftArm';
-        const xThreshold = isLeft ? 0 : 0; // Use 0 as the dividing line
-        
-        // Check all meshes 
-        model.traverse((object) => {
-          if (object.isMesh) {
-            const meshPosition = new THREE.Vector3();
-            object.getWorldPosition(meshPosition);
-            
-            // For arms, check if the mesh is on the correct side (left or right)
+        const isLeft = partId === 'leftArm'; /* */
+ const xThreshold = isLeft ? 0 : 0; // Use 0 as the dividing line /* */
+
+        // Check all meshes
+        model.traverse((object) => { /* */
+          if (object.isMesh) { /* */
+            const meshPosition = new THREE.Vector3(); /* */
+            object.getWorldPosition(meshPosition); /* */
+
+
+             // For arms, check if the mesh is on the correct side (left or right) /* */
             // and in the appropriate height range
-            if ((isLeft && meshPosition.x < xThreshold) || (!isLeft && meshPosition.x > xThreshold)) {
-              if (meshPosition.y > 1.2 && meshPosition.y < 2.7) { // FIXED: Updated height range for arms
-                selectedObjects.push(object);
-              }
-            }
-          }
-        });
-      } 
+            if ((isLeft && meshPosition.x < xThreshold) || (!isLeft && meshPosition.x > xThreshold)) { /* */
+              if (meshPosition.y > 1.2 && meshPosition.y < 2.7) { // FIXED: Updated height range for arms /* */
+
+                selectedObjects.push(object); /* */
+              } /* */
+            } /* */
+          } /* */
+        }); /* */
+ } /* */
       // Special case for abdomen to ensure correct selection - CORRECTED height
-      else if (partId === 'abdomen') {
-        model.traverse((object) => {
-          if (object.isMesh) {
-            const meshPosition = new THREE.Vector3();
-            object.getWorldPosition(meshPosition);
-            
-            // For abdomen, check if the mesh is in the central area
-            if (Math.abs(meshPosition.x) < 0.5 && meshPosition.y > 1.0 && meshPosition.y < 1.8) {  // Fixed height
-              selectedObjects.push(object);
-            }
-          }
-        });
-      }
+      else if (partId === 'abdomen') { /* */
+        model.traverse((object) => { /* */
+          if (object.isMesh) { /* */
+            const meshPosition = new THREE.Vector3(); /* */
+            object.getWorldPosition(meshPosition); /* */
+
+
+             // For abdomen, check if the mesh is in the central area /* */
+            if (Math.abs(meshPosition.x) < 0.5 && meshPosition.y > 1.0 && meshPosition.y < 1.8) {  // Fixed height /* */
+              selectedObjects.push(object); /* */
+            } /* */
+          } /* */
+        }); /* */
+ } /* */
       // Special case for legs with updated height range
-      else if (partId === 'leftLeg' || partId === 'rightLeg') {
+      else if (partId === 'leftLeg' || partId === 'rightLeg') { /* */
         // Determine which side to check
-        const isLeft = partId === 'leftLeg';
-        const xThreshold = isLeft ? 0 : 0; // Use 0 as the dividing line
-        
-        model.traverse((object) => {
-          if (object.isMesh) {
-            const meshPosition = new THREE.Vector3();
-            object.getWorldPosition(meshPosition);
-            
-            // For legs, check if the mesh is on the correct side (left or right)
+        const isLeft = partId === 'leftLeg'; /* */
+ const xThreshold = isLeft ? 0 : 0; // Use 0 as the dividing line /* */
+
+        model.traverse((object) => { /* */
+          if (object.isMesh) { /* */
+            const meshPosition = new THREE.Vector3(); /* */
+            object.getWorldPosition(meshPosition); /* */
+
+            // For legs, check /* */
+ if the mesh is on the correct side (left or right) /* */
             // and in the appropriate height range
-            if ((isLeft && meshPosition.x < xThreshold) || (!isLeft && meshPosition.x > xThreshold)) {
-              if (meshPosition.y > -0.2 && meshPosition.y < 1.0) { // Updated height range for legs
-                selectedObjects.push(object);
-              }
-            }
-          }
-        });
-      }
-      else {
+            if ((isLeft && meshPosition.x < xThreshold) || (!isLeft && meshPosition.x > xThreshold)) { /* */
+              if (meshPosition.y > -0.2 && meshPosition.y < 1.0) { // Updated height range for legs /* */
+                selectedObjects.push(object); /* */
+
+                 } /* */
+            } /* */
+          } /* */
+        }); /* */
+ } /* */
+      else { /* */
         // For non-arm/non-leg parts, use the standard zone-based approach
-        model.traverse((object) => {
-          if (object.isMesh) {
-            const meshPosition = new THREE.Vector3();
-            object.getWorldPosition(meshPosition);
-            
-            // Use extended zone for selection to be more inclusive
-            const extendedZone = bodyPartsData[partId].zone.clone().expandByScalar(0.3);
-            if (extendedZone.containsPoint(meshPosition)) {
-              selectedObjects.push(object);
-            }
-          }
-        });
-      }
-      
+        model.traverse((object) => { /* */
+          if (object.isMesh) { /* */
+            const meshPosition = new THREE.Vector3(); /* */
+            object.getWorldPosition(meshPosition); /* */
+
+            // Use extended /* */
+ zone for selection to be more inclusive /* */
+            const extendedZone = bodyPartsData[partId].zone.clone().expandByScalar(0.3); /* */
+            if (extendedZone.containsPoint(meshPosition)) { /* */
+              selectedObjects.push(object); /* */
+            } /* */
+          } /* */
+        }); /* */
+ } /* */
+
       // If no meshes were selected, try alternative methods
-      if (selectedObjects.length === 0) {
-        console.log('No meshes in zone, selecting by object names for', partId);
-        
-        // First try: select by part name in mesh name
-        model.traverse((object) => {
-          if (object.isMesh) {
-            const meshName = object.name.toLowerCase();
-            const partName = bodyPartsData[partId].name.toLowerCase();
-            if (
-              meshName.includes(partId) || 
-              meshName.includes(partName) ||
-              (partId === 'head' && (meshName.includes('head') || meshName.includes('skull') || meshName.includes('face'))) ||
-              (partId === 'chest' && (meshName.includes('chest') || meshName.includes('torso') || meshName.includes('rib'))) ||
-              (partId === 'abdomen' && (meshName.includes('abdomen') || meshName.includes('stomach') || meshName.includes('waist'))) ||
-              (partId.includes('arm') && (meshName.includes('arm') || meshName.includes('hand') || meshName.includes('shoulder'))) ||
-              (partId.includes('leg') && (meshName.includes('leg') || meshName.includes('thigh') || meshName.includes('foot')))
-            ) {
-              selectedObjects.push(object);
-            }
-          }
-        });
-        
-        // Last resort: if still no objects found, just highlight any visible mesh
-        if (selectedObjects.length === 0) {
-          model.traverse((object) => {
-            if (object.isMesh && object.visible) {
-              selectedObjects.push(object);
-            }
-          });
-        }
-      }
-      
-      outlinePass.selectedObjects = selectedObjects;
-      if (clickPoint) {
-        updateTrackerPosition(clickPoint);
-      }
-      
-      setTimeout(() => {
-        updateSystemStatus('TEST ACTIVE', 'green');
-      }, 1000);
-    }
+      if (selectedObjects.length === 0) { /* */
+        console.log('No meshes in zone, selecting by object names for', partId); /* */
+ // First try: select by part name in mesh name /* */
+        model.traverse((object) => { /* */
+          if (object.isMesh) { /* */
+            const meshName = object.name.toLowerCase(); /* */
+            const partName = bodyPartsData[partId].name.toLowerCase(); /* */
+            if ( /* */
+              meshName.includes(partId) || /* */
 
+               meshName.includes(partName) || /* */
+              (partId === 'head' && (meshName.includes('head') || meshName.includes('skull') || meshName.includes('face'))) || /* */
+              (partId === 'chest' && (meshName.includes('chest') || meshName.includes('torso') || meshName.includes('rib'))) || /* */
+              (partId === 'abdomen' && (meshName.includes('abdomen') || meshName.includes('stomach') || meshName.includes('waist'))) || /* */
+              (partId.includes('arm') && (meshName.includes('arm') || meshName.includes('hand') || meshName.includes('shoulder'))) || /* */
+
+               (partId.includes('leg') && (meshName.includes('leg') || meshName.includes('thigh') || meshName.includes('foot'))) /* */
+            ) { /* */
+              selectedObjects.push(object); /* */
+ } /* */
+          } /* */
+        }); /* */
+ // Last resort: if still no objects found, just highlight any visible mesh /* */
+        if (selectedObjects.length === 0) { /* */
+          model.traverse((object) => { /* */
+            if (object.isMesh && object.visible) { /* */
+              selectedObjects.push(object); /* */
+            } /* */
+          }); /* */
+ } /* */
+      } /* */
+
+      outlinePass.selectedObjects = selectedObjects; /* */
+ if (clickPoint) { /* */
+        updateTrackerPosition(clickPoint); /* */
+ } /* */
+
+      setTimeout(() => { /* */
+        updateSystemStatus('TEST ACTIVE', 'green'); /* */
+      }, 1000); /* */
+ } /* */
     // --- Clear Body Part Selection ---
-    function clearBodyPartSelection() {
-      selectedPart = null;
-      outlinePass.selectedObjects = [];
-      hideTracker();
-      
+    function clearBodyPartSelection() { /* */
+      selectedPart = null; /* */
+ outlinePass.selectedObjects = []; /* */
+      hideTracker(); /* */
+
       // Reset the test display
-      if (window.loadTest) {
-        window.loadTest(null);
-      }
+      if (window.loadTest) { /* */
+        window.loadTest(null); /* */
+ } /* */
     }
-
     // --- Update AR Labels Positions (Raised) ---
-    function updateARLabelsPositions() {
-      if (!model || !camera) return;
-      // Adjusted positions for labels (raised y-values)
-      const labelPositions = {
-        head: new THREE.Vector3(0, 3.2, 0),
-        torso: new THREE.Vector3(0.6, 2.2, 0),
-        arm: new THREE.Vector3(-1.2, 1.8, 0),
-        leg: new THREE.Vector3(0.6, 0.2, 0),
-        abdomen: new THREE.Vector3(0, 1.4, 0.4) // Added abdomen label position
-      };
-      for (const [label, element] of Object.entries(arLabels)) {
-        if (element && labelPositions[label]) {
-          const position = labelPositions[label].clone();
-          position.add(model.position);
-          const vector = position.project(camera);
-          const x = (vector.x * 0.5 + 0.5) * canvasContainer.clientWidth;
-          const y = (-(vector.y * 0.5) + 0.5) * canvasContainer.clientHeight;
-          element.style.left = (label.includes('right') ? x + 40 : x - 40) + 'px';
-          element.style.top = y + 'px';
-          element.style.display = vector.z < 1 ? 'block' : 'none';
-        }
-      }
+    function updateARLabelsPositions() { /* */
+      if (!model || !camera) return; /* */
+ // Adjusted positions for labels (raised y-values) /* */
+      const labelPositions = { /* */
+        head: new THREE.Vector3(0, 3.2, 0), /* */
+        torso: new THREE.Vector3(0.6, 2.2, 0), /* */
+        arm: new THREE.Vector3(-1.2, 1.8, 0), /* */
+        leg: new THREE.Vector3(0.6, 0.2, 0), /* */
+        abdomen: new THREE.Vector3(0, 1.4, 0.4) // Added abdomen label position /* */
+      }; /* */
+ for (const [label, element] of Object.entries(arLabels)) { /* */
+        if (element && labelPositions[label]) { /* */
+          const position = labelPositions[label].clone(); /* */
+ position.add(model.position); /* */
+          const vector = position.project(camera); /* */
+          const x = (vector.x * 0.5 + 0.5) * canvasContainer.clientWidth; /* */
+ const y = (-(vector.y * 0.5) + 0.5) * canvasContainer.clientHeight; /* */
+ element.style.left = (label.includes('right') ? x + 40 : x - 40) + 'px'; /* */
+          element.style.top = y + 'px'; /* */
+ element.style.display = vector.z < 1 ? 'block' : 'none'; /* */
+        } /* */
+      } /* */
     }
-
     // --- Animation Loop ---
-    function animate() {
-      requestAnimationFrame(animate);
-      if (controls) {
-        controls.update();
-      }
-      if (composer && scene && camera) {
-        composer.render();
-      }
-      updateARLabelsPositions();
+    function animate() { /* */
+      requestAnimationFrame(animate); /* */
+ if (controls) { /* */
+        controls.update(); /* */
+ } /* */
+      if (composer && scene && camera) { /* */
+        composer.render(); /* */
+ } /* */
+      updateARLabelsPositions(); /* */
     }
-
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', init);
-    } else {
-      init();
+    if (document.readyState === 'loading') { /* */
+      document.addEventListener('DOMContentLoaded', init); /* */
+ } else { /* */
+      init(); /* */
     }
   </script>
-</body>
+
+  <script type="module">
+    import * as THREE from 'three';
+    import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+
+    let logoScene, logoCamera, logoRenderer, logoModel;
+
+    function initLogo() {
+        const canvas = document.getElementById('logo-canvas');
+        if (!canvas) {
+            console.error("Logo canvas not found!");
+            return;
+        }
+
+        // Scene
+        logoScene = new THREE.Scene();
+
+        // Camera
+        const aspectRatio = canvas.clientWidth / canvas.clientHeight;
+        logoCamera = new THREE.PerspectiveCamera(50, aspectRatio, 0.1, 10);
+        logoCamera.position.z = 3; // Adjust distance as needed
+
+        // Renderer (with transparent background)
+        logoRenderer = new THREE.WebGLRenderer({
+            canvas: canvas,
+            antialias: true,
+            alpha: true // Enable transparent background
+        });
+        logoRenderer.setPixelRatio(window.devicePixelRatio);
+        logoRenderer.setSize(canvas.clientWidth, canvas.clientHeight);
+        logoRenderer.outputEncoding = THREE.sRGBEncoding; // Match main scene if needed
+
+        // Lighting
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.6); // Softer ambient
+        logoScene.add(ambientLight);
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8); // Simple directional
+        directionalLight.position.set(1, 1, 1);
+        logoScene.add(directionalLight);
+
+        // Load Logo Model
+        const loader = new GLTFLoader();
+        loader.load(
+            './logo.glb', // <<< MAKE SURE logo.glb is in the correct path!
+            function (gltf) {
+                logoModel = gltf.scene;
+
+                // Optional: Scale and center the logo if needed
+                const box = new THREE.Box3().setFromObject(logoModel);
+                const center = box.getCenter(new THREE.Vector3());
+                logoModel.position.sub(center); // Center the model
+
+                // Optional: Adjust scale to fit the small canvas
+                const size = box.getSize(new THREE.Vector3());
+                const maxDim = Math.max(size.x, size.y, size.z);
+                const scale = 1.5 / maxDim; // Adjust '1.5' to fit your logo size
+                logoModel.scale.set(scale, scale, scale);
+
+                logoScene.add(logoModel);
+                animateLogo(); // Start animation only after model is loaded
+            },
+            undefined, // Progress function (optional)
+            function (error) {
+                console.error('Error loading logo.glb:', error);
+            }
+        );
+    }
+
+    // Animation Loop for Logo
+    function animateLogo() {
+        requestAnimationFrame(animateLogo);
+
+        if (logoModel) {
+            // Rotate the logo (adjust speed as needed)
+            logoModel.rotation.y += 0.01;
+            logoModel.rotation.x += 0.005; // Optional: slight rotation on another axis
+        }
+
+        if (logoRenderer && logoScene && logoCamera) {
+            logoRenderer.render(logoScene, logoCamera);
+        }
+    }
+
+    // Handle resize for the logo canvas
+    function onLogoResize() {
+        if (!logoCamera || !logoRenderer) return;
+        const canvas = document.getElementById('logo-canvas');
+        logoCamera.aspect = canvas.clientWidth / canvas.clientHeight;
+        logoCamera.updateProjectionMatrix();
+        logoRenderer.setSize(canvas.clientWidth, canvas.clientHeight);
+    }
+
+    window.addEventListener('resize', onLogoResize);
+
+    // Wait for the main DOM content to be loaded before initializing the logo
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initLogo);
+    } else {
+        initLogo();
+    }
+
+  </script>
+  </body>
 </html>
