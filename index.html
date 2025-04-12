@@ -6,10 +6,10 @@
   <title>BioCare Health Assessment System</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Roboto:wght@300;400;500&display=swap">
-  <!-- React and Babel scripts -->
   <script src="https://unpkg.com/react@17/umd/react.development.js"></script>
   <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <style>
     /* Custom Science/Medical Theme */
     :root {
@@ -113,28 +113,26 @@
       left: 0;
       right: 0;
       bottom: 0;
-      background-color: rgba(15, 23, 42, 0.95);
+      background-color: rgba(15, 23, 42, 0.98); /* Slightly less transparent */
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
       z-index: 50;
+      transition: opacity 1s ease-out; /* Added transition for fade out */
     }
-    .progress-bar {
-      width: 300px;
-      height: 8px;
-      background-color: rgba(255, 255, 255, 0.1);
-      border-radius: 4px;
-      overflow: hidden;
-      margin-top: 2rem;
+    /* === ADDED: Sci-Fi Loader SVG Styles === */
+    #sci-fi-loader svg {
+        width: 100%;
+        height: 100%;
+        overflow: visible; /* Important for rotating elements */
     }
-    .progress-fill {
-      height: 100%;
-      background: linear-gradient(90deg, var(--primary), var(--secondary));
-      width: 0%;
-      transition: width 0.3s ease;
-      box-shadow: var(--glow-primary);
-    }
+    /* === END ADDED === */
+
+    /* Removed old progress bar styles */
+    /* .progress-bar { ... } */
+    /* .progress-fill { ... } */
+
     /* Controls Guide */
     #controls-guide {
       position: absolute;
@@ -176,11 +174,11 @@
       position: absolute;
       width: 100%;
       height: 4px;
-      background: linear-gradient(90deg, 
-          transparent, 
-          rgba(59, 130, 246, 0.2), 
-          rgba(59, 130, 246, 0.5), 
-          rgba(59, 130, 246, 0.2), 
+      background: linear-gradient(90deg,
+          transparent,
+          rgba(59, 130, 246, 0.2),
+          rgba(59, 130, 246, 0.5),
+          rgba(59, 130, 246, 0.2),
           transparent);
       z-index: 10;
       pointer-events: none;
@@ -204,9 +202,9 @@
       border: 1px solid rgba(59, 130, 246, 0.5);
       border-radius: 50%;
       transform: translate(-50%, -50%);
-      background: radial-gradient(circle, 
-          rgba(59, 130, 246, 0.15) 0%, 
-          rgba(16, 185, 129, 0.05) 70%, 
+      background: radial-gradient(circle,
+          rgba(59, 130, 246, 0.15) 0%,
+          rgba(16, 185, 129, 0.05) 70%,
           transparent 100%);
       box-shadow: 0 0 15px rgba(59, 130, 246, 0.3);
       opacity: 0;
@@ -312,32 +310,32 @@
       overflow-y: auto;
       padding: 1rem;
     }
-    
+
     .blink-animation {
       animation: blink 1.5s infinite;
     }
-    
+
     @keyframes blink {
       0% { opacity: 0.3; }
       50% { opacity: 1; }
       100% { opacity: 0.3; }
     }
-    
+
     .pulse-animation {
       animation: pulse 2s infinite;
     }
-    
+
     @keyframes pulse {
       0% { transform: scale(1); }
       50% { transform: scale(1.05); }
       100% { transform: scale(1); }
     }
-    
+
     .glow {
       box-shadow: 0 0 15px white;
       animation: glow 1.5s infinite alternate;
     }
-    
+
     @keyframes glow {
       from { box-shadow: 0 0 5px rgba(59, 130, 246, 0.6); }
       to { box-shadow: 0 0 20px rgba(59, 130, 246, 0.9); }
@@ -345,27 +343,36 @@
   </style>
 </head>
 <body>
-  <!-- Loading Overlay -->
   <div id="loading-overlay">
-    <h2 class="text-4xl font-bold text-center mb-2 glow-text">BIOCARE ASSESSMENT SYSTEM</h2>
-    <p class="text-blue-400 mb-2">Biometric scanning in progress...</p>
-    <p class="text-gray-400 mb-6">Please remain still while we analyze your health parameters</p>
-    <div class="progress-bar">
-      <div class="progress-fill" id="progress-bar"></div>
-    </div>
-    <p id="loading-text" class="mt-4 text-sm text-gray-300 blink-animation">Initializing bioscan...</p>
+      <h2 class="text-4xl font-bold text-center mb-2 glow-text">BIOCARE ASSESSMENT SYSTEM</h2>
+      <p class="text-blue-400 mb-2">Biometric scanning in progress...</p>
+      <p class="text-gray-400 mb-6">Please remain still while we analyze your health parameters</p>
+
+      <div id="sci-fi-loader" class="w-40 h-40 relative mt-8">
+          <svg viewBox="0 0 100 100" class="absolute inset-0">
+              <circle id="ring1" cx="50" cy="50" r="45" fill="none" stroke="rgba(59, 130, 246, 0.2)" stroke-width="1"/>
+              <circle id="ring2" cx="50" cy="50" r="35" fill="none" stroke="rgba(59, 130, 246, 0.3)" stroke-width="1"/>
+              <circle id="ring3" cx="50" cy="50" r="25" fill="none" stroke="rgba(16, 185, 129, 0.4)" stroke-width="1"/>
+
+              <path id="progress-arc" fill="none" stroke="var(--secondary)" stroke-width="3" stroke-linecap="round"
+                    d="M 50,5 A 45,45 0 1 1 49.99,5"  /* Full circle path starting/ending near top */
+                    stroke-dasharray="283" stroke-dashoffset="283" /> /* Approx circumference for r=45 */
+
+              <line id="scan-line" x1="50" y1="5" x2="50" y2="15" stroke="var(--primary)" stroke-width="1.5" />
+
+               <circle id="center-pulse" cx="50" cy="50" r="3" fill="var(--accent)" />
+          </svg>
+      </div>
+      <p id="loading-text" class="mt-8 text-sm text-gray-300 blink-animation">Initializing bioscan...</p>
   </div>
 
   <div class="flex h-screen md:flex-row flex-col-reverse">
-    <!-- Information Panel - Will be replaced with React assessment tests -->
     <div id="info-panel" class="relative">
-      <!-- Mobile Toggle -->
       <button id="panel-toggle" class="panel-toggle hidden absolute top-4 right-4 md:hidden bg-gray-700 p-2 rounded-md hover:bg-gray-600 focus:outline-none">
         <svg id="toggle-panel-icon" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
           <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
         </svg>
       </button>
-      <!-- Header Section -->
       <div class="p-6">
         <div class="sci-title pl-6 mb-4">
           <h1 class="text-2xl font-bold">BioCare Assessment System</h1>
@@ -379,15 +386,11 @@
           <div class="text-xs text-green-400">ASSESSMENT ACTIVE</div>
         </div>
       </div>
-      <!-- Test Container - Will be populated by React -->
       <div id="test-container" class="px-6 pb-6">
-        <!-- React content will be rendered here -->
-      </div>
+        </div>
     </div>
 
-    <!-- 3D Canvas Container -->
     <div id="canvas-container" class="relative">
-      <!-- HUD Elements -->
       <div class="hud-element body-stat sci-panel">
         <div class="text-xs text-blue-300 mb-1">DIAGNOSTIC STATUS</div>
         <div class="text-xs">
@@ -397,17 +400,13 @@
           <span>RECOMMENDED TESTS</span>: <span class="text-yellow-400">5</span>
         </div>
       </div>
-      <!-- Scan Line Animation -->
       <div class="body-scan-line"></div>
-      <!-- Target Tracker (will be positioned in JS) -->
       <div id="body-tracker" class="tracker"></div>
-      <!-- AR Labels (renamed to test names) -->
       <div id="head-label" class="ar-label ar-label-left">COGNITIVE ASSESSMENT</div>
       <div id="torso-label" class="ar-label ar-label-right">CARDIOVASCULAR TEST</div>
       <div id="arm-label" class="ar-label ar-label-left">REACTION ASSESSMENT</div>
       <div id="leg-label" class="ar-label ar-label-right">STABILITY ASSESSMENT</div>
       <div id="abdomen-label" class="ar-label ar-label-right">BODY COMPOSITION</div>
-      <!-- Controls Guide -->
       <div id="controls-guide" class="sci-panel">
         <div class="text-xs text-blue-300 mb-1 font-semibold">INTERFACE CONTROLS</div>
         <div class="grid grid-cols-2 gap-x-3 gap-y-1 text-xs">
@@ -421,7 +420,6 @@
     </div>
   </div>
 
-  <!-- Audio Elements -->
   <audio id="sound-click" preload="auto">
     <source src="https://assets.mixkit.co/sfx/preview/mixkit-modern-technology-select-3124.mp3" type="audio/mpeg">
   </audio>
@@ -432,31 +430,33 @@
     <source src="https://assets.mixkit.co/sfx/preview/mixkit-sci-fi-interface-zoom-890.mp3" type="audio/mpeg">
   </audio>
 
-  <!-- React components -->
   <script type="text/babel">
+    // ========================================================================
+    // ===== INSERT ALL YOUR REACT COMPONENTS HERE (CognitiveTest, etc.) ======
+    // ========================================================================
     // Component to manage which test is shown
     const TestManager = () => {
       const [activeTest, setActiveTest] = React.useState(null);
-      
+
       // Function to be exposed globally
       window.loadTest = (testId) => {
         setActiveTest(testId);
       };
-      
+
       // Render the appropriate test component based on the active test
       const renderTest = () => {
         switch(activeTest) {
           case 'head': return <CognitiveTest />;
           case 'chest': return <CardiovascularTest />;
           case 'abdomen': return <BodyCompositionTest />;
-          case 'leftArm': 
+          case 'leftArm':
           case 'rightArm': return <ReactionTest />;
           case 'leftLeg':
           case 'rightLeg': return <StabilityTest />;
           default: return <WelcomeScreen />;
         }
       };
-      
+
       return (
         <div className="test-panel">
           {renderTest()}
@@ -468,15 +468,15 @@
     const WelcomeScreen = () => (
       <div className="sci-panel p-6 info-card show text-gray-200">
         <h2 className="text-xl font-bold mb-4 text-blue-400">Bioscan Complete</h2>
-        
+
         <p className="mb-4">
           Our advanced AI diagnostic system has completed your biometric scan and identified specific areas that require assessment to evaluate your overall health status.
         </p>
-        
+
         <p className="mb-4">
           Based on your unique physical profile, we've customized a series of non-invasive diagnostic tests to measure your physiological and cognitive functions. These assessments will provide valuable data about your current health condition.
         </p>
-        
+
         <div className="my-5 p-4 bg-blue-900 bg-opacity-30 rounded-lg border border-blue-700">
           <h3 className="font-medium text-lg mb-2 text-blue-300">Required Assessments:</h3>
           <ul className="space-y-2">
@@ -517,11 +517,11 @@
             </li>
           </ul>
         </div>
-        
+
         <p className="mb-2">
           Please select any highlighted area on your biometric model to begin the corresponding assessment. Your results will be analyzed to create a comprehensive health profile.
         </p>
-        
+
         <p className="text-xs text-gray-400 mt-4">
           <strong>Note:</strong> This medical assessment system is for educational and demonstration purposes only. For accurate health diagnostics, please consult licensed healthcare professionals.
         </p>
@@ -535,58 +535,59 @@
       const [userSequence, setUserSequence] = React.useState([]);
       const [level, setLevel] = React.useState(1);
       const [currentShowIndex, setCurrentShowIndex] = React.useState(0);
-      
+
       // Colors for the memory game
       const colors = ['red', 'blue', 'green', 'yellow'];
-      
+
       // Start a new test
       const startTest = () => {
         // Generate random sequence based on level (level + 2 items)
-        const newSequence = Array.from({ length: level + 2 }, () => 
+        const newSequence = Array.from({ length: level + 2 }, () =>
           colors[Math.floor(Math.random() * colors.length)]
         );
         setSequence(newSequence);
         setUserSequence([]);
         setGameState('showing');
         setCurrentShowIndex(0);
-        
+
         // Start showing the sequence
         showNextColor(newSequence, 0);
       };
-      
+
       // Function to display the sequence one color at a time
       const showNextColor = (seq, index) => {
         setCurrentShowIndex(index);
-        
+
         // If we've shown all colors, move to playing state
         if (index >= seq.length) {
           setTimeout(() => {
             setGameState('playing');
-            setCurrentShowIndex(-1);
-          }, 300);
+            setCurrentShowIndex(-1); // Indicate showing is done
+          }, 500); // Shorter delay before user can play
           return;
         }
-        
+
         // Show the next color after a delay
         setTimeout(() => {
           showNextColor(seq, index + 1);
-        }, 800); // Show each color for 800ms
+        }, 700); // Show each color for 700ms
       };
-      
+
+
       // Handle user selection
       const handleColorClick = (color) => {
         if (gameState !== 'playing') return;
-        
+
         const newUserSequence = [...userSequence, color];
         setUserSequence(newUserSequence);
-        
+
         // Check if selection is correct
         const index = userSequence.length;
         if (color !== sequence[index]) {
           setGameState('failure');
           return;
         }
-        
+
         // Check if sequence is complete
         if (newUserSequence.length === sequence.length) {
           setGameState('success');
@@ -597,26 +598,26 @@
           }, 2000);
         }
       };
-      
+
       // Reset the test
       const resetTest = () => {
         setLevel(1);
         setGameState('intro');
       };
-      
+
       return (
         <div className="max-w-md mx-auto bg-gray-900 p-6 rounded-lg shadow-md">
           <h2 className="text-xl font-semibold mb-2 text-white">Cognitive Assessment</h2>
           <p className="text-sm text-gray-400 mb-4">Testing short-term memory and sequence recall abilities</p>
-          
+
           {gameState === 'intro' && (
             <div>
               <p className="mb-4 text-gray-300">
-                This test evaluates your cognitive processing and memory function. Observe the sequence of colors and repeat it exactly. 
+                This test evaluates your cognitive processing and memory function. Observe the sequence of colors and repeat it exactly.
                 <br/><br/>
                 Current difficulty: Level {level} ({level + 2} elements)
               </p>
-              <button 
+              <button
                 onClick={startTest}
                 className="w-full py-2 bg-blue-600 text-white rounded hover:bg-blue-500"
               >
@@ -624,32 +625,33 @@
               </button>
             </div>
           )}
-          
+
           {gameState === 'showing' && (
             <div>
               <p className="mb-3 text-gray-300">Memorize this sequence:</p>
               <div className="grid grid-cols-2 gap-3 mb-4">
-                {colors.map((color, index) => (
-                  <button
+                {colors.map((color) => (
+                  <div /* Changed from button to div */
                     key={color}
-                    className={`h-24 rounded-lg border-2 ${
+                    className={`h-24 rounded-lg border-2 flex items-center justify-center ${
                       sequence[currentShowIndex] === color ? 'border-white border-4 glow' : 'border-gray-800'
-                    } capitalize font-bold ${
-                      color === 'red' ? 'bg-red-600 text-white' :
-                      color === 'blue' ? 'bg-blue-600 text-white' :
-                      color === 'green' ? 'bg-green-600 text-white' :
-                      'bg-yellow-500 text-white'
+                    } capitalize font-bold text-white ${
+                      color === 'red' ? 'bg-red-600' :
+                      color === 'blue' ? 'bg-blue-600' :
+                      color === 'green' ? 'bg-green-600' :
+                      'bg-yellow-500'
                     }`}
-                    disabled={true}
+                    // disabled={true} // Removed disabled
                   >
-                    {color}
-                  </button>
+                     {sequence[currentShowIndex] === color ? color : ''} {/* Show text only when active */}
+                  </div>
                 ))}
               </div>
               <p className="text-center text-gray-300">Pattern recording in progress...</p>
             </div>
           )}
-          
+
+
           {gameState === 'playing' && (
             <div>
               <p className="mb-3 text-gray-300">Reproduce the sequence:</p>
@@ -658,11 +660,11 @@
                   <button
                     key={color}
                     onClick={() => handleColorClick(color)}
-                    className={`h-24 rounded-lg border-2 border-gray-800 capitalize font-bold ${
-                      color === 'red' ? 'bg-red-600 text-white' :
-                      color === 'blue' ? 'bg-blue-600 text-white' :
-                      color === 'green' ? 'bg-green-600 text-white' :
-                      'bg-yellow-500 text-white'
+                    className={`h-24 rounded-lg border-2 border-gray-800 capitalize font-bold text-white active:scale-95 transition-transform ${
+                      color === 'red' ? 'bg-red-600 hover:bg-red-500' :
+                      color === 'blue' ? 'bg-blue-600 hover:bg-blue-500' :
+                      color === 'green' ? 'bg-green-600 hover:bg-green-500' :
+                      'bg-yellow-500 hover:bg-yellow-400'
                     }`}
                   >
                     {color}
@@ -671,7 +673,7 @@
               </div>
               <div className="flex justify-between items-center text-gray-300">
                 <span>Sequence: {userSequence.length}/{sequence.length}</span>
-                <button 
+                <button
                   onClick={resetTest}
                   className="text-sm px-3 py-1 bg-gray-800 rounded hover:bg-gray-700"
                 >
@@ -680,7 +682,7 @@
               </div>
             </div>
           )}
-          
+
           {gameState === 'success' && (
             <div className="text-center py-6">
               <p className="text-green-400 text-xl mb-2">Assessment Successful</p>
@@ -688,12 +690,12 @@
               <p className="text-sm mt-3 text-gray-400">Advancing to higher difficulty level...</p>
             </div>
           )}
-          
+
           {gameState === 'failure' && (
             <div className="text-center py-6">
               <p className="text-red-400 text-xl mb-2">Sequence Mismatch</p>
               <p className="text-gray-300">Your cognitive assessment indicates level {level} function.</p>
-              <button 
+              <button
                 onClick={resetTest}
                 className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-500"
               >
@@ -710,65 +712,66 @@
       const [heartRate, setHeartRate] = React.useState('');
       const [age, setAge] = React.useState('');
       const [result, setResult] = React.useState(null);
-      
+
       const checkHeartRate = () => {
         const rate = parseInt(heartRate);
         const ageVal = parseInt(age);
-        
-        if (isNaN(rate) || isNaN(ageVal)) {
+
+        if (isNaN(rate) || isNaN(ageVal) || rate <= 0 || ageVal <= 0) { // Added value checks
           setResult({
             status: 'error',
-            message: 'Please enter valid numbers for heart rate and age.'
+            message: 'Please enter valid positive numbers for heart rate and age.'
           });
           return;
         }
-        
+
         // Heart rate evaluation based on age
         let status, message;
-        
+
         if (ageVal < 18) {
           if (rate < 60) {
             status = 'warning';
-            message = 'Your heart rate appears to be below the typical range for your age group.';
+            message = 'Your heart rate appears to be below the typical range for your age group (60-100 BPM).';
           } else if (rate > 100) {
             status = 'warning';
-            message = 'Your heart rate appears to be elevated for your age group.';
+            message = 'Your heart rate appears to be elevated for your age group (60-100 BPM).';
           } else {
             status = 'good';
-            message = 'Your heart rate falls within normal parameters for your age group.';
+            message = 'Your heart rate falls within normal parameters for your age group (60-100 BPM).';
           }
         } else if (ageVal >= 18 && ageVal < 65) {
           if (rate < 60) {
             status = 'warning';
-            message = 'Your resting heart rate is below typical adult range. This could be normal for athletes or those with high cardiovascular fitness.';
+            message = 'Your resting heart rate is below typical adult range (60-100 BPM). This could be normal for athletes or indicate an issue.';
           } else if (rate > 100) {
             status = 'warning';
-            message = 'Your heart rate is elevated above the typical adult range.';
+            message = 'Your heart rate is elevated above the typical adult range (60-100 BPM).';
           } else {
             status = 'good';
-            message = 'Your cardiovascular indicators are within standard adult parameters.';
+            message = 'Your cardiovascular indicators are within standard adult parameters (60-100 BPM).';
           }
-        } else {
-          if (rate < 50) {
+        } else { // Age 65+
+          // Normal range for seniors can be slightly lower, e.g., 50-90 or 60-90
+          if (rate < 55) { // Adjusted lower bound
             status = 'warning';
-            message = 'Your heart rate is below the typical range for your age demographic.';
-          } else if (rate > 90) {
+            message = 'Your heart rate is below the typical range for your age demographic (approx. 55-90 BPM).';
+          } else if (rate > 90) { // Adjusted upper bound
             status = 'warning';
-            message = 'Your heart rate appears elevated for your age demographic.';
+            message = 'Your heart rate appears elevated for your age demographic (approx. 55-90 BPM).';
           } else {
             status = 'good';
-            message = 'Your cardiovascular readings are within normal parameters for your age demographic.';
+            message = 'Your cardiovascular readings are within normal parameters for your age demographic (approx. 55-90 BPM).';
           }
         }
-        
+
         setResult({ status, message, rate });
       };
-      
+
       return (
         <div className="max-w-md mx-auto bg-gray-900 p-6 rounded-lg shadow-md">
           <h2 className="text-xl font-semibold mb-2 text-white">Cardiovascular Assessment</h2>
           <p className="text-sm text-gray-400 mb-4">Analyzing heart rate indicators and cardiovascular health</p>
-          
+
           <div className="mb-4">
             <label className="block text-gray-300 mb-2">Biological Age (years):</label>
             <input
@@ -779,7 +782,7 @@
               className="w-full p-2 border rounded bg-gray-800 text-white border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400"
             />
           </div>
-          
+
           <div className="mb-6">
             <label className="block text-gray-300 mb-2">Resting Heart Rate (BPM):</label>
             <input
@@ -790,44 +793,44 @@
               className="w-full p-2 border rounded bg-gray-800 text-white border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400"
             />
             <p className="text-sm text-gray-500 mt-1">
-              Measurement method: Locate radial or carotid pulse, count beats for 15 seconds and multiply by 4.
+              Measurement method: Locate radial or carotid pulse, count beats for 15 seconds and multiply by 4. Measure when relaxed.
             </p>
           </div>
-          
-          <button 
+
+          <button
             onClick={checkHeartRate}
             className="w-full py-2 bg-blue-600 text-white rounded hover:bg-blue-500"
           >
             Analyze Cardiovascular Metrics
           </button>
-          
+
           {result && (
             <div className={`mt-6 p-4 rounded-lg ${
-              result.status === 'good' ? 'bg-green-900 bg-opacity-30 border border-green-700' : 
+              result.status === 'good' ? 'bg-green-900 bg-opacity-30 border border-green-700' :
               result.status === 'warning' ? 'bg-yellow-900 bg-opacity-30 border border-yellow-700' :
               'bg-red-900 bg-opacity-30 border border-red-700'
             }`}>
               <div className="flex items-center mb-2">
                 <span className="text-2xl mr-2">
-                  {result.status === 'good' ? '✅' : 
-                  result.status === 'warning' ? '⚠️' : 
+                  {result.status === 'good' ? '✅' :
+                  result.status === 'warning' ? '⚠️' :
                   '❌'}
                 </span>
                 <h3 className="font-medium text-white">
-                  {result.status === 'good' ? 'Normal Parameters' : 
-                  result.status === 'warning' ? 'Further Monitoring Recommended' : 
+                  {result.status === 'good' ? 'Normal Parameters' :
+                  result.status === 'warning' ? 'Further Monitoring Recommended' :
                   'Input Error'}
                 </h3>
               </div>
               <p className={`${
-                result.status === 'good' ? 'text-green-300' : 
+                result.status === 'good' ? 'text-green-300' :
                 result.status === 'warning' ? 'text-yellow-300' :
                 'text-red-300'
               }`}>
                 {result.message}
               </p>
               <p className="mt-3 text-sm text-gray-400">
-                <strong>Important:</strong> This is not a medical diagnosis. For accurate cardiovascular assessment, consult a qualified healthcare provider.
+                <strong>Important:</strong> This is not a medical diagnosis. Many factors affect heart rate. Consult a qualified healthcare provider for accurate assessment.
               </p>
             </div>
           )}
@@ -835,45 +838,51 @@
       );
     };
 
+
     // ABDOMEN: Body Composition Test
     const BodyCompositionTest = () => {
       const [height, setHeight] = React.useState('');
       const [weight, setWeight] = React.useState('');
       const [unit, setUnit] = React.useState('metric'); // metric or imperial
       const [result, setResult] = React.useState(null);
-      
+
       const calculateBMI = () => {
         let bmi, heightVal, weightVal;
-        
+        let inputError = false;
+
         if (unit === 'metric') {
           // Metric: weight in kg, height in cm
           heightVal = parseFloat(height);
           weightVal = parseFloat(weight);
-          
-          if (isNaN(heightVal) || isNaN(weightVal) || heightVal <= 0 || weightVal <= 0) {
-            setResult({ error: 'Please enter valid height and weight values' });
-            return;
+
+          if (isNaN(heightVal) || isNaN(weightVal) || heightVal <= 50 || weightVal <= 10) { // Basic validation
+             inputError = true;
+          } else {
+             // Convert cm to meters and calculate BMI
+             bmi = weightVal / Math.pow(heightVal / 100, 2);
           }
-          
-          // Convert cm to meters and calculate BMI
-          bmi = weightVal / Math.pow(heightVal / 100, 2);
         } else {
           // Imperial: weight in lbs, height in inches
           heightVal = parseFloat(height);
           weightVal = parseFloat(weight);
-          
-          if (isNaN(heightVal) || isNaN(weightVal) || heightVal <= 0 || weightVal <= 0) {
-            setResult({ error: 'Please enter valid height and weight values' });
-            return;
+
+          if (isNaN(heightVal) || isNaN(weightVal) || heightVal <= 20 || weightVal <= 20) { // Basic validation
+            inputError = true;
+          } else {
+            // Imperial BMI formula: (weight in pounds * 703) / (height in inches)²
+            bmi = (weightVal * 703) / Math.pow(heightVal, 2);
           }
-          
-          // Imperial BMI formula: (weight in pounds * 703) / (height in inches)²
-          bmi = (weightVal * 703) / Math.pow(heightVal, 2);
         }
-        
+
+        if(inputError) {
+             setResult({ error: `Please enter valid ${unit === 'metric' ? 'height (cm > 50) and weight (kg > 10)' : 'height (in > 20) and weight (lbs > 20)' } values.` });
+             return;
+        }
+
+
         // Round to one decimal place
         bmi = Math.round(bmi * 10) / 10;
-        
+
         // Determine BMI category
         let category, color;
         if (bmi < 18.5) {
@@ -889,33 +898,33 @@
           category = 'Obesity';
           color = 'text-red-400';
         }
-        
+
         setResult({ bmi, category, color });
       };
-      
+
       return (
         <div className="max-w-md mx-auto bg-gray-900 p-6 rounded-lg shadow-md">
           <h2 className="text-xl font-semibold mb-2 text-white">Body Composition Analysis</h2>
-          <p className="text-sm text-gray-400 mb-4">Evaluating body mass index and tissue composition</p>
-          
+          <p className="text-sm text-gray-400 mb-4">Evaluating body mass index (BMI)</p>
+
           <div className="mb-4">
             <label className="block text-gray-300 mb-2">Measurement System:</label>
             <div className="flex">
-              <button 
-                onClick={() => setUnit('metric')}
-                className={`flex-1 py-2 ${unit === 'metric' ? 'bg-blue-600 text-white' : 'bg-gray-800 text-gray-300'} rounded-l`}
+              <button
+                onClick={() => { setUnit('metric'); setResult(null); setHeight(''); setWeight(''); }} // Reset on unit change
+                className={`flex-1 py-2 ${unit === 'metric' ? 'bg-blue-600 text-white' : 'bg-gray-800 text-gray-300'} rounded-l hover:bg-opacity-80`}
               >
                 Metric
               </button>
-              <button 
-                onClick={() => setUnit('imperial')}
-                className={`flex-1 py-2 ${unit === 'imperial' ? 'bg-blue-600 text-white' : 'bg-gray-800 text-gray-300'} rounded-r`}
+              <button
+                onClick={() => { setUnit('imperial'); setResult(null); setHeight(''); setWeight(''); }} // Reset on unit change
+                className={`flex-1 py-2 ${unit === 'imperial' ? 'bg-blue-600 text-white' : 'bg-gray-800 text-gray-300'} rounded-r hover:bg-opacity-80`}
               >
                 Imperial
               </button>
             </div>
           </div>
-          
+
           <div className="mb-4">
             <label className="block text-gray-300 mb-2">
               Height {unit === 'metric' ? '(cm)' : '(inches)'}:
@@ -928,7 +937,7 @@
               className="w-full p-2 border rounded bg-gray-800 text-white border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400"
             />
           </div>
-          
+
           <div className="mb-6">
             <label className="block text-gray-300 mb-2">
               Weight {unit === 'metric' ? '(kg)' : '(lbs)'}:
@@ -941,19 +950,19 @@
               className="w-full p-2 border rounded bg-gray-800 text-white border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400"
             />
           </div>
-          
-          <button 
+
+          <button
             onClick={calculateBMI}
             className="w-full py-2 bg-blue-600 text-white rounded hover:bg-blue-500"
           >
             Analyze Body Composition
           </button>
-          
+
           {result && !result.error && (
             <div className="mt-6 p-4 bg-gray-800 rounded-lg border border-gray-700">
               <h3 className="font-medium text-lg mb-3 text-white">Analysis Results</h3>
               <div className="flex justify-between mb-2 text-gray-300">
-                <span>Body Mass Index:</span>
+                <span>Body Mass Index (BMI):</span>
                 <span className="font-semibold text-white">{result.bmi}</span>
               </div>
               <div className="flex justify-between text-gray-300">
@@ -968,10 +977,11 @@
                   <li><span className="text-yellow-400 font-medium">25 - 29.9:</span> Overweight</li>
                   <li><span className="text-red-400 font-medium">30 and above:</span> Obesity</li>
                 </ul>
+                 <p className="mt-3 text-xs text-gray-500">Note: BMI is a general indicator and may not accurately reflect body composition for athletes or certain individuals.</p>
               </div>
             </div>
           )}
-          
+
           {result && result.error && (
             <div className="mt-4 p-3 bg-red-900 bg-opacity-30 text-red-300 rounded border border-red-700">
               {result.error}
@@ -981,129 +991,153 @@
       );
     };
 
+
     // HANDS/ARMS: Reaction Test
     const ReactionTest = () => {
       const [state, setState] = React.useState('ready'); // ready, waiting, click, results
+      const [timeoutId, setTimeoutId] = React.useState(null); // Store timeout ID
       const [startTime, setStartTime] = React.useState(null);
       const [reactionTime, setReactionTime] = React.useState(null);
       const [results, setResults] = React.useState([]);
-      
+
+       // Cleanup timeout on unmount or state change away from waiting
+       React.useEffect(() => {
+           return () => {
+               if (timeoutId) {
+                   clearTimeout(timeoutId);
+               }
+           };
+       }, [timeoutId]);
+
+
       // Start the test
       const startTest = () => {
         setState('waiting');
-        
-        // Random delay between 1-5 seconds
-        const delay = 1000 + Math.random() * 4000;
-        
-        setTimeout(() => {
+        setReactionTime(null); // Clear previous result display
+
+        // Random delay between 1.5 - 4.5 seconds
+        const delay = 1500 + Math.random() * 3000;
+
+        const id = setTimeout(() => {
           setStartTime(Date.now());
           setState('click');
+          setTimeoutId(null); // Clear the stored ID once the timeout fires
         }, delay);
+        setTimeoutId(id); // Store the timeout ID
       };
-      
+
       // Handle user click
       const handleClick = () => {
         if (state === 'waiting') {
           // Clicked too early
-          setState('ready');
-          alert('Early response detected. Wait for the green signal before responding.');
+          if (timeoutId) {
+            clearTimeout(timeoutId); // Cancel the scheduled change to green
+            setTimeoutId(null);
+          }
+          setState('ready'); // Go back to ready state
+          setReactionTime(-1); // Indicate early click
         } else if (state === 'click') {
           // Measure reaction time
           const endTime = Date.now();
           const time = endTime - startTime;
           setReactionTime(time);
-          
+
           // Add to results history (keep last 5)
           const newResults = [time, ...results].slice(0, 5);
           setResults(newResults);
-          
+
           setState('results');
         }
       };
-      
+
       // Get feedback based on reaction time
       const getFeedback = (time) => {
+        if (time === -1) return { text: 'Early response detected! Wait for green.', color: 'text-red-400' };
         if (time < 200) return { text: 'Exceptional response time!', color: 'text-purple-400' };
         if (time < 250) return { text: 'Excellent neural response!', color: 'text-indigo-400' };
         if (time < 300) return { text: 'Very Good reflexes!', color: 'text-blue-400' };
         if (time < 350) return { text: 'Good response time', color: 'text-green-400' };
-        if (time < 400) return { text: 'Average reaction speed', color: 'text-yellow-400' };
-        return { text: 'Response time could be improved', color: 'text-red-400' };
+        if (time < 450) return { text: 'Average reaction speed', color: 'text-yellow-400' }; // Increased threshold
+        return { text: 'Response time could be improved', color: 'text-orange-400' };
       };
-      
-      // Calculate average reaction time
+
+      // Calculate average reaction time (excluding early clicks)
       const getAverage = () => {
-        if (results.length === 0) return null;
-        const sum = results.reduce((a, b) => a + b, 0);
-        return Math.round(sum / results.length);
+        const validResults = results.filter(time => time !== -1);
+        if (validResults.length === 0) return null;
+        const sum = validResults.reduce((a, b) => a + b, 0);
+        return Math.round(sum / validResults.length);
       };
-      
+
       // Get background color based on state
       const getBackgroundColor = () => {
         if (state === 'ready') return 'bg-blue-900 hover:bg-blue-800';
         if (state === 'waiting') return 'bg-red-700';
         if (state === 'click') return 'bg-green-700';
-        return 'bg-gray-800';
+        // Results state
+        if(reactionTime === -1) return 'bg-red-900'; // Show red if clicked early
+        return 'bg-gray-800'; // Neutral background for displaying results
       };
-      
+
       return (
         <div className="max-w-md mx-auto bg-gray-900 p-6 rounded-lg shadow-md">
           <h2 className="text-xl font-semibold mb-2 text-white">Reaction Speed Assessment</h2>
           <p className="text-sm text-gray-400 mb-4">Measuring neural pathway response and motor function</p>
-          
-          <div 
+
+          <div
             onClick={state === 'ready' ? startTest : handleClick}
-            className={`w-full h-64 rounded-lg flex items-center justify-center cursor-pointer transition-colors ${getBackgroundColor()}`}
+            className={`w-full h-64 rounded-lg flex items-center justify-center cursor-pointer transition-colors ${getBackgroundColor()} text-white`}
           >
             <div className="text-center p-4">
-              {state === 'ready' && (
+              {state === 'ready' && !reactionTime && ( // Only show initial text if no result is displayed
                 <div>
-                  <p className="font-medium mb-2 text-white">Tap to begin reaction assessment</p>
+                  <p className="font-medium mb-2">Tap to begin reaction assessment</p>
                   <p className="text-sm text-gray-300">Wait for the red screen to turn green, then tap as quickly as possible.</p>
                 </div>
               )}
-              
+
               {state === 'waiting' && (
-                <p className="font-medium text-white">Wait for green signal...</p>
+                <p className="font-medium">Wait for green signal...</p>
               )}
-              
+
               {state === 'click' && (
-                <p className="font-medium text-white pulse-animation">TAP NOW!</p>
+                <p className="font-medium text-3xl pulse-animation">TAP NOW!</p>
               )}
-              
-              {state === 'results' && (
-                <div>
-                  <p className="text-2xl font-bold mb-1 text-white">{reactionTime} ms</p>
-                  {reactionTime && (
-                    <p className={`font-medium ${getFeedback(reactionTime).color}`}>
-                      {getFeedback(reactionTime).text}
-                    </p>
-                  )}
-                  <button 
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setState('ready');
-                    }}
-                    className="mt-3 px-4 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-500"
-                  >
-                    Assess Again
-                  </button>
-                </div>
-              )}
+
+               {(state === 'ready' || state === 'results') && reactionTime !== null && ( // Show results/early click message
+                 <div>
+                    {reactionTime !== -1 && (
+                        <p className="text-3xl font-bold mb-1">{reactionTime} ms</p>
+                    )}
+                   <p className={`font-medium ${getFeedback(reactionTime).color}`}>
+                     {getFeedback(reactionTime).text}
+                   </p>
+                   <button
+                     onClick={(e) => {
+                       e.stopPropagation(); // Prevent triggering the outer div's click
+                       startTest(); // Start a new test immediately
+                     }}
+                     className="mt-4 px-4 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-500"
+                   >
+                     Assess Again
+                   </button>
+                 </div>
+               )}
+
             </div>
           </div>
-          
+
           {results.length > 0 && (
             <div className="mt-5">
-              <h3 className="font-medium mb-2 text-gray-300">Response time history:</h3>
+              <h3 className="font-medium mb-2 text-gray-300">Response time history (last 5):</h3>
               <div className="flex flex-wrap gap-2">
                 {results.map((time, index) => (
-                  <div key={index} className="px-3 py-1 bg-gray-800 rounded text-sm text-gray-300">
-                    {time} ms
+                  <div key={index} className={`px-3 py-1 bg-gray-800 rounded text-sm ${time === -1 ? 'text-red-400' : 'text-gray-300'}`}>
+                    {time === -1 ? 'Early' : `${time} ms`}
                   </div>
                 ))}
               </div>
-              {results.length > 1 && (
+              {results.filter(t => t !== -1).length > 1 && ( // Only show average if more than 1 valid result
                 <p className="mt-3 text-sm text-gray-300">
                   Average response: <span className="font-medium text-white">{getAverage()} ms</span>
                 </p>
@@ -1114,6 +1148,7 @@
       );
     };
 
+
     // LEGS: Stability Test
     const StabilityTest = () => {
       const [timerRunning, setTimerRunning] = React.useState(false);
@@ -1123,43 +1158,47 @@
       const [leg, setLeg] = React.useState('right');
       const [feedbackVisible, setFeedbackVisible] = React.useState(false);
       const [intervalId, setIntervalId] = React.useState(null);
-      
+
       // Start the timer
       const startTimer = () => {
         setTimerRunning(true);
         const now = Date.now();
         setStartTime(now);
         setElapsedTime(0);
-        setFeedbackVisible(false);
-        
-        // Update timer every 100ms
+        setFeedbackVisible(false); // Hide previous feedback
+
+        // Update timer every 50ms for smoother display
         const newIntervalId = setInterval(() => {
           const currentTime = Date.now();
           const newElapsedTime = (currentTime - now) / 1000;
           setElapsedTime(newElapsedTime);
-        }, 100);
-        
+        }, 50);
+
         setIntervalId(newIntervalId);
       };
-      
+
       // Stop the timer
       const stopTimer = () => {
         setTimerRunning(false);
-        
+
         // Clear the interval
         if (intervalId) {
           clearInterval(intervalId);
           setIntervalId(null);
         }
-        
+
+         // Ensure elapsedTime is captured correctly when stopped
+         const finalElapsedTime = (Date.now() - startTime) / 1000;
+         setElapsedTime(finalElapsedTime); // Update state one last time
+
         // Update best time if current time is better
-        if (elapsedTime > bestTime) {
-          setBestTime(elapsedTime);
+        if (finalElapsedTime > bestTime) {
+          setBestTime(finalElapsedTime);
         }
-        
-        setFeedbackVisible(true);
+
+        setFeedbackVisible(true); // Show feedback
       };
-      
+
       // Clean up interval on unmount
       React.useEffect(() => {
         return () => {
@@ -1168,21 +1207,30 @@
           }
         };
       }, [intervalId]);
-      
+
+       // Reset best time when switching legs
+       const switchLeg = (newLeg) => {
+           if (timerRunning) stopTimer(); // Stop timer if running
+           setLeg(newLeg);
+           setElapsedTime(0);
+           setBestTime(0); // Reset best time for the new leg
+           setFeedbackVisible(false);
+       }
+
       // Get feedback based on balance time
-      const getFeedback = () => {
+      const getFeedbackText = (time) => { // Renamed to avoid conflict
         // Simplified feedback thresholds
-        if (elapsedTime < 10) {
+        if (time < 10) {
           return {
             text: 'Vestibular system shows potential for improvement. Regular balance exercises recommended.',
             color: 'text-red-400'
           };
-        } else if (elapsedTime < 20) {
+        } else if (time < 20) {
           return {
             text: 'Adequate stability detected. Further enhancement possible with targeted exercises.',
             color: 'text-yellow-400'
           };
-        } else if (elapsedTime < 30) {
+        } else if (time < 30) {
           return {
             text: 'Good proprioceptive function observed. Your stability systems are performing well.',
             color: 'text-green-400'
@@ -1194,87 +1242,91 @@
           };
         }
       };
-      
+
       return (
         <div className="max-w-md mx-auto bg-gray-900 p-6 rounded-lg shadow-md">
           <h2 className="text-xl font-semibold mb-2 text-white">Stability Assessment</h2>
           <p className="text-sm text-gray-400 mb-4">Evaluating vestibular function and proprioceptive systems</p>
-          
+
           <div className="mb-4 flex justify-center">
             <div className="inline-flex rounded-md shadow-sm" role="group">
               <button
                 type="button"
-                onClick={() => setLeg('right')}
-                className={`px-4 py-2 text-sm font-medium rounded-l-lg ${
-                  leg === 'right' 
-                    ? 'bg-blue-600 text-white' 
+                onClick={() => switchLeg('right')}
+                disabled={timerRunning} // Disable while timer runs
+                className={`px-4 py-2 text-sm font-medium rounded-l-lg transition-colors ${
+                  leg === 'right'
+                    ? 'bg-blue-600 text-white'
                     : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
-                }`}
+                } ${timerRunning ? 'opacity-50 cursor-not-allowed' : ''}`}
               >
                 Right Leg
               </button>
               <button
                 type="button"
-                onClick={() => setLeg('left')}
-                className={`px-4 py-2 text-sm font-medium rounded-r-lg ${
-                  leg === 'left' 
-                    ? 'bg-blue-600 text-white' 
+                onClick={() => switchLeg('left')}
+                disabled={timerRunning} // Disable while timer runs
+                className={`px-4 py-2 text-sm font-medium rounded-r-lg transition-colors ${
+                  leg === 'left'
+                    ? 'bg-blue-600 text-white'
                     : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
-                }`}
+                } ${timerRunning ? 'opacity-50 cursor-not-allowed' : ''}`}
               >
                 Left Leg
               </button>
             </div>
           </div>
-          
+
           <div id="timer-container" className="text-center py-4">
-            <div className="text-5xl font-bold mb-4 text-white">{elapsedTime.toFixed(2)}</div>
+             {/* Ensure elapsedTime displays correctly even after stopping */}
+             <div className="text-5xl font-bold mb-4 text-white tabular-nums">{elapsedTime.toFixed(2)}s</div>
             <p className="text-sm text-gray-300 mb-4">
-              Stand on your {leg} leg in a safe, level area. Press start when ready, and stop when balance is compromised.
+              Stand on your {leg} leg in a safe, level area. Press Start when ready, and Stop when balance is compromised (foot touches down or significant body shift).
             </p>
-            
+
             {!timerRunning ? (
-              <button 
+              <button
                 onClick={startTimer}
                 className="w-full py-3 bg-green-600 text-white rounded-lg text-lg hover:bg-green-500"
               >
-                Begin Assessment
+                Start Assessment ({leg} leg)
               </button>
             ) : (
-              <button 
+              <button
                 onClick={stopTimer}
                 className="w-full py-3 bg-red-600 text-white rounded-lg text-lg hover:bg-red-500"
               >
-                End Assessment
+                Stop Assessment
               </button>
             )}
-            
+
             {bestTime > 0 && (
               <p className="mt-3 text-sm font-medium text-gray-300">
-                Best stability: <span className="text-white">{bestTime.toFixed(2)}</span> seconds
+                Best stability ({leg} leg): <span className="text-white">{bestTime.toFixed(2)}</span> seconds
               </p>
             )}
           </div>
-          
+
           {feedbackVisible && (
             <div className="mt-4 p-4 rounded-lg bg-gray-800 border border-gray-700">
-              <h3 className="font-medium mb-2 text-white">Stability Analysis</h3>
-              <p className={getFeedback().color}>{getFeedback().text}</p>
+              <h3 className="font-medium mb-2 text-white">Stability Analysis ({leg} leg - {elapsedTime.toFixed(2)}s)</h3>
+              <p className={getFeedbackText(elapsedTime).color}>{getFeedbackText(elapsedTime).text}</p>
               <div className="mt-4 text-sm text-gray-400">
-                <p className="mb-1"><strong>Balance Parameters:</strong></p>
+                <p className="mb-1"><strong>Balance Parameters (General):</strong></p>
                 <ul className="list-disc list-inside space-y-1">
-                  <li><span className="text-red-400 font-medium">Less than 10 seconds:</span> Stability enhancement recommended</li>
-                  <li><span className="text-yellow-400 font-medium">10-20 seconds:</span> Adequate stability</li>
-                  <li><span className="text-green-400 font-medium">20-30 seconds:</span> Good stability</li>
-                  <li><span className="text-blue-400 font-medium">More than 30 seconds:</span> Excellent stability</li>
+                  <li><span className="text-red-400 font-medium">Less than 10 sec:</span> Stability enhancement recommended</li>
+                  <li><span className="text-yellow-400 font-medium">10-20 sec:</span> Adequate stability</li>
+                  <li><span className="text-green-400 font-medium">20-30 sec:</span> Good stability</li>
+                  <li><span className="text-blue-400 font-medium">More than 30 sec:</span> Excellent stability</li>
                 </ul>
-                <p className="mt-3">Compare results between legs to identify potential asymmetries in your vestibular system.</p>
+                <p className="mt-3">Compare results between legs to identify potential asymmetries.</p>
               </div>
             </div>
           )}
         </div>
       );
     };
+
 
     // Render the main TestManager component to the DOM
     ReactDOM.render(
@@ -1311,14 +1363,15 @@
     let initialCameraPosition = new THREE.Vector3();
     let initialControlsTarget = new THREE.Vector3();
     let arLabels = {};
-    let tracker = document.getElementById('body-tracker');
+    let tracker; // Defined later
     let audioEnabled = true;
+    let loadingTimeline; // <-- GSAP Timeline for loader
 
     // DOM elements
     const canvasContainer = document.getElementById('canvas-container');
-    const infoContent = document.getElementById('info-content');
+    // const infoContent = document.getElementById('info-content'); // seems unused
     const loadingOverlay = document.getElementById('loading-overlay');
-    const progressBar = document.getElementById('progress-bar');
+    // const progressBar = document.getElementById('progress-bar'); // REMOVED
     const loadingText = document.getElementById('loading-text');
     const panelToggle = document.getElementById('panel-toggle');
     const infoPanel = document.getElementById('info-panel');
@@ -1329,84 +1382,29 @@
     const soundHover = document.getElementById('sound-hover');
     const soundScan = document.getElementById('sound-scan');
 
-    // Detailed information for each body part with improved zone coordinates
-    const bodyPartsData = {
-      head: {
-        name: "Cognitive Assessment",  // Renamed from "Head"
-        system: "Neural Function",  // Renamed from "Nervous System"
-        description: "Analysis of memory function and cognitive processing abilities.",
-        zone: new THREE.Box3(
-          new THREE.Vector3(-0.5, 2.6, -0.5),
-          new THREE.Vector3(0.5, 3.5, 0.5)
-        )
-      },
-      chest: {
-        name: "Cardiovascular Test",  // Renamed from "Chest/Torso"
-        system: "Circulatory Function",  // Renamed from "Respiratory & Cardiovascular Systems"
-        description: "Evaluation of heart rate patterns and cardiovascular health indicators.",
-        zone: new THREE.Box3(
-          new THREE.Vector3(-0.8, 1.5, -0.5),
-          new THREE.Vector3(0.8, 2.6, 0.5)
-        )
-      },
-      abdomen: {
-        name: "Body Composition",  // Renamed from "Abdomen"
-        system: "Metabolic Status",  // Renamed from "Digestive & Urinary Systems"
-        description: "Assessment of body mass index and tissue composition metrics.",
-        zone: new THREE.Box3(
-          new THREE.Vector3(-0.4, 1.0, -0.3),
-          new THREE.Vector3(0.4, 1.8, 0.3)
-        )
-      },
-      leftArm: {
-        name: "Reaction Assessment",  // Renamed from "Left Arm"
-        system: "Neural Responsiveness",  // Renamed from "Musculoskeletal System"
-        description: "Measurement of neural pathway efficiency and response time.",
-        zone: new THREE.Box3(
-          new THREE.Vector3(-1.5, 1.2, -0.6),
-          new THREE.Vector3(-0.5, 2.6, 0.6)
-        )
-      },
-      rightArm: {
-        name: "Reaction Assessment",  // Renamed from "Right Arm"
-        system: "Neural Responsiveness",  // Renamed from "Musculoskeletal System"
-        description: "Measurement of neural pathway efficiency and response time.",
-        zone: new THREE.Box3(
-          new THREE.Vector3(0.5, 1.2, -0.6),
-          new THREE.Vector3(1.5, 2.6, 0.6)
-        )
-      },
-      leftLeg: {
-        name: "Stability Assessment",  // Renamed from "Left Leg"
-        system: "Vestibular Function",  // Renamed from "Musculoskeletal System"
-        description: "Evaluation of balance, proprioception, and vestibular system performance.",
-        zone: new THREE.Box3(
-          new THREE.Vector3(-0.6, -0.2, -0.5),
-          new THREE.Vector3(-0.1, 1.0, 0.5)
-        )
-      },
-      rightLeg: {
-        name: "Stability Assessment",  // Renamed from "Right Leg"
-        system: "Vestibular Function",  // Renamed from "Musculoskeletal System"
-        description: "Evaluation of balance, proprioception, and vestibular system performance.",
-        zone: new THREE.Box3(
-          new THREE.Vector3(0.1, -0.2, -0.5),
-          new THREE.Vector3(0.6, 1.0, 0.5)
-        )
-      }
-    };
+    // Detailed information for each body part
+     const bodyPartsData = {
+         head: { name: "Cognitive Assessment", system: "Neural Function", description: "Analysis of memory function and cognitive processing abilities.", zone: new THREE.Box3(new THREE.Vector3(-0.5, 2.6, -0.5), new THREE.Vector3(0.5, 3.5, 0.5)) },
+         chest: { name: "Cardiovascular Test", system: "Circulatory Function", description: "Evaluation of heart rate patterns and cardiovascular health indicators.", zone: new THREE.Box3(new THREE.Vector3(-0.8, 1.5, -0.5), new THREE.Vector3(0.8, 2.6, 0.5)) },
+         abdomen: { name: "Body Composition", system: "Metabolic Status", description: "Assessment of body mass index and tissue composition metrics.", zone: new THREE.Box3(new THREE.Vector3(-0.4, 1.0, -0.3), new THREE.Vector3(0.4, 1.8, 0.3)) }, // Corrected Y values
+         leftArm: { name: "Reaction Assessment", system: "Neural Responsiveness", description: "Measurement of neural pathway efficiency and response time.", zone: new THREE.Box3(new THREE.Vector3(-1.5, 1.2, -0.6), new THREE.Vector3(-0.5, 2.6, 0.6)) }, // Corrected Y values
+         rightArm: { name: "Reaction Assessment", system: "Neural Responsiveness", description: "Measurement of neural pathway efficiency and response time.", zone: new THREE.Box3(new THREE.Vector3(0.5, 1.2, -0.6), new THREE.Vector3(1.5, 2.6, 0.6)) }, // Corrected Y values
+         leftLeg: { name: "Stability Assessment", system: "Vestibular Function", description: "Evaluation of balance, proprioception, and vestibular system performance.", zone: new THREE.Box3(new THREE.Vector3(-0.6, -0.2, -0.5), new THREE.Vector3(-0.1, 1.0, 0.5)) }, // Corrected Y values
+         rightLeg: { name: "Stability Assessment", system: "Vestibular Function", description: "Evaluation of balance, proprioception, and vestibular system performance.", zone: new THREE.Box3(new THREE.Vector3(0.1, -0.2, -0.5), new THREE.Vector3(0.6, 1.0, 0.5)) } // Corrected Y values
+     };
+
 
     // --- Initialization ---
     function init() {
-     initSceneAndCamera();
+      initSceneAndCamera();
       setupRenderer();
       setupLighting();
       setupPostProcessing();
       setupControls();
       setupRaycaster();
-      setupARElements();
+      setupARElements(); // Includes getting tracker element
       loadEnvironmentMap();
-      loadModel();
+      loadModel(); // This will now also init the loader animation
       setupEventListeners();
       animate();
     }
@@ -1414,74 +1412,93 @@
     // --- Setup Scene and Camera ---
     function initSceneAndCamera() {
       scene = new THREE.Scene();
-      scene.background = new THREE.Color(0x0f172a);
-      scene.fog = new THREE.FogExp2(0x0f172a, 0.005);
-      camera = new THREE.PerspectiveCamera(60, canvasContainer.clientWidth / canvasContainer.clientHeight, 0.1, 1000);
-      camera.position.set(0, 1.2, 5);
+      scene.background = new THREE.Color(0x0f172a); // Dark blue background
+      scene.fog = new THREE.FogExp2(0x0f172a, 0.08); // Adjusted fog
+      camera = new THREE.PerspectiveCamera(60, canvasContainer.clientWidth / canvasContainer.clientHeight, 0.1, 100); // Adjusted far plane
+      camera.position.set(0, 1.5, 6); // Adjusted initial camera position slightly
     }
 
     // --- Setup Renderer ---
     function setupRenderer() {
-      renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-      renderer.setSize(canvasContainer.clientWidth, canvasContainer.clientHeight);
-      renderer.outputEncoding = THREE.sRGBEncoding;
-      renderer.toneMapping = THREE.ACESFilmicToneMapping;
-      renderer.toneMappingExposure = 1.2;
-      renderer.shadowMap.enabled = true;
-      renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-      canvasContainer.appendChild(renderer.domElement);
+        renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); // Limit pixel ratio
+        renderer.setSize(canvasContainer.clientWidth, canvasContainer.clientHeight);
+        renderer.outputColorSpace = THREE.SRGBColorSpace; // Use sRGB for output
+        renderer.toneMapping = THREE.ACESFilmicToneMapping;
+        renderer.toneMappingExposure = 1.1; // Adjusted exposure
+        renderer.shadowMap.enabled = true;
+        renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+        canvasContainer.appendChild(renderer.domElement);
     }
+
 
     // --- Setup Lighting ---
     function setupLighting() {
-      const ambientLight = new THREE.AmbientLight(0x303060, 0.5);
-      scene.add(ambientLight);
-      const mainLight = new THREE.DirectionalLight(0x6080ff, 1.0);
-      mainLight.position.set(5, 10, 7.5);
-      mainLight.castShadow = true;
-      mainLight.shadow.mapSize.width = 1024;
-      mainLight.shadow.mapSize.height = 1024;
-      scene.add(mainLight);
-      const fillLight = new THREE.DirectionalLight(0x3040c0, 0.5);
-      fillLight.position.set(-5, 0, -7.5);
-      scene.add(fillLight);
-      const pointLight1 = new THREE.PointLight(0x3060ff, 1, 10);
-      pointLight1.position.set(3, 1, 3);
-      scene.add(pointLight1);
-      const pointLight2 = new THREE.PointLight(0x60ffff, 1, 10);
-      pointLight2.position.set(-3, 1, -3);
-      scene.add(pointLight2);
+        const ambientLight = new THREE.AmbientLight(0x406090, 0.6); // Slightly brighter ambient
+        scene.add(ambientLight);
+
+        const mainLight = new THREE.DirectionalLight(0x80a0ff, 1.2); // Brighter main light
+        mainLight.position.set(5, 8, 6); // Adjusted position
+        mainLight.castShadow = true;
+        mainLight.shadow.mapSize.width = 1024;
+        mainLight.shadow.mapSize.height = 1024;
+        mainLight.shadow.camera.near = 0.5; // Adjusted shadow camera properties
+        mainLight.shadow.camera.far = 20;
+        mainLight.shadow.bias = -0.001; // Help reduce shadow artifacts
+        scene.add(mainLight);
+
+        // Optional: Add helper to visualize light
+        // const helper = new THREE.DirectionalLightHelper( mainLight, 1 );
+        // scene.add( helper );
+
+        const fillLight = new THREE.DirectionalLight(0x3050a0, 0.4); // Adjusted fill light
+        fillLight.position.set(-5, 2, -6);
+        scene.add(fillLight);
+
+        // Remove point lights for simpler setup, rely on env map and directional lights
+        // const pointLight1 = new THREE.PointLight(0x3060ff, 1, 10);
+        // pointLight1.position.set(3, 1, 3);
+        // scene.add(pointLight1);
+        // const pointLight2 = new THREE.PointLight(0x60ffff, 1, 10);
+        // pointLight2.position.set(-3, 1, -3);
+        // scene.add(pointLight2);
     }
+
 
     // --- Setup Post-Processing Effects ---
     function setupPostProcessing() {
       composer = new EffectComposer(renderer);
       const renderPass = new RenderPass(scene, camera);
       composer.addPass(renderPass);
-      bloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 0.2, 0.2, 0.9);
+
+      // Bloom Pass (subtle glow)
+      bloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 0.25, 0.3, 0.85); // Slightly adjusted values
       composer.addPass(bloomPass);
+
+      // Outline Pass for selection
       outlinePass = new OutlinePass(new THREE.Vector2(window.innerWidth, window.innerHeight), scene, camera);
-      outlinePass.edgeStrength = 3.0;
-      outlinePass.edgeGlow = 1.0;
+      outlinePass.edgeStrength = 4.0; // Slightly stronger outline
+      outlinePass.edgeGlow = 0.5;     // Less intense glow
       outlinePass.edgeThickness = 1.5;
-      outlinePass.pulsePeriod = 2;
-      outlinePass.visibleEdgeColor.set(0x3b82f6);
-      outlinePass.hiddenEdgeColor.set(0x3b82f6);
+      outlinePass.pulsePeriod = 0;     // Disable pulse
+      outlinePass.visibleEdgeColor.set(0x10B981); // Use secondary color for outline
+      outlinePass.hiddenEdgeColor.set(0x10B981);
       composer.addPass(outlinePass);
     }
 
     // --- Setup Controls ---
     function setupControls() {
       controls = new OrbitControls(camera, renderer.domElement);
-      controls.target.set(0, 1.0, 0);
+      controls.target.set(0, 1.2, 0); // Set target slightly higher
       controls.enableDamping = true;
       controls.dampingFactor = 0.05;
-      controls.screenSpacePanning = true;
-      controls.minDistance = 1;
-      controls.maxDistance = 20;
+      controls.screenSpacePanning = false; // Prevent panning issues
+      controls.minDistance = 2; // Adjusted min distance
+      controls.maxDistance = 15; // Adjusted max distance
+      controls.minPolarAngle = Math.PI / 4; // Limit vertical rotation down
+      controls.maxPolarAngle = Math.PI * (3/4); // Limit vertical rotation up
       controls.autoRotate = false;
-      controls.autoRotateSpeed = 0.5;
+      controls.autoRotateSpeed = 0.4;
       controls.update();
     }
 
@@ -1500,299 +1517,437 @@
         leg: document.getElementById('leg-label'),
         abdomen: document.getElementById('abdomen-label')
       };
+      tracker = document.getElementById('body-tracker'); // Get tracker element
     }
 
     // --- Load Environment Map for Reflections ---
     function loadEnvironmentMap() {
       new RGBELoader()
-        .setPath('https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/')
-        .load('royal_esplanade_1k.hdr', function(texture) {
+        .setPath('https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/') // Use Poly Haven CDN
+        .load('industrial_workshop_foundry_1k.hdr', function(texture) { // Different HDR for variety
           texture.mapping = THREE.EquirectangularReflectionMapping;
           scene.environment = texture;
+          // scene.background = texture; // Optional: Use HDR as background
+          console.log("Environment map loaded.");
+        }, undefined, function(error) {
+             console.error('Error loading environment map:', error);
+             // Fallback background color if HDR fails
+             scene.background = new THREE.Color(0x0f172a);
         });
     }
 
-    // --- Load 3D Model ---
+    // --- Load 3D Model (MODIFIED for GSAP Loader) ---
     function loadModel() {
-      const loader = new GLTFLoader();
-      const modelUrl = './human_body.glb';
-      progressBar.style.width = '5%';
-      loadingText.textContent = 'Initializing biometric scanner...';
-      
-      // Simulate a more extensive scanning process
-      let scanPhase = 0;
-      const scanMessages = [
-        'Calibrating sensors...',
-        'Initializing body composition scan...',
-        'Mapping skeletal structure...',
-        'Analyzing muscle tissue density...',
-        'Evaluating cardiovascular metrics...',
-        'Measuring neural response patterns...',
-        'Assessing cognitive parameters...',
-        'Compiling biometric profile...',
-        'Identifying assessment requirements...',
-        'Finalizing diagnostic recommendations...'
-      ];
-      
-      const scanInterval = setInterval(() => {
-        scanPhase++;
-        const progress = 5 + (scanPhase * 8);
-        progressBar.style.width = `${Math.min(progress, 95)}%`;
-        
-        if (scanPhase < scanMessages.length) {
-          loadingText.textContent = scanMessages[scanPhase];
-        } else {
-          clearInterval(scanInterval);
-        }
-      }, 800);
-      
-      loader.load(
-        modelUrl,
-        function (gltf) {
-          clearInterval(scanInterval);
-          progressBar.style.width = '100%';
-          loadingText.textContent = 'Biometric scan complete. Preparing results...';
-          
-          model = gltf.scene;
-          optimizeAndCenterModel(model);
-          applyBioScanMaterial(model);
-          scene.add(model);
-          updateControlsForModel();
-          
-          // Delay completion slightly to enhance the "scanning" experience
-          setTimeout(completeLoading, 1500);
-        },
-        function (xhr) {
-          // Progress is handled by our custom scan animation above
-        },
-        function (error) {
-          clearInterval(scanInterval);
-          loadingOverlay.innerHTML = `
-            <div class="text-center p-6">
-              <h2 class="text-2xl font-bold text-red-500 mb-4">Scan Error Detected</h2>
-              <p class="text-gray-300 mb-4">We encountered a problem while processing your biometric data.</p>
-              <p class="text-sm text-gray-400 mb-6">${error.message || 'Diagnostic system failure'}</p>
-              <button onclick="location.reload()" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md">
-                Restart Assessment
-              </button>
-            </div>
-          `;
-        }
-      );
+        const loader = new GLTFLoader();
+        const modelUrl = './human_body.glb'; // Ensure this path is correct
+        const loadingText = document.getElementById('loading-text');
+
+        // --- Initialize GSAP Loader Animation ---
+        initLoaderAnimation(); // Create the animation timeline
+
+        loadingText.textContent = 'Initializing biometric scanner...';
+
+        // Simulate a more extensive scanning process (keep this or adjust timing)
+        let scanPhase = 0;
+        const scanMessages = [
+            'Calibrating bio-sensors...', // Changed wording
+            'Analyzing systemic inputs...',
+            'Mapping neural pathways...',
+            'Assessing tissue integrity...',
+            'Evaluating cardiovascular flow...',
+            'Measuring response latencies...',
+            'Integrating cognitive signals...',
+            'Compiling biometric profile...',
+            'Prioritizing assessment protocols...', // Changed wording
+            'Finalizing diagnostic matrix...' // Changed wording
+        ];
+
+        const scanInterval = setInterval(() => {
+            scanPhase++;
+            // Update text based on scan phase
+            if (scanPhase < scanMessages.length) {
+                loadingText.textContent = scanMessages[scanPhase];
+            } else {
+                 clearInterval(scanInterval); // Stop text updates when messages run out
+            }
+        }, 650); // Slightly faster interval
+
+        loader.load(
+            modelUrl,
+            function (gltf) { // onLoad
+                clearInterval(scanInterval); // Ensure interval stops
+                loadingText.textContent = 'Biometric scan complete. Rendering results...';
+
+                // Force animation to completion smoothly
+                gsap.to(loadingTimeline, { progress: 1, duration: 0.6, ease: "power1.inOut" });
+
+                model = gltf.scene;
+                optimizeAndCenterModel(model); // Apply scaling and centering
+                applyBioScanMaterial(model); // Apply custom material AFTER optimization
+                scene.add(model);
+                updateControlsForModel(); // Update controls AFTER model is positioned
+
+                // Delay completion slightly for visual effect and GSAP finish
+                setTimeout(completeLoading, 1000); // Wait for GSAP animation to finish + buffer
+            },
+            function (xhr) { // onProgress
+                if (xhr.lengthComputable) {
+                    const percentComplete = xhr.loaded / xhr.total;
+                    // Update GSAP timeline progress based on actual model load
+                    gsap.to(loadingTimeline, {
+                        progress: percentComplete * 0.95, // Go up to 95% based on load
+                        duration: 0.3,
+                        ease: "none"
+                     });
+
+                    // Optional text updates based on percentage
+                    if (percentComplete > 0.9 && scanPhase >= scanMessages.length -1) {
+                         loadingText.textContent = 'Finalizing diagnostic matrix...';
+                    } else if (percentComplete > 0.7 && scanPhase >= scanMessages.length - 3) {
+                         loadingText.textContent = 'Compiling biometric profile...';
+                    }
+
+                } else {
+                     // If not computable, advance timeline slowly if needed
+                     if(loadingTimeline && loadingTimeline.progress() < 0.8) {
+                        loadingTimeline.progress(loadingTimeline.progress() + 0.001);
+                     }
+                }
+            },
+            function (error) { // onError
+                clearInterval(scanInterval);
+                 if (loadingTimeline) loadingTimeline.kill(); // Stop animation on error
+                console.error('Error loading GLTF model:', error);
+                loadingOverlay.innerHTML = `
+                  <div class="text-center p-6">
+                      <h2 class="text-2xl font-bold text-red-500 mb-4">System Load Failure</h2>
+                      <p class="text-gray-300 mb-4">Unable to initialize biometric model data.</p>
+                      <p class="text-sm text-gray-400 mb-6">${error.message || 'Unknown diagnostic system error'}</p>
+                      <button onclick="location.reload()" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md">
+                          Restart Assessment
+                      </button>
+                  </div>
+                `;
+            }
+        );
     }
 
-    // --- Optimize and Center Model with improved zone handling ---
+
+    // --- NEW: Initialize GSAP Loader Animation ---
+    function initLoaderAnimation() {
+        const loaderSvg = document.querySelector('#sci-fi-loader svg');
+        if (!loaderSvg) {
+            console.error("Sci-fi loader SVG not found!");
+            return;
+        }
+
+        // Calculate path length for accurate animation
+        const progressArc = document.getElementById('progress-arc');
+        let pathLength = 283; // Default fallback
+        if (progressArc && typeof progressArc.getTotalLength === 'function') {
+            pathLength = progressArc.getTotalLength();
+        }
+         gsap.set(progressArc, { strokeDasharray: pathLength, strokeDashoffset: pathLength });
+
+        // Set initial states using GSAP
+        gsap.set(["#ring1", "#ring2", "#ring3"], { transformOrigin: "50% 50%", opacity: 0, scale: 0.8 });
+        gsap.set("#scan-line", { transformOrigin: "50% 5px", rotation: 0, opacity: 0 }); // Origin at the top center
+        gsap.set("#center-pulse", { transformOrigin: "50% 50%", scale: 0.5, opacity: 0 });
+
+        // Main timeline controlled by loading progress
+        loadingTimeline = gsap.timeline({
+            paused: true,
+            defaults: { duration: 0.5, ease: "power1.out" } // Default settings for tweens
+        });
+
+        loadingTimeline
+            .to(["#ring1", "#ring2", "#ring3"], { opacity: (i) => 0.2 + i * 0.1, scale: 1, stagger: 0.1 }, 0)
+            .to("#center-pulse", { opacity: 1, scale: 1 }, 0.1)
+            .to("#scan-line", { opacity: 0.8 }, 0.2)
+            // The progress arc animation - tied to timeline progress
+            .to("#progress-arc", {
+                 strokeDashoffset: 0,
+                 duration: 1, // Make duration 1 so its progress matches timeline progress
+                 ease: "none" // Linear progress
+             }, 0); // Start drawing immediately
+
+         // Separate timeline for continuous looping animations
+         gsap.timeline({ repeat: -1, repeatDelay: 0 })
+            .to("#scan-line", { rotation: "+=360", duration: 1.8, ease: "none" }, 0)
+            .to("#center-pulse", { scale: 0.85, duration: 0.8, ease: "power1.inOut", yoyo: true, repeat: 1 }, 0) // Simpler pulse
+            .to("#ring1", { rotation: "-=360", duration: 12, ease: "none" }, 0)
+            .to("#ring2", { rotation: "+=360", duration: 9, ease: "none" }, 0);
+
+        // Kick off the initial fade-in part of the timeline
+        loadingTimeline.play(0); // Play from the beginning but immediately pause (progress controlled externally)
+        loadingTimeline.pause(); // Ensure it stays paused
+    }
+
+
+    // --- Optimize and Center Model ---
     function optimizeAndCenterModel(model) {
-      const box = new THREE.Box3().setFromObject(model);
-      const center = box.getCenter(new THREE.Vector3());
-      const size = box.getSize(new THREE.Vector3());
-      const maxDim = Math.max(size.x, size.y, size.z);
-      const desiredHeight = 3.0;
-      const scale = desiredHeight / maxDim;
-      
-      model.scale.set(scale, scale, scale);
-      box.setFromObject(model);
-      box.getCenter(center);
-      model.position.sub(center);
-      model.position.y += box.max.y - center.y;
-      
-      // Store the model's final position and scale
-      model.userData.finalScale = scale;
-      model.userData.finalPosition = model.position.clone();
-      
-      console.log('Model scaled and centered. Scale:', scale, 'Position:', model.position);
-      console.log('Model bounding box:', box.min, box.max);
-      
-      // No need to update zones - we've manually defined them to match the model
-      // Just apply the model position offset to all zones
-      Object.keys(bodyPartsData).forEach(part => {
-        const zone = bodyPartsData[part].zone;
-        zone.translate(model.position);
-      });
+        const box = new THREE.Box3().setFromObject(model);
+        const center = box.getCenter(new THREE.Vector3());
+        const size = box.getSize(new THREE.Vector3());
+        const maxDim = Math.max(size.x, size.y, size.z);
+
+        // Make sure model height is reasonable, e.g., around 3.5 units
+        const desiredHeight = 3.5;
+        const scale = desiredHeight / size.y; // Scale based on Y dimension (height)
+
+        model.scale.set(scale, scale, scale);
+
+        // Recalculate bounds after scaling
+        box.setFromObject(model);
+        box.getCenter(center);
+
+        // Adjust position to center and place bottom at y=0
+        model.position.x -= center.x;
+        model.position.y -= box.min.y; // Shift model up so its lowest point is at y=0
+        model.position.z -= center.z;
+
+
+        model.userData.finalScale = scale;
+        model.userData.finalPosition = model.position.clone();
+
+        console.log('Model optimized. Scale:', scale.toFixed(3), 'Position:', model.position.toArray().map(p => p.toFixed(3)).join(', '));
+        console.log('Model bounding box (post-opt):', box.min.toArray().map(p => p.toFixed(3)), box.max.toArray().map(p => p.toFixed(3)));
+
+         // Translate predefined zones based on final model position (important!)
+         Object.keys(bodyPartsData).forEach(part => {
+             const zone = bodyPartsData[part].zone;
+             // IMPORTANT: Apply scaling and translation relative to the original definition
+             // Assuming original zones were defined relative to a model centered at origin before scaling
+             const originalCenter = new THREE.Vector3(); // Assuming original model was centered
+             zone.applyMatrix4(new THREE.Matrix4().makeScale(scale, scale, scale)); // Apply scale first
+             zone.translate(model.position); // Then apply final position offset
+         });
+         console.log("Body part zones adjusted for model scale and position.");
+
+         // Optional: Add debug boxes AFTER zones are adjusted
+         // showAllZones();
     }
 
-    // --- Add visual debug box for zones ---
-    function addDebugBox(partId, box) {
-      const size = new THREE.Vector3();
-      box.getSize(size);
-      
-      const center = new THREE.Vector3();
-      box.getCenter(center);
-      
-      // Create different colors for different body parts
-      let color = 0xff0000; // Default red
-      if (partId.includes('Arm')) {
-        color = 0x00ff00; // Green for arms
-      } else if (partId.includes('Leg')) {
-        color = 0x0000ff; // Blue for legs
-      } else if (partId === 'head') {
-        color = 0xffff00; // Yellow for head
-      } else if (partId === 'abdomen') {
-        color = 0xff00ff; // Magenta for abdomen
-      }
-      
-      const geometry = new THREE.BoxGeometry(size.x, size.y, size.z);
-      const material = new THREE.MeshBasicMaterial({
-        color: color,
-        wireframe: true,
-        transparent: true,
-        opacity: 0.5
-      });
-      
-      const debugBox = new THREE.Mesh(geometry, material);
-      debugBox.position.copy(center);
-      debugBox.name = 'debug_' + partId;
-      scene.add(debugBox);
-      
-      console.log(`Added debug box for ${partId} at position ${center.x}, ${center.y}, ${center.z}`);
-    }
 
-    // --- Apply Biotech Material Effect for a more medical/futuristic look ---
+    // --- Apply Biotech Material Effect ---
     function applyBioScanMaterial(model) {
       model.traverse((node) => {
         if (node.isMesh) {
           node.castShadow = true;
           node.receiveShadow = true;
-          const material = node.material.clone();
-          material.metalness = 0.3;
-          material.roughness = 0.2;
-          material.envMapIntensity = 1.2;
-          
-          // Cool blue medical scan look
-          if (material.color) {
-            material.color.set(0x6090ff);
-            material.emissive.set(0x2050c0);
-            material.emissiveIntensity = 0.2;
+          const material = node.material; // Modify existing material if possible
+
+          if (material) {
+             // Check if it's a standard material
+             if (material.isMeshStandardMaterial) {
+                 material.metalness = 0.2; // Less metallic
+                 material.roughness = 0.4; // Slightly rougher
+                 material.envMapIntensity = 0.8; // Subtle reflections
+                 material.color.set(0x80a0ff); // Lighter blue base
+                 material.emissive.set(0x103080); // Darker blue emissive
+                 material.emissiveIntensity = 0.15;
+                 material.needsUpdate = true;
+             }
+             // Make slightly transparent for holographic feel
+             material.transparent = true;
+             material.opacity = 0.95; // Less transparent
           }
-          
-          // Add some transparency for a holographic effect
-          material.transparent = true;
-          material.opacity = 0.9;
-          
-          node.material = material;
         }
       });
+      console.log("Applied BioScan material to model.");
     }
+
 
     // --- Update Controls For Model ---
     function updateControlsForModel() {
-      controls.target.set(model.position.x, model.position.y + 1.0, model.position.z);
-      controls.update();
-      initialCameraPosition.copy(camera.position);
-      initialControlsTarget.copy(controls.target);
+        // Calculate the center of the model's bounding box AFTER it's positioned
+        const box = new THREE.Box3().setFromObject(model);
+        const center = box.getCenter(new THREE.Vector3());
+
+        controls.target.copy(center); // Target the actual center
+        controls.update();
+
+        // Save initial state AFTER targeting
+        initialCameraPosition.copy(camera.position);
+        initialControlsTarget.copy(controls.target);
+        console.log("Controls updated. Target:", center.toArray().map(p => p.toFixed(3)).join(', '));
     }
 
-    // --- Complete Loading Process ---
+
+    // --- Complete Loading Process (MODIFIED) ---
     function completeLoading() {
-      setTimeout(startScanAnimation, 1000);
-      loadingOverlay.style.transition = 'opacity 1s';
-      loadingOverlay.style.opacity = '0';
-      setTimeout(() => {
-        loadingOverlay.style.display = 'none';
-      }, 1000);
-      updateSystemStatus('ANALYZING', 'green');
+        // Loader fade out animation
+        loadingOverlay.style.opacity = '0';
+        loadingOverlay.style.pointerEvents = 'none'; // Prevent interaction during fade
+
+        setTimeout(() => {
+            loadingOverlay.style.display = 'none';
+             if (loadingTimeline) loadingTimeline.kill(); // Clean up GSAP timeline
+             // Ensure looping animations stop
+             gsap.killTweensOf(["#scan-line", "#center-pulse", "#ring1", "#ring2", "#progress-arc"]);
+             console.log("Loading overlay hidden and animations stopped.");
+
+             // Trigger the main app's animations/welcome screen logic AFTER fade out
+             startMainAppAnimation();
+
+        }, 1000); // Match transition duration in CSS
     }
 
-    // --- Start Scan Animation ---
-    function startScanAnimation() {
-      if (audioEnabled) {
-        soundScan.volume = 0.3;
-        soundScan.play().catch(e => {
-          console.warn("Auto-play prevented:", e);
-          audioEnabled = false;
-        });
-      }
-      controls.autoRotate = true;
-      setTimeout(() => { controls.autoRotate = false; }, 5000);
-      setTimeout(() => showLabel('head'), 500);
-      setTimeout(() => showLabel('torso'), 1000);
-      setTimeout(() => showLabel('arm'), 1500);
-      setTimeout(() => showLabel('leg'), 2000);
-      setTimeout(() => showLabel('abdomen'), 1300);
-      setTimeout(() => { updateSystemStatus('ASSESSMENT READY', 'green'); }, 3000);
+    // --- NEW function to start main app animations AFTER loading ---
+    function startMainAppAnimation() {
+         console.log("Starting main application animations...");
+         // Play initial sounds or model animations if desired
+          if (audioEnabled) {
+              soundScan.volume = 0.3;
+              soundScan.play().catch(e => {
+                  console.warn("Audio auto-play prevented:", e);
+                  audioEnabled = false; // Disable further attempts if blocked
+              });
+          }
+          // Example: Auto-rotate briefly
+          // controls.autoRotate = true;
+          // setTimeout(() => { controls.autoRotate = false; }, 4000);
+
+          // Reveal AR Labels sequentially
+          const labels = ['head', 'torso', 'arm', 'leg', 'abdomen'];
+          labels.forEach((label, index) => {
+              setTimeout(() => showLabel(label), 300 + index * 400); // Staggered reveal
+          });
+
+
+          updateSystemStatus('ANALYZING', 'yellow'); // Initial status
+
+          // Show initial welcome message in React panel
+          if (window.loadTest) {
+              window.loadTest(null); // Load the welcome screen
+          }
+
+          // Update status after a delay
+          setTimeout(() => { updateSystemStatus('ASSESSMENT READY', 'green'); }, 2500);
     }
+
 
     // --- Show AR Label ---
     function showLabel(label) {
       if (arLabels[label]) {
-        arLabels[label].style.opacity = '1';
+        gsap.to(arLabels[label], { opacity: 1, duration: 0.5 });
       }
     }
 
     // --- Update System Status ---
     function updateSystemStatus(status, color) {
+      if (!systemStatus) return;
       systemStatus.textContent = status;
-      systemStatus.className = '';
-      if (color === 'green') {
-        systemStatus.classList.add('text-green-400');
-      } else if (color === 'yellow') {
-        systemStatus.classList.add('text-yellow-400');
-      } else if (color === 'red') {
-        systemStatus.classList.add('text-red-400');
-      }
+      systemStatus.className = ''; // Clear existing color classes
+      if (color === 'green') systemStatus.classList.add('text-green-400');
+      else if (color === 'yellow') systemStatus.classList.add('text-yellow-400');
+      else if (color === 'red') systemStatus.classList.add('text-red-400');
+      else systemStatus.classList.add('text-gray-400'); // Default
     }
+
+    // --- Add Debug Box for Zones ---
+    function addDebugBox(partId, box) {
+        const size = new THREE.Vector3(); box.getSize(size);
+        const center = new THREE.Vector3(); box.getCenter(center);
+        let color = 0xff0000; // Default red
+        if (partId.includes('Arm')) color = 0x00ff00; // Green
+        else if (partId.includes('Leg')) color = 0x0000ff; // Blue
+        else if (partId === 'head') color = 0xffff00; // Yellow
+        else if (partId === 'abdomen') color = 0xff00ff; // Magenta
+        else if (partId === 'chest') color = 0xffa500; // Orange
+
+        const geometry = new THREE.BoxGeometry(size.x, size.y, size.z);
+        const material = new THREE.MeshBasicMaterial({ color: color, wireframe: true, transparent: true, opacity: 0.3 });
+        const debugBox = new THREE.Mesh(geometry, material);
+        debugBox.position.copy(center);
+        debugBox.name = 'debug_' + partId;
+        scene.add(debugBox);
+    }
+
+    // --- Show All Zones for Debugging ---
+    function showAllZones() {
+        // Clear existing debug boxes first
+        const toRemove = [];
+        scene.traverse(child => {
+            if (child.name && child.name.startsWith('debug_')) {
+                toRemove.push(child);
+            }
+        });
+        toRemove.forEach(child => scene.remove(child));
+
+        // Create a debug box for each body part zone
+        Object.keys(bodyPartsData).forEach(part => {
+            const zone = bodyPartsData[part].zone;
+            if (zone) {
+                addDebugBox(part, zone);
+            } else {
+                 console.warn(`Zone not defined for ${part}`);
+            }
+        });
+        console.log('Debug Zone visualization enabled.');
+    }
+
 
     // --- Setup Event Listeners ---
     function setupEventListeners() {
       window.addEventListener('resize', onWindowResize);
-      canvasContainer.addEventListener('click', onClick);
+      canvasContainer.addEventListener('pointerdown', onPointerDown); // Use pointer events
+      canvasContainer.addEventListener('pointerup', onPointerUp);
+      canvasContainer.addEventListener('pointermove', onPointerMove);
       canvasContainer.addEventListener('dblclick', onDoubleClick);
-      canvasContainer.addEventListener('mousemove', onMouseMove);
-      if (panelToggle) {
+
+      if (panelToggle && infoPanel) {
         panelToggle.addEventListener('click', () => {
           infoPanel.classList.toggle('collapsed');
+          // Optional: Trigger resize after transition to fix canvas size if needed
+          // setTimeout(onWindowResize, 350);
         });
+      } else {
+          console.warn("Panel toggle or info panel not found.");
       }
-      
+
       // Add keyboard listener for zone visualization toggle
       document.addEventListener('keydown', function(event) {
-        if (event.key === 'z' || event.key === 'Z') {
-          let zonesVisible = scene.children.some(child => 
-            child.name && child.name.startsWith('debug_')
-          );
-          
-          if (zonesVisible) {
-            // Hide zones
-            scene.children.forEach(child => {
+        if (event.key === 'z' || event.key === 'Z') { // Toggle Zones with 'Z'
+          let zonesVisible = false;
+          scene.traverse(child => {
               if (child.name && child.name.startsWith('debug_')) {
-                scene.remove(child);
+                  zonesVisible = true;
               }
-            });
-            console.log('Zone visualization disabled');
+          });
+
+          if (zonesVisible) {
+             // Hide zones
+             const toRemove = [];
+             scene.traverse(child => {
+                 if (child.name && child.name.startsWith('debug_')) {
+                     toRemove.push(child);
+                 }
+             });
+             toRemove.forEach(child => scene.remove(child));
+             console.log('Debug Zone visualization disabled.');
           } else {
-            // Show zones
-            showAllZones();
+             // Show zones
+             showAllZones();
           }
         }
       });
     }
 
-    // --- Visualization of all zones for debugging ---
-    function showAllZones() {
-      // First clear any existing debug boxes
-      scene.children.forEach(child => {
-        if (child.name && child.name.startsWith('debug_')) {
-          scene.remove(child);
-        }
-      });
-      
-      // Create a debug box for each body part zone
-      Object.keys(bodyPartsData).forEach(part => {
-        const zone = bodyPartsData[part].zone;
-        addDebugBox(part, zone);
-      });
-      
-      console.log('Zone visualization enabled');
-    }
-
     // --- Handle Window Resize ---
     function onWindowResize() {
       if (!renderer || !camera || !canvasContainer) return;
-      camera.aspect = canvasContainer.clientWidth / canvasContainer.clientHeight;
+      const width = canvasContainer.clientWidth;
+      const height = canvasContainer.clientHeight;
+
+      camera.aspect = width / height;
       camera.updateProjectionMatrix();
-      renderer.setSize(canvasContainer.clientWidth, canvasContainer.clientHeight);
-      composer.setSize(canvasContainer.clientWidth, canvasContainer.clientHeight);
-      updateARLabelsPositions();
+
+      renderer.setSize(width, height);
+      composer.setSize(width, height); // Update composer size
+
+      updateARLabelsPositions(); // Update label positions on resize
+      console.log(`Resized to: ${width}x${height}`);
     }
 
     // --- Handle Double Click (Reset View) ---
@@ -1802,343 +1957,369 @@
         soundClick.volume = 0.2;
         soundClick.play().catch(e => console.warn("Audio play prevented:", e));
       }
-      camera.position.copy(initialCameraPosition);
-      controls.target.copy(initialControlsTarget);
-      controls.update();
+      // Smooth transition back to initial view
+      gsap.to(camera.position, {
+          duration: 0.8,
+          x: initialCameraPosition.x,
+          y: initialCameraPosition.y,
+          z: initialCameraPosition.z,
+          ease: "power2.out"
+      });
+      gsap.to(controls.target, {
+          duration: 0.8,
+          x: initialControlsTarget.x,
+          y: initialControlsTarget.y,
+          z: initialControlsTarget.z,
+          ease: "power2.out",
+          onUpdate: () => controls.update() // Important: update controls during tween
+      });
+
       updateSystemStatus('VIEW RESET', 'yellow');
-      setTimeout(() => updateSystemStatus('ASSESSMENT READY', 'green'), 2000);
+      setTimeout(() => updateSystemStatus('ASSESSMENT READY', 'green'), 1500);
     }
 
-    // --- Handle Mouse Move ---
-    function onMouseMove(event) {
-      if (!model) return;
-      const rect = renderer.domElement.getBoundingClientRect();
-      mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
-      mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
-      raycaster.setFromCamera(mouse, camera);
-      const intersects = raycaster.intersectObject(model, true);
-      if (intersects.length > 0) {
-        document.body.style.cursor = 'pointer';
-        const clickPoint = intersects[0].point;
-        const hoveredPart = getBodyPartAtPoint(clickPoint);
-        if (hoveredPart && hoveredPart !== selectedPart) {
-          updateTrackerPosition(clickPoint);
-          if (audioEnabled && Math.random() > 0.95) {
-            soundHover.volume = 0.1;
-            soundHover.play().catch(e => console.warn("Audio play prevented:", e));
-          }
-        }
-      } else {
-        document.body.style.cursor = 'default';
-        hideTracker();
-      }
+
+    // --- Handle Pointer Move (Hover Effects) ---
+    let isDragging = false;
+    let hoverPart = null;
+
+    function onPointerDown() {
+        isDragging = false; // Assume not dragging initially
     }
+
+    function onPointerUp(event) {
+        if (!isDragging) {
+            // Treat as a click if not dragged
+            onClick(event);
+        }
+        isDragging = false; // Reset drag flag
+    }
+
+
+    function onPointerMove(event) {
+        isDragging = true; // If mouse moves after down, it's a drag
+        if (!model || !renderer || !camera) return;
+
+        const rect = renderer.domElement.getBoundingClientRect();
+        mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+        mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+
+        raycaster.setFromCamera(mouse, camera);
+        const intersects = raycaster.intersectObject(model, true);
+
+        if (intersects.length > 0) {
+            canvasContainer.style.cursor = 'pointer';
+            const intersectPoint = intersects[0].point;
+            const currentHoverPart = getBodyPartAtPoint(intersectPoint);
+
+            if (currentHoverPart && currentHoverPart !== selectedPart) {
+                // Only update tracker if part changes or wasn't selected
+                if(currentHoverPart !== hoverPart) {
+                    updateTrackerPosition(intersectPoint);
+                    if (audioEnabled && Math.random() > 0.97) { // Less frequent hover sound
+                        soundHover.volume = 0.08;
+                        soundHover.play().catch(e => console.warn("Audio play prevented:", e));
+                    }
+                    hoverPart = currentHoverPart;
+                }
+
+            } else {
+                // If hovering over selected part or no part, hide tracker
+                hideTracker();
+                hoverPart = null;
+                canvasContainer.style.cursor = 'grab';
+            }
+        } else {
+            canvasContainer.style.cursor = 'grab'; // Use grab cursor when not over model
+             if (tracker.style.opacity !== '0') { // Only hide if visible
+                 hideTracker();
+             }
+            hoverPart = null;
+        }
+    }
+
 
     // --- Update Tracker Position ---
     function updateTrackerPosition(position) {
-      if (!tracker) return;
-      const vector = new THREE.Vector3(position.x, position.y, position.z);
-      vector.project(camera);
+      if (!tracker || !camera || !canvasContainer) return;
+      const vector = position.clone().project(camera); // Use clone to avoid modifying original
+
+      // Convert NDC to screen coordinates
       const x = (vector.x * 0.5 + 0.5) * canvasContainer.clientWidth;
       const y = (-(vector.y * 0.5) + 0.5) * canvasContainer.clientHeight;
-      tracker.style.left = x + 'px';
-      tracker.style.top = y + 'px';
-      tracker.style.opacity = '1';
+
+      // Apply position and ensure visibility
+      gsap.to(tracker, {
+          duration: 0.1, // Quick move
+          left: x + 'px',
+          top: y + 'px',
+          opacity: 1,
+          ease: "power1.out"
+       });
     }
 
     // --- Hide Tracker ---
     function hideTracker() {
       if (tracker) {
-        tracker.style.opacity = '0';
+          gsap.to(tracker, { duration: 0.3, opacity: 0 });
       }
     }
 
-    // --- Improved Click Handler - Now loads tests ---
+    // --- Click Handler (Loads Tests) ---
     function onClick(event) {
-      if (!model) return;
-      
-      const rect = renderer.domElement.getBoundingClientRect();
-      mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
-      mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
-      
-      raycaster.setFromCamera(mouse, camera);
-      const intersects = raycaster.intersectObject(model, true);
-      
-      if (intersects.length > 0) {
-        const clickPoint = intersects[0].point;
-        console.log('Click Point:', clickPoint);
-        
-        // Try to get body part using the improved function
-        const partId = getBodyPartAtPoint(clickPoint);
-        
-        if (partId) {
-          selectBodyPart(partId, clickPoint);
-          
-          // Load the appropriate test using the window.loadTest function exposed by React
-          if (window.loadTest) {
-            window.loadTest(partId);
-          }
+        // This function is now called from onPointerUp if not dragging
+        if (!model || !renderer || !camera) return;
+
+        const rect = renderer.domElement.getBoundingClientRect();
+        mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+        mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+
+        raycaster.setFromCamera(mouse, camera);
+        const intersects = raycaster.intersectObject(model, true);
+
+        if (intersects.length > 0) {
+            const clickPoint = intersects[0].point;
+            // console.log('Click Point:', clickPoint.toArray().map(p=>p.toFixed(3)).join(', '));
+
+            const partId = getBodyPartAtPoint(clickPoint);
+
+            if (partId) {
+                selectBodyPart(partId, clickPoint); // Select and highlight
+
+                // Load the appropriate test using the window.loadTest function exposed by React
+                if (window.loadTest) {
+                    window.loadTest(partId);
+                    console.log(`Loading React test for: ${partId}`);
+                     // If on mobile, potentially collapse the info panel after selection
+                     if (window.innerWidth <= 768 && infoPanel && infoPanel.classList.contains('collapsed')) {
+                        // infoPanel.classList.remove('collapsed'); // Or keep it collapsed? User choice.
+                     }
+
+                } else {
+                    console.error("window.loadTest function not found!");
+                }
+            } else {
+                console.log('Clicked on model but no specific part identified at this point.');
+                // Optionally clear selection if clicking empty space on model?
+                // clearBodyPartSelection();
+            }
         } else {
-          console.log('Clicked on model but no part identified');
+            // Clicked outside the model - clear selection
+            clearBodyPartSelection();
         }
-      } else {
-        clearBodyPartSelection();
-      }
     }
 
-    // --- Get Body Part At Point with EXTREMELY aggressive arm and abdomen detection ---
+
+    // --- Get Body Part At Point ---
     function getBodyPartAtPoint(point) {
-      // Debug: Log the point coordinates for troubleshooting
-      console.log('Checking point:', point);
-      
-      const y = point.y;
-      const x = point.x;
-      
-      // EXTREMELY AGGRESSIVE ARM DETECTION
-      // This will override the chest detection when x is far enough from center
-      if (y > 1.2 && y < 2.6) {  // FIXED: Raised lower bound from 0.5 to 1.2 to match arm zone
-        // Far left = left arm (no matter what other detections say)
-        if (x < -0.5) {
-          console.log('Aggressive arm detection: leftArm');
-          return 'leftArm';
+        // Use adjusted zones (already scaled and translated)
+        const tolerance = 0.1; // Smaller tolerance for direct hit detection
+
+        // Priority check (e.g., abdomen might overlap chest slightly)
+        const checkOrder = ['head', 'abdomen', 'chest', 'leftArm', 'rightArm', 'leftLeg', 'rightLeg'];
+
+        for (const partId of checkOrder) {
+            const zone = bodyPartsData[partId]?.zone;
+            if (zone) {
+                 // Check if point is within the adjusted zone
+                 if (zone.containsPoint(point)) {
+                    // console.log(`Direct hit in zone: ${partId}`);
+                    return partId;
+                 }
+            }
         }
-        
-        // Far right = right arm (no matter what other detections say)
-        if (x > 0.5) {
-          console.log('Aggressive arm detection: rightArm');
-          return 'rightArm';
-        }
-      }
-      
-      // Special case for abdomen to make it more central - with CORRECTED height
-      if (Math.abs(x) < 0.4 && y > 1.0 && y < 1.8) {  // Fixed height
-        console.log('Direct abdomen detection');
-        return 'abdomen';
-      }
-      
-      // Standard detection for all parts
-      const tolerance = 0.3;
-      for (const partId in bodyPartsData) {
-        const zone = bodyPartsData[partId].zone.clone();
-        zone.expandByScalar(tolerance);
-        
-        if (zone.containsPoint(point)) {
-          console.log('Direct hit on zone:', partId);
-          return partId;
-        }
-      }
-      
-      // Find closest part if no direct hit
-      let closestPart = null;
-      let minDistance = Infinity;
-      
-      for (const partId in bodyPartsData) {
-        const zoneCenter = new THREE.Vector3();
-        bodyPartsData[partId].zone.getCenter(zoneCenter);
-        
-        const distance = point.distanceTo(zoneCenter);
-        console.log(`Distance to ${partId}: ${distance.toFixed(3)}`);
-        
-        if (distance < minDistance) {
-          minDistance = distance;
-          closestPart = partId;
-        }
-      }
-      
-      // Use closest part if it's within a reasonable distance
-      if (minDistance < 1.5) {
-        console.log(`Using closest part: ${closestPart}, distance: ${minDistance.toFixed(3)}`);
-        return closestPart;
-      }
-      
-      console.log('No body part found at point');
-      return null;
+
+
+         // If no direct hit, find the closest zone center (less reliable but fallback)
+         let closestPart = null;
+         let minDistanceSq = Infinity; // Use squared distance for efficiency
+
+         for (const partId in bodyPartsData) {
+             const zone = bodyPartsData[partId]?.zone;
+             if (zone) {
+                 const zoneCenter = new THREE.Vector3();
+                 zone.getCenter(zoneCenter);
+                 const distanceSq = point.distanceToSquared(zoneCenter);
+                 if (distanceSq < minDistanceSq) {
+                     minDistanceSq = distanceSq;
+                     closestPart = partId;
+                 }
+             }
+         }
+
+         // Threshold for closest distance (adjust as needed, squared value)
+         const MAX_CLOSE_DISTANCE_SQ = 0.5 * 0.5; // e.g., within 0.5 units
+
+         if (closestPart && minDistanceSq < MAX_CLOSE_DISTANCE_SQ) {
+             // console.log(`Using closest part: ${closestPart}, distance: ${Math.sqrt(minDistanceSq).toFixed(3)}`);
+             return closestPart;
+         }
+
+
+        // console.log('No body part identified at point:', point.toArray().map(p=>p.toFixed(3)).join(', '));
+        return null; // No part found
     }
 
-    // --- Select Body Part with improved highlighting ---
+
+    // --- Select Body Part ---
     function selectBodyPart(partId, clickPoint) {
-      if (audioEnabled) {
-        soundClick.volume = 0.3;
-        soundClick.currentTime = 0;
-        soundClick.play().catch(e => console.warn("Audio play prevented:", e));
-      }
-      if (selectedPart === partId) return;
-      selectedPart = partId;
-      updateSystemStatus('INITIALIZING TEST', 'yellow');
-      
-      // Try to select meshes that are within the zone of the selected part
-      const selectedObjects = [];
-      
-      // For arm parts, use special handling
-      if (partId === 'leftArm' || partId === 'rightArm') {
-        // Determine which side to check
-        const isLeft = partId === 'leftArm';
-        const xThreshold = isLeft ? 0 : 0; // Use 0 as the dividing line
-        
-        // Check all meshes 
-        model.traverse((object) => {
-          if (object.isMesh) {
-            const meshPosition = new THREE.Vector3();
-            object.getWorldPosition(meshPosition);
-            
-            // For arms, check if the mesh is on the correct side (left or right)
-            // and in the appropriate height range
-            if ((isLeft && meshPosition.x < xThreshold) || (!isLeft && meshPosition.x > xThreshold)) {
-              if (meshPosition.y > 1.2 && meshPosition.y < 2.7) { // FIXED: Updated height range for arms
-                selectedObjects.push(object);
-              }
-            }
-          }
-        });
-      } 
-      // Special case for abdomen to ensure correct selection - CORRECTED height
-      else if (partId === 'abdomen') {
-        model.traverse((object) => {
-          if (object.isMesh) {
-            const meshPosition = new THREE.Vector3();
-            object.getWorldPosition(meshPosition);
-            
-            // For abdomen, check if the mesh is in the central area
-            if (Math.abs(meshPosition.x) < 0.5 && meshPosition.y > 1.0 && meshPosition.y < 1.8) {  // Fixed height
-              selectedObjects.push(object);
-            }
-          }
-        });
-      }
-      // Special case for legs with updated height range
-      else if (partId === 'leftLeg' || partId === 'rightLeg') {
-        // Determine which side to check
-        const isLeft = partId === 'leftLeg';
-        const xThreshold = isLeft ? 0 : 0; // Use 0 as the dividing line
-        
-        model.traverse((object) => {
-          if (object.isMesh) {
-            const meshPosition = new THREE.Vector3();
-            object.getWorldPosition(meshPosition);
-            
-            // For legs, check if the mesh is on the correct side (left or right)
-            // and in the appropriate height range
-            if ((isLeft && meshPosition.x < xThreshold) || (!isLeft && meshPosition.x > xThreshold)) {
-              if (meshPosition.y > -0.2 && meshPosition.y < 1.0) { // Updated height range for legs
-                selectedObjects.push(object);
-              }
-            }
-          }
-        });
-      }
-      else {
-        // For non-arm/non-leg parts, use the standard zone-based approach
-        model.traverse((object) => {
-          if (object.isMesh) {
-            const meshPosition = new THREE.Vector3();
-            object.getWorldPosition(meshPosition);
-            
-            // Use extended zone for selection to be more inclusive
-            const extendedZone = bodyPartsData[partId].zone.clone().expandByScalar(0.3);
-            if (extendedZone.containsPoint(meshPosition)) {
-              selectedObjects.push(object);
-            }
-          }
-        });
-      }
-      
-      // If no meshes were selected, try alternative methods
-      if (selectedObjects.length === 0) {
-        console.log('No meshes in zone, selecting by object names for', partId);
-        
-        // First try: select by part name in mesh name
-        model.traverse((object) => {
-          if (object.isMesh) {
-            const meshName = object.name.toLowerCase();
-            const partName = bodyPartsData[partId].name.toLowerCase();
-            if (
-              meshName.includes(partId) || 
-              meshName.includes(partName) ||
-              (partId === 'head' && (meshName.includes('head') || meshName.includes('skull') || meshName.includes('face'))) ||
-              (partId === 'chest' && (meshName.includes('chest') || meshName.includes('torso') || meshName.includes('rib'))) ||
-              (partId === 'abdomen' && (meshName.includes('abdomen') || meshName.includes('stomach') || meshName.includes('waist'))) ||
-              (partId.includes('arm') && (meshName.includes('arm') || meshName.includes('hand') || meshName.includes('shoulder'))) ||
-              (partId.includes('leg') && (meshName.includes('leg') || meshName.includes('thigh') || meshName.includes('foot')))
-            ) {
-              selectedObjects.push(object);
-            }
-          }
-        });
-        
-        // Last resort: if still no objects found, just highlight any visible mesh
-        if (selectedObjects.length === 0) {
-          model.traverse((object) => {
-            if (object.isMesh && object.visible) {
-              selectedObjects.push(object);
-            }
-          });
+        if (!model || !bodyPartsData[partId]) return; // Ensure part exists
+
+        if (selectedPart === partId) return; // Don't re-select same part
+
+        if (audioEnabled) {
+            soundClick.volume = 0.3;
+            soundClick.currentTime = 0;
+            soundClick.play().catch(e => console.warn("Audio play prevented:", e));
         }
-      }
-      
-      outlinePass.selectedObjects = selectedObjects;
-      if (clickPoint) {
-        updateTrackerPosition(clickPoint);
-      }
-      
-      setTimeout(() => {
-        updateSystemStatus('TEST ACTIVE', 'green');
-      }, 1000);
+
+        console.log(`Selecting body part: ${partId}`);
+        selectedPart = partId;
+        updateSystemStatus('INITIATING TEST...', 'yellow'); // Update status
+
+        // Simple Highlighting: Outline all meshes belonging to the model for now
+        // More complex logic could try to identify specific mesh groups if model is structured that way
+        const selectedObjects = [];
+         model.traverse((object) => {
+           if (object.isMesh) {
+             // Attempt to find meshes within the selected part's zone
+             // This is approximate as zones are simple boxes
+             const meshWorldPos = new THREE.Vector3();
+             object.getWorldPosition(meshWorldPos);
+             const zone = bodyPartsData[partId].zone;
+
+             // Check if mesh's bounding box center is within the zone (more robust than single point)
+             if (object.geometry.boundingSphere) {
+                const sphereCenterWorld = object.geometry.boundingSphere.center.clone().applyMatrix4(object.matrixWorld);
+                 if (zone.containsPoint(sphereCenterWorld)) {
+                    selectedObjects.push(object);
+                 }
+             } else if (zone.containsPoint(meshWorldPos)) { // Fallback to mesh position
+                  selectedObjects.push(object);
+             }
+           }
+         });
+
+        // If zone check didn't find anything (e.g., complex mesh outside simple box zone)
+        // fall back to highlighting the whole model - less ideal but ensures feedback
+        if (selectedObjects.length === 0) {
+             console.warn(`No meshes found within zone for ${partId}. Highlighting entire model.`);
+             model.traverse((object) => {
+                if (object.isMesh) selectedObjects.push(object);
+             });
+        }
+
+
+        outlinePass.selectedObjects = selectedObjects;
+
+        if (clickPoint) {
+            updateTrackerPosition(clickPoint); // Keep tracker on the clicked point
+        }
+
+        // Update status after a short delay
+        setTimeout(() => {
+            if (selectedPart === partId) { // Check if selection hasn't changed
+                updateSystemStatus('TEST ACTIVE', 'green');
+            }
+        }, 800);
     }
+
 
     // --- Clear Body Part Selection ---
     function clearBodyPartSelection() {
+      if (!selectedPart) return; // Nothing to clear
+
+      console.log("Clearing body part selection.");
       selectedPart = null;
-      outlinePass.selectedObjects = [];
-      hideTracker();
-      
-      // Reset the test display
+      outlinePass.selectedObjects = []; // Clear outline
+      hideTracker(); // Hide tracker
+
+      // Reset the test display to the welcome screen
       if (window.loadTest) {
         window.loadTest(null);
       }
+      updateSystemStatus('ASSESSMENT READY', 'green'); // Reset status
     }
 
-    // --- Update AR Labels Positions (Raised) ---
+    // --- Update AR Labels Positions ---
     function updateARLabelsPositions() {
-      if (!model || !camera) return;
-      // Adjusted positions for labels (raised y-values)
-      const labelPositions = {
-        head: new THREE.Vector3(0, 3.2, 0),
-        torso: new THREE.Vector3(0.6, 2.2, 0),
-        arm: new THREE.Vector3(-1.2, 1.8, 0),
-        leg: new THREE.Vector3(0.6, 0.2, 0),
-        abdomen: new THREE.Vector3(0, 1.4, 0.4) // Added abdomen label position
-      };
-      for (const [label, element] of Object.entries(arLabels)) {
-        if (element && labelPositions[label]) {
-          const position = labelPositions[label].clone();
-          position.add(model.position);
-          const vector = position.project(camera);
-          const x = (vector.x * 0.5 + 0.5) * canvasContainer.clientWidth;
-          const y = (-(vector.y * 0.5) + 0.5) * canvasContainer.clientHeight;
-          element.style.left = (label.includes('right') ? x + 40 : x - 40) + 'px';
-          element.style.top = y + 'px';
-          element.style.display = vector.z < 1 ? 'block' : 'none';
+        if (!model || !camera || !canvasContainer) return;
+
+        // Define anchor points on the model (approximate world coordinates BEFORE projection)
+        // These need to be adjusted based on your final model's scale and position
+        const modelCenterY = controls.target.y; // Use control target as reference Y
+        const labelAnchors = {
+            head: new THREE.Vector3(0, modelCenterY + 1.8, 0.3),    // Top front of head
+            torso: new THREE.Vector3(0.7, modelCenterY + 0.6, 0.4),   // Right chest area
+            arm: new THREE.Vector3(-0.9, modelCenterY + 0.3, 0.3),  // Left bicep area
+            leg: new THREE.Vector3(0.5, modelCenterY - 1.0, 0.4),   // Right thigh area
+            abdomen: new THREE.Vector3(0.0, modelCenterY - 0.1, 0.5) // Front abdomen
+        };
+
+        for (const [labelId, element] of Object.entries(arLabels)) {
+            if (element && labelAnchors[labelId]) {
+                const worldPosition = labelAnchors[labelId].clone();
+                // No need to add model position if anchors are already in world space relative to centered model
+
+                const screenVector = worldPosition.project(camera);
+
+                // Check if point is behind the camera
+                if (screenVector.z > 1) {
+                    element.style.display = 'none';
+                    continue;
+                }
+
+                // Convert Normalized Device Coordinates (NDC) to screen pixels
+                const x = (screenVector.x * 0.5 + 0.5) * canvasContainer.clientWidth;
+                const y = (-(screenVector.y * 0.5) + 0.5) * canvasContainer.clientHeight;
+
+                // Apply position based on alignment (left/right)
+                const offset = 40; // Horizontal offset from anchor point
+                if (element.classList.contains('ar-label-left')) {
+                    element.style.left = (x - offset) + 'px'; // Position text to the left of anchor
+                } else {
+                    element.style.left = (x + offset) + 'px'; // Position text to the right of anchor
+                }
+                element.style.top = y + 'px'; // Vertical position
+
+                // Ensure element is visible if in front of camera
+                element.style.display = 'block';
+
+            } else if (element) {
+                 element.style.display = 'none'; // Hide if no anchor defined
+            }
         }
-      }
     }
+
 
     // --- Animation Loop ---
     function animate() {
       requestAnimationFrame(animate);
-      if (controls) {
-        controls.update();
+
+      // Update controls only if needed (improves performance)
+      if (controls.enabled) {
+          controls.update();
       }
+
+      // Render scene with post-processing
       if (composer && scene && camera) {
         composer.render();
+      } else if (renderer && scene && camera) {
+          // Fallback to direct render if composer failed
+          renderer.render(scene, camera);
       }
+
+      // Update AR labels continuously as camera moves
       updateARLabelsPositions();
     }
 
+    // --- Start Initialization ---
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', init);
     } else {
       init();
     }
+
   </script>
 </body>
 </html>
