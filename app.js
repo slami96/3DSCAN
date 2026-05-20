@@ -4,8 +4,6 @@
    ============================================================ */
 
 const panel = document.getElementById('panel');
-const hotspots = document.querySelectorAll('.hotspot');
-const labels = document.querySelectorAll('.label');
 const resetBtn = document.getElementById('reset');
 const todayEl = document.getElementById('today');
 
@@ -51,8 +49,8 @@ function loadTest(key) {
   cleanup = () => {};
   currentTest = key;
 
-  hotspots.forEach(h => h.classList.toggle('active', h.dataset.test === key));
-  labels.forEach(l => l.style.opacity = (!key || l.dataset.test === key) ? '1' : '0.25');
+  // Sync the 3D scene's active hotspot when navigating from the panel
+  window.body3d?.setActive(key);
 
   if (!key) { renderWelcome(); return; }
 
@@ -71,32 +69,10 @@ function loadTest(key) {
   t.render(document.getElementById('panel-body'), document.getElementById('panel-sub'));
 }
 
-hotspots.forEach(h => h.addEventListener('click', () => { tone(660); loadTest(h.dataset.test); }));
-resetBtn.addEventListener('click', () => { tone(440); loadTest(null); });
+// Expose so body3d.js can call this when a hotspot sphere is clicked
+window.loadTest = loadTest;
 
-// Cross-highlight: hovering a hotspot lights up its pin annotation
-const pins = document.querySelectorAll('.pin');
-hotspots.forEach(h => {
-  const key = h.dataset.test;
-  const pin = document.querySelector(`.pin[data-test="${key}"]`);
-  if (!pin) return;
-  const enter = () => {
-    pins.forEach(p => p.style.opacity = (p === pin) ? '1' : '0.18');
-    pin.querySelectorAll('text').forEach(t => { t.style.fontWeight = '500'; });
-    pin.querySelector('line').setAttribute('stroke', '#B05333');
-    pin.querySelector('circle').setAttribute('fill', '#B05333');
-  };
-  const leave = () => {
-    pins.forEach(p => p.style.opacity = '');
-    pin.querySelectorAll('text').forEach(t => { t.style.fontWeight = ''; });
-    pin.querySelector('line').setAttribute('stroke', '#1A1A1A');
-    pin.querySelector('circle').setAttribute('fill', '#1A1A1A');
-  };
-  h.addEventListener('mouseenter', enter);
-  h.addEventListener('mouseleave', leave);
-  h.addEventListener('focus', enter);
-  h.addEventListener('blur', leave);
-});
+resetBtn.addEventListener('click', () => { tone(440); loadTest(null); });
 
 /* ============================================================
    WELCOME
@@ -757,20 +733,6 @@ function renderStillness(body, subEl) {
 }
 
 /* ============================================================
-   INITIAL RENDER + entrance choreography
+   INITIAL RENDER
    ============================================================ */
 renderWelcome();
-
-// Draw the body lines on load
-window.addEventListener('load', () => {
-  const lines = document.querySelectorAll('.body__lines path, .body__lines ellipse');
-  lines.forEach((p, i) => {
-    try {
-      const len = p.getTotalLength ? p.getTotalLength() : 400;
-      p.style.strokeDasharray = len;
-      p.style.strokeDashoffset = len;
-      p.style.transition = `stroke-dashoffset 1.4s cubic-bezier(0.4, 0, 0.2, 1) ${i * 30}ms`;
-      requestAnimationFrame(() => { p.style.strokeDashoffset = 0; });
-    } catch (e) {}
-  });
-});
