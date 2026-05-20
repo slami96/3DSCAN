@@ -8,9 +8,18 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT@9..144,300..700,0..100&family=Inter+Tight:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
+
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.163.0/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.163.0/examples/jsm/"
+    }
+  }
+  </script>
 </head>
 <body>
-  <!-- Paper grain (SVG noise filter applied globally) -->
+  <!-- Paper grain -->
   <svg class="grain" aria-hidden="true">
     <filter id="noise">
       <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" stitchTiles="stitch"/>
@@ -47,182 +56,82 @@
 
   <main class="stage">
     <!-- FIGURE COLUMN -->
-    <section class="figure" aria-label="Body diagram">
-      <!-- Corner marks (like a printer's plate) -->
+    <section class="figure" aria-label="Body figure">
       <span class="corner corner--tl" aria-hidden="true"></span>
       <span class="corner corner--tr" aria-hidden="true"></span>
       <span class="corner corner--bl" aria-hidden="true"></span>
       <span class="corner corner--br" aria-hidden="true"></span>
 
-      <!-- Running spine (vertical text in margin) -->
       <span class="spine" aria-hidden="true">PULSE · FOLIO 01 · BODY IN FIVE PARTS · MMXXV</span>
 
       <header class="figure__head">
-        <p class="eyebrow">
-          <span class="eyebrow__dot"></span>
-          Select a region
-        </p>
+        <p class="eyebrow"><span class="eyebrow__dot"></span>Select a region</p>
         <h1 class="title">Spend five<br><em>minutes</em> with<br>your body.</h1>
-        <p class="lede"><span class="dropcap">T</span>ap any spot on the figure to begin a short check. Each one takes under a minute. <em>Nothing is recorded, nothing is sent.</em> The page forgets you the moment you close it.</p>
+        <p class="lede"><span class="dropcap">T</span>ap any sage marker on the figure to begin a short check. Each one takes under a minute. <em>Nothing is recorded, nothing is sent.</em> The page forgets you the moment you close it.</p>
       </header>
 
-      <!-- Marginalia -->
       <aside class="marginalia" aria-hidden="true">
         <span class="marginalia__rule"></span>
-        <p>Fig. i. — Five interactive regions, after the manner of an anatomical plate.</p>
+        <p>Fig. i. — Five regions. Drag to orbit. Scroll to zoom.</p>
       </aside>
 
-      <div class="figure__svg" role="group" aria-label="Interactive body">
-        <svg viewBox="0 0 320 540" xmlns="http://www.w3.org/2000/svg" class="body">
-          <defs>
-            <pattern id="hatch" patternUnits="userSpaceOnUse" width="3" height="3" patternTransform="rotate(35)">
-              <line x1="0" y1="0" x2="0" y2="3" stroke="currentColor" stroke-width="0.35" opacity="0.5"/>
-            </pattern>
-            <radialGradient id="bodyFill" cx="50%" cy="30%">
-              <stop offset="0%" stop-color="#FBF8F2"/>
-              <stop offset="100%" stop-color="#ECE5D6"/>
-            </radialGradient>
-          </defs>
+      <!-- 3D body stage -->
+      <div class="body3d" id="body3d">
+        <!-- canvas appended by body3d.js -->
 
-          <!-- Soft body wash -->
-          <g class="body__wash" opacity="0.6">
-            <path d="M160 22 Q188 22 196 60 Q196 92 178 108 L172 122 Q190 124 208 138 Q224 156 226 184 L232 232 Q236 268 230 290 L218 332 Q220 360 220 384 L208 480 Q210 504 206 520 L196 522 L190 506 L188 470 L184 422 L170 386 L168 446 L164 504 L162 522 L154 522 L154 510 L156 460 L150 386 L132 422 L132 470 L130 506 L124 522 L114 520 Q110 504 112 480 L100 384 Q100 360 102 332 L90 290 Q84 268 88 232 L94 184 Q96 156 112 138 Q130 124 148 122 L142 108 Q124 92 124 60 Q132 22 160 22 Z" fill="url(#bodyFill)" stroke="#B8AE99" stroke-width="0.5" opacity="0.55"/>
-          </g>
+        <!-- Loading state -->
+        <div class="body3d__loading" id="body3d-loading">
+          <svg class="body3d__loading-mark" viewBox="0 0 60 60">
+            <circle cx="30" cy="30" r="22" fill="none" stroke="currentColor" stroke-width="0.6" stroke-dasharray="2 3"/>
+            <circle cx="30" cy="30" r="14" fill="none" stroke="currentColor" stroke-width="0.6"/>
+            <line x1="30" y1="4" x2="30" y2="56" stroke="currentColor" stroke-width="0.4"/>
+            <line x1="4" y1="30" x2="56" y2="30" stroke="currentColor" stroke-width="0.4"/>
+          </svg>
+          <p class="body3d__loading-status" id="body3d-status">Preparing the plate…</p>
+          <div class="body3d__loading-bar"><div id="body3d-bar"></div></div>
+          <p class="body3d__loading-pct" id="body3d-pct">0%</p>
+        </div>
 
-          <!-- Anatomical line work -->
-          <g class="body__lines" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round">
-            <!-- Head -->
-            <ellipse cx="160" cy="62" rx="34" ry="40"/>
-            <!-- Brow/jaw hints -->
-            <path d="M138 56 Q148 50 158 54" opacity="0.5"/>
-            <path d="M162 54 Q172 50 182 56" opacity="0.5"/>
-            <path d="M148 82 Q160 88 172 82" opacity="0.5"/>
-            <!-- Neck -->
-            <path d="M142 100 Q146 110 142 122"/>
-            <path d="M178 100 Q174 110 178 122"/>
-            <!-- Collarbone -->
-            <path d="M142 122 Q160 134 178 122" opacity="0.5"/>
-            <!-- Shoulders/torso outline -->
-            <path d="M142 122 Q116 128 100 150 L84 210 Q82 246 90 282"/>
-            <path d="M178 122 Q204 128 220 150 L236 210 Q238 246 230 282"/>
-            <!-- Ribcage hints -->
-            <path d="M118 170 Q140 178 160 178 Q180 178 202 170" opacity="0.4"/>
-            <path d="M118 198 Q140 206 160 206 Q180 206 202 198" opacity="0.35"/>
-            <!-- Sternum line -->
-            <path d="M160 134 L160 240" stroke-dasharray="2 4" opacity="0.4"/>
-            <!-- Waist taper -->
-            <path d="M90 282 Q98 312 116 332"/>
-            <path d="M230 282 Q222 312 204 332"/>
-            <!-- Navel hint -->
-            <circle cx="160" cy="278" r="2" opacity="0.5"/>
-            <!-- Hips -->
-            <path d="M116 332 Q108 346 110 372 L122 408"/>
-            <path d="M204 332 Q212 346 210 372 L198 408"/>
-            <!-- Pelvic line -->
-            <path d="M122 408 Q142 400 160 402 Q178 400 198 408" opacity="0.6"/>
-            <!-- Quad lines -->
-            <path d="M122 408 L118 484 Q116 510 120 524"/>
-            <path d="M160 402 L156 484 Q154 510 150 524"/>
-            <path d="M160 402 L164 484 Q166 510 170 524"/>
-            <path d="M198 408 L202 484 Q204 510 200 524"/>
-            <!-- Knee hints -->
-            <path d="M118 466 Q126 470 138 466" opacity="0.4"/>
-            <path d="M182 466 Q194 470 202 466" opacity="0.4"/>
-            <!-- Feet -->
-            <path d="M120 524 Q116 530 122 534 L134 532 L138 524"/>
-            <path d="M150 524 Q154 530 148 534 L138 532 L138 524"/>
-            <path d="M170 524 Q166 530 172 534 L182 532 L186 524"/>
-            <path d="M200 524 Q204 530 198 534 L186 532 L186 524"/>
-            <!-- Arms (outer) -->
-            <path d="M100 150 Q72 198 60 252 Q56 296 64 332"/>
-            <path d="M220 150 Q248 198 260 252 Q264 296 256 332"/>
-            <!-- Arms (inner) -->
-            <path d="M142 156 Q124 200 116 250 Q112 290 120 326"/>
-            <path d="M178 156 Q196 200 204 250 Q208 290 200 326"/>
-            <!-- Elbow hints -->
-            <path d="M68 250 Q74 254 84 250" opacity="0.4"/>
-            <path d="M236 250 Q246 254 252 250" opacity="0.4"/>
-            <!-- Hands -->
-            <path d="M64 332 Q58 344 60 358 L66 350 L66 364 L72 354 L74 366 L80 354 Q84 348 80 336"/>
-            <path d="M256 332 Q262 344 260 358 L254 350 L254 364 L248 354 L246 366 L240 354 Q236 348 240 336"/>
-          </g>
+        <!-- Annotation pins (HTML, positioned by JS) -->
+        <div class="pins-overlay" id="pins-overlay" aria-hidden="true">
+          <div class="pin3d" data-test="memory">
+            <span class="pin3d__num">i.</span>
+            <span class="pin3d__name">MEMORY</span>
+            <span class="pin3d__sub">recall</span>
+          </div>
+          <div class="pin3d" data-test="breath">
+            <span class="pin3d__num">ii.</span>
+            <span class="pin3d__name">BREATH</span>
+            <span class="pin3d__sub">4 — 7 — 8</span>
+          </div>
+          <div class="pin3d" data-test="bmi">
+            <span class="pin3d__num">iii.</span>
+            <span class="pin3d__name">COMPOSITION</span>
+            <span class="pin3d__sub">BMI</span>
+          </div>
+          <div class="pin3d" data-test="reaction">
+            <span class="pin3d__num">iv.</span>
+            <span class="pin3d__name">REACTION</span>
+            <span class="pin3d__sub">response</span>
+          </div>
+          <div class="pin3d" data-test="stillness">
+            <span class="pin3d__num">v.</span>
+            <span class="pin3d__name">STILLNESS</span>
+            <span class="pin3d__sub">steadiness</span>
+          </div>
+        </div>
 
-          <!-- Hatching accents on torso (subtle shading) -->
-          <g class="body__hatch" color="#3F5A4D" opacity="0.18">
-            <path d="M90 282 Q98 312 116 332 L116 240 Q118 200 102 162" fill="url(#hatch)"/>
-            <path d="M230 282 Q222 312 204 332 L204 240 Q202 200 218 162" fill="url(#hatch)"/>
-          </g>
-
-          <!-- Interactive hotspots -->
-          <g class="hotspots">
-            <button class="hotspot" data-test="memory" type="button" aria-label="Memory test">
-              <circle cx="160" cy="62" r="26"/>
-            </button>
-            <button class="hotspot" data-test="breath" type="button" aria-label="Breath pacer">
-              <circle cx="160" cy="200" r="30"/>
-            </button>
-            <button class="hotspot" data-test="bmi" type="button" aria-label="Composition">
-              <circle cx="160" cy="290" r="28"/>
-            </button>
-            <button class="hotspot" data-test="reaction" type="button" aria-label="Reaction test">
-              <circle cx="62" cy="252" r="22"/>
-            </button>
-            <button class="hotspot" data-test="stillness" type="button" aria-label="Stillness test">
-              <circle cx="200" cy="470" r="22"/>
-            </button>
-          </g>
-
-          <!-- Numbered annotation pins (botanical-plate style) -->
-          <g class="pins" font-family="JetBrains Mono, monospace" font-size="8.5" letter-spacing="1">
-            <g class="pin" data-test="memory">
-              <line x1="186" y1="62" x2="282" y2="42" stroke="#1A1A1A" stroke-width="0.5"/>
-              <circle cx="282" cy="42" r="1.5" fill="#1A1A1A"/>
-              <text x="290" y="40" fill="#1A1A1A" font-weight="500">i.</text>
-              <text x="290" y="52" fill="#1A1A1A">MEMORY</text>
-              <text x="290" y="62" fill="#8A8278" font-size="7.5">recall</text>
-            </g>
-            <g class="pin" data-test="reaction">
-              <line x1="40" y1="252" x2="6" y2="230" stroke="#1A1A1A" stroke-width="0.5"/>
-              <circle cx="6" cy="230" r="1.5" fill="#1A1A1A"/>
-              <text x="6" y="218" fill="#1A1A1A" font-weight="500">ii.</text>
-              <text x="6" y="208" fill="#1A1A1A">REACTION</text>
-              <text x="6" y="198" fill="#8A8278" font-size="7.5">response</text>
-            </g>
-            <g class="pin" data-test="breath">
-              <line x1="190" y1="200" x2="298" y2="186" stroke="#1A1A1A" stroke-width="0.5"/>
-              <circle cx="298" cy="186" r="1.5" fill="#1A1A1A"/>
-              <text x="290" y="174" fill="#1A1A1A" font-weight="500" text-anchor="start">iii.</text>
-              <text x="290" y="164" fill="#1A1A1A">BREATH</text>
-              <text x="290" y="154" fill="#8A8278" font-size="7.5">4 — 7 — 8</text>
-            </g>
-            <g class="pin" data-test="bmi">
-              <line x1="132" y1="290" x2="22" y2="316" stroke="#1A1A1A" stroke-width="0.5"/>
-              <circle cx="22" cy="316" r="1.5" fill="#1A1A1A"/>
-              <text x="6" y="330" fill="#1A1A1A" font-weight="500">iv.</text>
-              <text x="6" y="340" fill="#1A1A1A">COMPOSITION</text>
-              <text x="6" y="350" fill="#8A8278" font-size="7.5">BMI</text>
-            </g>
-            <g class="pin" data-test="stillness">
-              <line x1="222" y1="470" x2="296" y2="490" stroke="#1A1A1A" stroke-width="0.5"/>
-              <circle cx="296" cy="490" r="1.5" fill="#1A1A1A"/>
-              <text x="290" y="504" fill="#1A1A1A" font-weight="500" text-anchor="start">v.</text>
-              <text x="290" y="514" fill="#1A1A1A">STILLNESS</text>
-              <text x="290" y="524" fill="#8A8278" font-size="7.5">steadiness</text>
-            </g>
-          </g>
-
-          <!-- Compass / scale ornament -->
-          <g class="ornament" transform="translate(28 502)" opacity="0.7">
-            <circle cx="0" cy="0" r="11" fill="none" stroke="#1A1A1A" stroke-width="0.5"/>
-            <line x1="0" y1="-11" x2="0" y2="11" stroke="#1A1A1A" stroke-width="0.5"/>
-            <line x1="-11" y1="0" x2="11" y2="0" stroke="#1A1A1A" stroke-width="0.5"/>
-            <text x="0" y="-15" font-family="JetBrains Mono, monospace" font-size="7" fill="#1A1A1A" text-anchor="middle" letter-spacing="1">FIG. I</text>
-          </g>
-        </svg>
+        <!-- Controls legend (subtle, bottom) -->
+        <div class="legend" aria-hidden="true">
+          <span><kbd>drag</kbd> orbit</span>
+          <span class="legend__sep">·</span>
+          <span><kbd>scroll</kbd> zoom</span>
+          <span class="legend__sep">·</span>
+          <span><kbd>2×</kbd> reset</span>
+        </div>
       </div>
 
       <footer class="figure__foot">
-        <span class="foot__rule"></span>
         <p>Wellness exercises, not medical diagnostics. If something feels off in your body, talk to a clinician.</p>
         <span class="foot__folio">— 01 —</span>
       </footer>
@@ -230,10 +139,11 @@
 
     <!-- ACTIVE PANEL -->
     <section class="panel" id="panel" aria-live="polite">
-      <!-- Content swapped in by JS -->
+      <!-- swapped by app.js -->
     </section>
   </main>
 
   <script src="app.js"></script>
+  <script type="module" src="body3d.js"></script>
 </body>
 </html>
