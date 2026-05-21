@@ -1,14 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Pulse — Five Self-Checks</title>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SOMA — Biometric Canvas</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT@9..144,300..700,0..100&family=Inter+Tight:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT@9..144,200..700,0..100&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
-
   <script type="importmap">
   {
     "imports": {
@@ -19,128 +18,89 @@
   </script>
 </head>
 <body>
-  <!-- Paper grain -->
-  <svg class="grain" aria-hidden="true">
-    <filter id="noise">
-      <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" stitchTiles="stitch"/>
-      <feColorMatrix values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.08 0"/>
-    </filter>
-    <rect width="100%" height="100%" filter="url(#noise)"/>
-  </svg>
 
-  <header class="masthead">
-    <div class="brand">
-      <span class="brand__mark" aria-hidden="true">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4">
-          <path d="M3 12h3l2-6 4 12 2-6 2 3h5"/>
-        </svg>
-      </span>
-      <span class="brand__word">Pulse<span class="brand__dot">.</span></span>
-      <span class="brand__tag">№ 01 — A Folio of Five</span>
-    </div>
-    <nav class="meta">
-      <span class="meta__pulse" aria-hidden="true"></span>
-      <span class="meta__label">Live</span>
-      <span class="meta__sep">·</span>
-      <span class="meta__label">Self-issued</span>
-      <span class="meta__sep">·</span>
-      <time class="meta__label" id="today">—</time>
-    </nav>
-    <button class="reset" id="reset" type="button" aria-label="Return to start">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
-        <path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/>
+  <header class="bar">
+    <div class="bar__brand">
+      <svg class="bar__sig" viewBox="0 0 32 32" fill="none">
+        <circle cx="16" cy="16" r="14" stroke="currentColor" stroke-width="0.6"/>
+        <path d="M4 16h4l3-8 5 16 3-8 3 4h6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
       </svg>
-      <span>Reset</span>
-    </button>
+      <span class="bar__name">SOMA</span>
+      <span class="bar__tag">Biometric Canvas</span>
+    </div>
+
+    <!-- Session manifest: 5 dots, one per check -->
+    <div class="manifest" id="manifest" aria-label="Session progress">
+      <div class="manifest__dot" data-test="memory"    title="Cognitive">01</div>
+      <div class="manifest__dot" data-test="breath"    title="Breath">02</div>
+      <div class="manifest__dot" data-test="bmi"       title="Composition">03</div>
+      <div class="manifest__dot" data-test="reaction"  title="Reaction">04</div>
+      <div class="manifest__dot" data-test="stillness" title="Stillness">05</div>
+    </div>
+
+    <div class="bar__right">
+      <span class="bar__clock" id="session-clock">00:00</span>
+      <button class="bar__reset" id="reset" type="button">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.2">
+          <path d="M3 10a7 7 0 1 0 2-5L3 3v4h4"/>
+        </svg>
+        Reset
+      </button>
+    </div>
   </header>
 
   <main class="stage">
-    <!-- FIGURE COLUMN -->
-    <section class="figure" aria-label="Body figure">
-      <span class="corner corner--tl" aria-hidden="true"></span>
-      <span class="corner corner--tr" aria-hidden="true"></span>
-      <span class="corner corner--bl" aria-hidden="true"></span>
-      <span class="corner corner--br" aria-hidden="true"></span>
 
-      <span class="spine" aria-hidden="true">PULSE · FOLIO 01 · BODY IN FIVE PARTS · MMXXV</span>
+    <!-- ─── LEFT: 3D canvas ─────────────────────────────── -->
+    <section class="canvas-col" id="canvas-col">
 
-      <header class="figure__head">
-        <p class="eyebrow"><span class="eyebrow__dot"></span>Select a region</p>
-        <h1 class="title">Spend five<br><em>minutes</em> with<br>your body.</h1>
-        <p class="lede"><span class="dropcap">T</span>ap any sage marker on the figure to begin a short check. Each one takes under a minute. <em>Nothing is recorded, nothing is sent.</em> The page forgets you the moment you close it.</p>
-      </header>
+      <!-- Three.js appends <canvas> here -->
+      <div class="viewport" id="viewport">
 
-      <aside class="marginalia" aria-hidden="true">
-        <span class="marginalia__rule"></span>
-        <p>Fig. i. — Five regions. Drag to orbit. Scroll to zoom.</p>
-      </aside>
-
-      <!-- 3D body stage -->
-      <div class="body3d" id="body3d">
-        <!-- canvas appended by body3d.js -->
-
-        <!-- Loading state -->
-        <div class="body3d__loading" id="body3d-loading">
-          <svg class="body3d__loading-mark" viewBox="0 0 60 60">
-            <circle cx="30" cy="30" r="22" fill="none" stroke="currentColor" stroke-width="0.6" stroke-dasharray="2 3"/>
-            <circle cx="30" cy="30" r="14" fill="none" stroke="currentColor" stroke-width="0.6"/>
-            <line x1="30" y1="4" x2="30" y2="56" stroke="currentColor" stroke-width="0.4"/>
-            <line x1="4" y1="30" x2="56" y2="30" stroke="currentColor" stroke-width="0.4"/>
-          </svg>
-          <p class="body3d__loading-status" id="body3d-status">Preparing the plate…</p>
-          <div class="body3d__loading-bar"><div id="body3d-bar"></div></div>
-          <p class="body3d__loading-pct" id="body3d-pct">0%</p>
+        <!-- Loading -->
+        <div class="loader" id="loader">
+          <div class="loader__ring">
+            <svg viewBox="0 0 80 80">
+              <circle cx="40" cy="40" r="32" stroke="currentColor" stroke-width="0.5" stroke-dasharray="2 4"/>
+              <circle cx="40" cy="40" r="20" fill="none" stroke="currentColor" stroke-width="0.5"/>
+              <line x1="40" y1="8"  x2="40" y2="72" stroke="currentColor" stroke-width="0.4"/>
+              <line x1="8"  y1="40" x2="72" y2="40" stroke="currentColor" stroke-width="0.4"/>
+            </svg>
+          </div>
+          <p class="loader__msg" id="loader-msg">Preparing figure…</p>
+          <div class="loader__track"><div class="loader__fill" id="loader-fill"></div></div>
+          <p class="loader__pct" id="loader-pct">0 %</p>
         </div>
 
-        <!-- Annotation pins (HTML, positioned by JS) -->
-        <div class="pins-overlay" id="pins-overlay" aria-hidden="true">
-          <div class="pin3d" data-test="memory">
-            <span class="pin3d__num">i.</span>
-            <span class="pin3d__name">MEMORY</span>
-            <span class="pin3d__sub">recall</span>
-          </div>
-          <div class="pin3d" data-test="breath">
-            <span class="pin3d__num">ii.</span>
-            <span class="pin3d__name">BREATH</span>
-            <span class="pin3d__sub">4 — 7 — 8</span>
-          </div>
-          <div class="pin3d" data-test="bmi">
-            <span class="pin3d__num">iii.</span>
-            <span class="pin3d__name">COMPOSITION</span>
-            <span class="pin3d__sub">BMI</span>
-          </div>
-          <div class="pin3d" data-test="reaction">
-            <span class="pin3d__num">iv.</span>
-            <span class="pin3d__name">REACTION</span>
-            <span class="pin3d__sub">response</span>
-          </div>
-          <div class="pin3d" data-test="stillness">
-            <span class="pin3d__num">v.</span>
-            <span class="pin3d__name">STILLNESS</span>
-            <span class="pin3d__sub">steadiness</span>
-          </div>
+        <!-- Floating region pins (HTML, positioned via JS every frame) -->
+        <div class="pins" id="pins">
+          <button class="pin" data-test="memory"    type="button"><span class="pin__n">i</span><span class="pin__l">Cognitive</span></button>
+          <button class="pin" data-test="breath"    type="button"><span class="pin__n">ii</span><span class="pin__l">Breath</span></button>
+          <button class="pin" data-test="bmi"       type="button"><span class="pin__n">iii</span><span class="pin__l">Composition</span></button>
+          <button class="pin" data-test="reaction"  type="button"><span class="pin__n">iv</span><span class="pin__l">Reaction</span></button>
+          <button class="pin" data-test="stillness" type="button"><span class="pin__n">v</span><span class="pin__l">Stillness</span></button>
         </div>
 
-        <!-- Controls legend (subtle, bottom) -->
-        <div class="legend" aria-hidden="true">
-          <span><kbd>drag</kbd> orbit</span>
+        <!-- Scan line (ambient) -->
+        <div class="scanline" aria-hidden="true"></div>
+
+        <!-- Bottom legend -->
+        <div class="legend">
+          <span><kbd>Drag</kbd> orbit</span>
           <span class="legend__sep">·</span>
-          <span><kbd>scroll</kbd> zoom</span>
+          <span><kbd>Scroll</kbd> zoom</span>
           <span class="legend__sep">·</span>
-          <span><kbd>2×</kbd> reset</span>
+          <span><kbd>2×click</kbd> reset view</span>
         </div>
       </div>
 
-      <footer class="figure__foot">
-        <p>Wellness exercises, not medical diagnostics. If something feels off in your body, talk to a clinician.</p>
-        <span class="foot__folio">— 01 —</span>
-      </footer>
     </section>
 
-    <!-- ACTIVE PANEL -->
+    <!-- ─── RIGHT: Test panel ───────────────────────────── -->
     <section class="panel" id="panel" aria-live="polite">
-      <!-- swapped by app.js -->
+      <!-- filled by app.js -->
     </section>
+
   </main>
 
   <script src="app.js"></script>
