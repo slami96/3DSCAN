@@ -1,691 +1,646 @@
 /* ============================================================
-   PULSE — Five Self-Checks
-   Vanilla JS, no framework, no build.
+   SOMA — app.js
+   Test panel logic. Results call window.soma.setResult()
+   which drives GLSL shader effects in real time.
    ============================================================ */
 
-const panel = document.getElementById('panel');
-const resetBtn = document.getElementById('reset');
-const todayEl = document.getElementById('today');
+const panel      = document.getElementById('panel');
+const resetBtn   = document.getElementById('reset');
+const manifestEl = document.getElementById('manifest');
 
-/* ---------- Live header date ---------- */
-function setToday() {
-  const d = new Date();
-  todayEl.textContent = d.toLocaleDateString('en-GB', {
-    day: '2-digit', month: 'short', year: 'numeric'
-  }).toUpperCase().replace(/\./g, '');
+/* ---- Session clock ---- */
+const clockEl = document.getElementById('session-clock');
+const clockStart = Date.now();
+setInterval(() => {
+  const s = Math.floor((Date.now() - clockStart) / 1000);
+  clockEl.textContent = `${String(Math.floor(s / 60)).padStart(2,'0')}:${String(s % 60).padStart(2,'0')}`;
+}, 1000);
+
+/* ---- Date stamp ---- */
+const d = new Date();
+if (clockEl) clockEl.title = d.toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' }).toUpperCase();
+
+/* ---- Session state ---- */
+const SESSION = { memory: null, breath: null, bmi: null, reaction: null, stillness: null };
+function markDone(id) {
+  SESSION[id] = true;
+  manifestEl?.querySelectorAll('.manifest__dot').forEach(dot => {
+    if (dot.dataset.test === id) dot.classList.add('done');
+  });
 }
-setToday();
-
-/* ---------- Audio cues (soft, optional) ---------- */
-let audioCtx = null;
-function tone(freq = 440, dur = 0.08, type = 'sine', gain = 0.04) {
-  try {
-    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    const o = audioCtx.createOscillator();
-    const g = audioCtx.createGain();
-    o.type = type; o.frequency.value = freq;
-    g.gain.value = gain;
-    o.connect(g); g.connect(audioCtx.destination);
-    o.start();
-    g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + dur);
-    o.stop(audioCtx.currentTime + dur);
-  } catch (e) { /* ignore */ }
-}
-
-/* ---------- Routing ---------- */
-const TESTS = {
-  memory:    { num: '01', name: 'Memory',      sub: 'cognitive recall',     time: '~60s', render: renderMemory },
-  reaction:  { num: '02', name: 'Reaction',    sub: 'response time',        time: '~45s', render: renderReaction },
-  breath:    { num: '03', name: 'Breath',      sub: '4 — 7 — 8 pacer',      time: '~90s', render: renderBreath },
-  bmi:       { num: '04', name: 'Composition', sub: 'BMI with context',     time: '~30s', render: renderBMI },
-  stillness: { num: '05', name: 'Stillness',   sub: 'steadiness drill',     time: '~30s', render: renderStillness },
-};
-
-let currentTest = null;
-let cleanup = () => {};
-
-function loadTest(key) {
-  cleanup && cleanup();
-  cleanup = () => {};
-  currentTest = key;
-
-  // Sync the 3D scene's active hotspot when navigating from the panel
-  window.body3d?.setActive(key);
-
-  if (!key) { renderWelcome(); return; }
-
-  const t = TESTS[key];
-  panel.innerHTML = `
-    <header class="panel-head">
-      <p class="eyebrow">${t.num} — ${t.sub.toUpperCase()}</p>
-      <h2>${t.name}.</h2>
-      <p class="panel-sub" id="panel-sub"></p>
-    </header>
-    <div class="panel-body" id="panel-body"></div>
-    <footer class="panel-foot">
-      Pulse № 01  ·  Folio ${t.num}/05  ·  Self-check, not diagnostic
-    </footer>
-  `;
-  t.render(document.getElementById('panel-body'), document.getElementById('panel-sub'));
-}
-
-// Expose so body3d.js can call this when a hotspot sphere is clicked
-window.loadTest = loadTest;
-
-resetBtn.addEventListener('click', () => { tone(440); loadTest(null); });
-
-/* ============================================================
-   WELCOME
-   ============================================================ */
-function renderWelcome() {
-  panel.innerHTML = `
-    <div class="welcome">
-      <p class="eyebrow">Folio · Issue 01</p>
-      <p class="number">05<em>.</em></p>
-      <h2>Brief checks for<br>a long body.</h2>
-      <p><span class="dropcap">F</span>ive small exercises that ask different questions of you: how well you remember a pattern, how quickly your hand finds a green light, how patiently you can let a breath leave your chest. Choose one. Or work through all of them in sequence — the whole set takes under five minutes.</p>
-
-      <ol class="toc" id="toc">
-        ${Object.entries(TESTS).map(([k, t]) => `
-          <li data-test="${k}">
-            <span class="toc__num">${t.num}</span>
-            <span class="toc__name">${t.name}<span style="color:var(--ink-3); font-family:var(--sans); font-size:13px; margin-left:8px;">— ${t.sub}</span></span>
-            <span class="toc__time">${t.time}</span>
-          </li>
-        `).join('')}
-      </ol>
-
-      <p style="font-family:var(--mono); font-size:11px; letter-spacing:0.1em; color:var(--ink-3); text-transform:uppercase; margin-top: 16px;">
-        ↳ Tap a region on the figure, or pick a line above.
-      </p>
-    </div>
-  `;
-  document.querySelectorAll('#toc li').forEach(li => {
-    li.addEventListener('click', () => loadTest(li.dataset.test));
+function setActiveManifest(id) {
+  manifestEl?.querySelectorAll('.manifest__dot').forEach(dot => {
+    dot.classList.toggle('active', dot.dataset.test === id && !SESSION[id]);
   });
 }
 
+/* ---- Animated number counter ---- */
+function countUp(el, from, to, dur = 1100, suffix = '') {
+  const t0 = performance.now();
+  function tick() {
+    const t = Math.min(1, (performance.now() - t0) / dur);
+    const e = 1 - Math.pow(1 - t, 3);
+    el.textContent = Math.round(from + (to - from) * e) + suffix;
+    if (t < 1) requestAnimationFrame(tick);
+  }
+  tick();
+}
+
+/* ---- Web audio cues ---- */
+let ctx;
+function beep(freq = 440, dur = 0.1, type = 'sine', vol = 0.04) {
+  try {
+    if (!ctx) ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const o = ctx.createOscillator(), g = ctx.createGain();
+    o.type = type; o.frequency.value = freq;
+    g.gain.value = vol;
+    o.connect(g); g.connect(ctx.destination);
+    o.start();
+    g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + dur);
+    o.stop(ctx.currentTime + dur);
+  } catch {}
+}
+
+/* ---- Routing ---- */
+let cleanup = () => {};
+let currentTest = null;
+
+const TESTS = {
+  memory:    { n: '01', sub: 'Cognitive Recall',    time: '~60s', fn: renderMemory    },
+  breath:    { n: '02', sub: 'Breath Pacer',        time: '~80s', fn: renderBreath    },
+  bmi:       { n: '03', sub: 'Body Composition',    time: '~20s', fn: renderBMI       },
+  reaction:  { n: '04', sub: 'Reaction Time',       time: '~45s', fn: renderReaction  },
+  stillness: { n: '05', sub: 'Stillness Drill',     time: '~30s', fn: renderStillness },
+};
+
+function loadTest(id) {
+  cleanup();
+  cleanup = () => {};
+  currentTest = id;
+
+  window.soma?.setActive(id);
+  setActiveManifest(id);
+
+  if (!id) { renderHome(); return; }
+  const t = TESTS[id];
+  panel.innerHTML = `
+    <header class="ph">
+      <p class="ph__eye">${t.n} — ${t.sub.toUpperCase()}</p>
+      <h2 class="ph__h" id="ph-h">${t.sub.split(' ')[0]}.</h2>
+      <p class="ph__sub" id="ph-sub"></p>
+    </header>
+    <div class="pb" id="pb"></div>
+    <footer class="pf">SOMA · Check ${t.n}/05 · ${t.time} · Self-check, not diagnostic</footer>
+  `;
+  t.fn(document.getElementById('pb'), document.getElementById('ph-sub'));
+}
+
+window.loadTest = loadTest;
+resetBtn?.addEventListener('click', () => {
+  beep(330); loadTest(null); window.soma?.clearActive?.();
+});
+
+/* manifest dot click → navigate */
+manifestEl?.querySelectorAll('.manifest__dot').forEach(d => {
+  d.style.cursor = 'pointer';
+  d.addEventListener('click', () => { beep(550); loadTest(d.dataset.test); });
+});
+
 /* ============================================================
-   01 · MEMORY  — Simon-style sequence recall
+   HOME
    ============================================================ */
-function renderMemory(body, subEl) {
-  subEl.textContent = 'Watch the sequence. Repeat it back. Each round adds one step.';
-  body.innerHTML = `
-    <div class="stats-row">
-      <div class="stat"><span class="stat__label">Round</span><span class="stat__value" id="m-round">—</span></div>
-      <div class="stat"><span class="stat__label">Length</span><span class="stat__value" id="m-len">—</span></div>
-      <div class="stat"><span class="stat__label">Best</span><span class="stat__value" id="m-best"><em>0</em></span></div>
-    </div>
-    <div class="memory-grid">
-      <button class="memory-tile" data-c="sage"  data-i="0">Sage</button>
-      <button class="memory-tile" data-c="clay"  data-i="1">Clay</button>
-      <button class="memory-tile" data-c="amber" data-i="2">Amber</button>
-      <button class="memory-tile" data-c="stone" data-i="3">Stone</button>
-    </div>
-    <div id="m-status" class="result-block" style="display:none;"></div>
-    <div class="actions">
-      <button class="btn" id="m-start">Begin</button>
-      <button class="btn btn--ghost" id="m-stop" style="display:none;">Stop</button>
+function renderHome() {
+  panel.innerHTML = `
+    <div class="home">
+      <p class="ph__eye">SOMA · BIOMETRIC CANVAS</p>
+      <p class="home__num">05</p>
+      <h2 class="home__h">Results written<br>on the body.</h2>
+      <p class="home__p">Complete each check. Watch the model respond — every result paints a living effect directly onto the 3D surface. Drag to orbit while a test runs and see it update in real time.</p>
+      <ol class="toc" id="toc">
+        ${Object.entries(TESTS).map(([k, t]) => `
+          <li data-id="${k}" class="${SESSION[k] ? 'done' : ''}">
+            <span class="toc__n">${t.n}</span>
+            <span class="toc__name">${t.sub}</span>
+            <span class="toc__time">${t.time}</span>
+          </li>`).join('')}
+      </ol>
     </div>
   `;
+  document.querySelectorAll('#toc li').forEach(li =>
+    li.addEventListener('click', () => { beep(550); loadTest(li.dataset.id); })
+  );
+}
 
-  const tiles = body.querySelectorAll('.memory-tile');
-  const roundEl = body.querySelector('#m-round');
-  const lenEl = body.querySelector('#m-len');
-  const bestEl = body.querySelector('#m-best');
+/* ============================================================
+   01 · MEMORY — Simon + live neural shader feedback
+   ============================================================ */
+function renderMemory(body, sub) {
+  sub.textContent = 'Watch the sequence. Repeat it back. Score drives neural density on the model.';
+  body.innerHTML = `
+    <div class="stats">
+      <div><div class="stat__lbl">Round</div><div class="stat__val" id="m-round">—</div></div>
+      <div><div class="stat__lbl">Length</div><div class="stat__val scan" id="m-len">—</div></div>
+      <div><div class="stat__lbl">Best</div><div class="stat__val" id="m-best"><em id="m-best-n">${localStorage.getItem('soma.mem.best') ?? 0}</em></div></div>
+    </div>
+    <div class="tiles">
+      <button class="tile" data-c="0" data-i="0">Forest</button>
+      <button class="tile" data-c="1" data-i="1">Ember</button>
+      <button class="tile" data-c="2" data-i="2">Arctic</button>
+      <button class="tile" data-c="3" data-i="3">Dusk</button>
+    </div>
+    <div id="m-status" class="note" style="display:none;"></div>
+    <div class="actions">
+      <button class="btn btn--primary" id="m-go">Begin sequence</button>
+      <button class="btn btn--ghost" id="m-stop" style="display:none;">Stop</button>
+    </div>`;
+
+  const tiles    = [...body.querySelectorAll('.tile')];
+  const roundEl  = body.querySelector('#m-round');
+  const lenEl    = body.querySelector('#m-len');
+  const bestEl   = body.querySelector('#m-best-n');
   const statusEl = body.querySelector('#m-status');
-  const startBtn = body.querySelector('#m-start');
-  const stopBtn = body.querySelector('#m-stop');
+  const goBtn    = body.querySelector('#m-go');
+  const stopBtn  = body.querySelector('#m-stop');
 
-  let seq = [], input = [], round = 0, best = +(localStorage.getItem('pulse.memory.best') || 0);
-  bestEl.innerHTML = `<em>${best}</em>`;
+  let seq = [], input = [], round = 0, best = +(localStorage.getItem('soma.mem.best') || 0), running = false;
 
-  let playing = false;
-
-  function lightTile(i, ms = 380) {
-    const tile = tiles[i];
-    tile.classList.add('lit');
-    const freqs = [330, 415, 494, 277];
-    tone(freqs[i], 0.18, 'sine', 0.05);
-    return new Promise(res => setTimeout(() => { tile.classList.remove('lit'); setTimeout(res, 120); }, ms));
+  function lightTile(i, ms = 400) {
+    tiles[i].classList.add('lit');
+    beep([330, 415, 494, 277][i], 0.18, 'sine', 0.045);
+    return new Promise(r => setTimeout(() => { tiles[i].classList.remove('lit'); setTimeout(r, 100); }, ms));
   }
+
+  function setEnabled(on) { tiles.forEach(t => { t.disabled = !on; t.style.opacity = on ? '1' : '0.55'; }); }
 
   async function playSeq() {
     setEnabled(false);
     await new Promise(r => setTimeout(r, 500));
-    for (const i of seq) {
-      await lightTile(i, 420);
-    }
+    for (const i of seq) await lightTile(i, 420);
     setEnabled(true);
   }
 
-  function setEnabled(on) {
-    tiles.forEach(t => { t.disabled = !on; t.style.opacity = on ? 1 : 0.7; });
-  }
-
   function nextRound() {
-    round++;
-    input = [];
+    round++; input = [];
     seq.push(Math.floor(Math.random() * 4));
-    roundEl.innerHTML = round;
-    lenEl.innerHTML = seq.length;
+    roundEl.textContent = round;
+    lenEl.textContent   = seq.length;
     statusEl.style.display = 'none';
+    // push score to shader
+    window.soma?.setResult('memory', { level: round });
     playSeq();
   }
 
   function fail() {
-    playing = false;
+    running = false;
     setEnabled(false);
-    statusEl.style.display = 'block';
     const score = round - 1;
     if (score > best) {
       best = score;
-      localStorage.setItem('pulse.memory.best', score);
-      bestEl.innerHTML = `<em>${best}</em>`;
+      localStorage.setItem('soma.mem.best', score);
+      bestEl.textContent = score;
     }
-    statusEl.innerHTML = `
-      <h4>Round ${round}</h4>
-      <p>You held <strong>${score}</strong> ${score === 1 ? 'step' : 'steps'} clean before missing. Working memory typically holds five to nine items — the variance is enormous. The point isn't the number; it's that you noticed where attention slipped.</p>
-    `;
-    startBtn.textContent = 'Try again';
-    startBtn.style.display = 'inline-flex';
+    window.soma?.setResult('memory', { level: score });
+    statusEl.style.display = 'block';
+    statusEl.innerHTML = `<div class="note__lbl">Round ${round}</div>
+      <p>Recalled <strong>${score}</strong> clean ${score === 1 ? 'step' : 'steps'}. The neural glow on the model reflects your depth of recall — denser means further you went.</p>`;
+    goBtn.textContent = 'Try again'; goBtn.style.display = 'inline-flex';
     stopBtn.style.display = 'none';
-    tone(180, 0.3, 'sawtooth', 0.04);
+    beep(160, 0.3, 'sawtooth', 0.035);
+    if (score >= 4) markDone('memory');
   }
 
-  function handleTile(e) {
-    if (!playing) return;
-    const i = +e.currentTarget.dataset.i;
-    lightTile(i, 200);
-    input.push(i);
+  tiles.forEach(t => t.addEventListener('click', () => {
+    if (!running) return;
+    const i = +t.dataset.i;
+    lightTile(i, 200); input.push(i);
     if (input[input.length - 1] !== seq[input.length - 1]) { fail(); return; }
     if (input.length === seq.length) {
       setEnabled(false);
-      tone(880, 0.12, 'sine', 0.04);
-      setTimeout(() => nextRound(), 700);
+      beep(880, 0.12);
+      window.soma?.setResult('memory', { level: round + 1 });
+      setTimeout(() => nextRound(), 650);
     }
-  }
-  tiles.forEach(t => t.addEventListener('click', handleTile));
+  }));
 
-  startBtn.addEventListener('click', () => {
-    seq = []; input = []; round = 0;
-    playing = true;
-    startBtn.style.display = 'none';
-    stopBtn.style.display = 'inline-flex';
+  goBtn.addEventListener('click', () => {
+    seq = []; input = []; round = 0; running = true;
+    goBtn.style.display = 'none'; stopBtn.style.display = 'inline-flex';
     nextRound();
   });
   stopBtn.addEventListener('click', () => fail());
-
-  cleanup = () => { playing = false; };
+  cleanup = () => { running = false; };
 }
 
 /* ============================================================
-   02 · REACTION  — Wait for green, 5 trials, show median
+   02 · BREATH — 4-7-8 pacer, phase drives circulation shader
    ============================================================ */
-function renderReaction(body, subEl) {
-  subEl.textContent = 'Wait. The panel will turn sage. Click as fast as you can. Five trials.';
+function renderBreath(body, sub) {
+  sub.textContent = 'Inhale 4 — hold 7 — exhale 8. Four cycles. The chest circulation responds in real time.';
+
+  const phases = [
+    { name: 'Inhale',  s: 4, targetBreath: 1.0, freq: 330 },
+    { name: 'Hold',    s: 7, targetBreath: 1.0, freq: 0   },
+    { name: 'Exhale',  s: 8, targetBreath: 0.0, freq: 220 },
+    { name: 'Rest',    s: 1, targetBreath: 0.0, freq: 0   },
+  ];
+  const CYCLES = 4;
+  const CIRC   = 2 * Math.PI * 118; // circumference of progress ring r=118
+
   body.innerHTML = `
-    <div class="reaction-stage" id="r-stage">
-      <div id="r-content" style="text-align:center;">
-        <h3>Ready</h3>
-        <p>Click anywhere to start</p>
+    <div class="pacer">
+      <div class="pacer__stage">
+        <svg class="pacer__svg" viewBox="0 0 260 260">
+          <!-- Outer atmospheric rings -->
+          <circle cx="130" cy="130" r="120" fill="none" stroke="rgba(255,122,42,0.07)" stroke-width="0.6" stroke-dasharray="2 4"/>
+          <circle cx="130" cy="130" r="100" fill="none" stroke="rgba(255,122,42,0.05)" stroke-width="0.6"/>
+          <!-- Breathing core -->
+          <circle id="bp-core" cx="130" cy="130" r="70" fill="rgba(26,10,4,0.9)" stroke="rgba(255,122,42,0.2)" stroke-width="0.8"
+            style="transform-origin:center; transition:transform 4s cubic-bezier(0.4,0,0.2,1), stroke 1s;"/>
+          <!-- Phase progress arc -->
+          <circle id="bp-arc" cx="130" cy="130" r="90" fill="none" stroke="var(--ember)" stroke-width="1.5"
+            stroke-dasharray="${CIRC}" stroke-dashoffset="${CIRC}" stroke-linecap="round"
+            transform="rotate(-90 130 130)" style="transition:stroke-dashoffset 1s linear;"/>
+        </svg>
+        <div class="pacer__text">
+          <div class="pacer__phase" id="bp-phase">Ready</div>
+          <div class="pacer__count" id="bp-count">—</div>
+        </div>
+      </div>
+      <div class="pacer__cyc" id="bp-cyc">Press start to begin</div>
+      <div class="actions">
+        <button class="btn btn--primary" id="bp-start">Start pacer</button>
+        <button class="btn btn--ghost"   id="bp-stop" style="display:none;">Stop</button>
+      </div>
+      <div id="bp-done" class="note" style="display:none;"></div>
+    </div>`;
+
+  const phaseEl = body.querySelector('#bp-phase');
+  const countEl = body.querySelector('#bp-count');
+  const cycEl   = body.querySelector('#bp-cyc');
+  const core    = body.querySelector('#bp-core');
+  const arc     = body.querySelector('#bp-arc');
+  const startB  = body.querySelector('#bp-start');
+  const stopB   = body.querySelector('#bp-stop');
+  const doneEl  = body.querySelector('#bp-done');
+
+  let running = false, ival = null, tout = null;
+
+  function setCore(big) {
+    core.style.transform = big ? 'scale(1)' : 'scale(0.52)';
+    core.style.stroke    = big ? 'rgba(255,122,42,0.65)' : 'rgba(255,122,42,0.2)';
+  }
+
+  function runPhase(pi, ci) {
+    if (!running) return;
+    if (pi >= phases.length) { runCycle(ci + 1); return; }
+    if (ci >= CYCLES)        { complete(); return; }
+    const ph = phases[pi];
+    phaseEl.textContent = ph.name;
+    if (ph.freq) beep(ph.freq, 0.12, 'sine', 0.03);
+
+    setCore(ph.targetBreath > 0.5);
+    window.soma?.setResult('breath', { phase: ph.targetBreath });
+
+    // Phase arc
+    arc.style.transition = 'none';
+    arc.style.strokeDashoffset = CIRC;
+    requestAnimationFrame(() => {
+      arc.style.transition = `stroke-dashoffset ${ph.s}s linear`;
+      arc.style.strokeDashoffset = '0';
+    });
+
+    let r = ph.s; countEl.textContent = r;
+    clearInterval(ival);
+    ival = setInterval(() => { r--; countEl.textContent = Math.max(0, r); }, 1000);
+    tout = setTimeout(() => { clearInterval(ival); runPhase(pi + 1, ci); }, ph.s * 1000);
+  }
+
+  function runCycle(ci) {
+    if (!running) return;
+    if (ci >= CYCLES) { complete(); return; }
+    cycEl.textContent = `Cycle ${ci + 1} of ${CYCLES}`;
+    runPhase(0, ci);
+  }
+
+  function complete() {
+    running = false;
+    setCore(false);
+    phaseEl.textContent = 'Complete'; countEl.textContent = '';
+    cycEl.textContent = 'Take your time before moving on';
+    window.soma?.setResult('breath', { phase: 0.6 });
+    startB.style.display = 'inline-flex'; startB.textContent = 'Run again';
+    stopB.style.display = 'none';
+    doneEl.style.display = 'block';
+    doneEl.innerHTML = `<div class="note__lbl">80 seconds · 4 cycles</div>
+      <p>The circulation rings on the chest are now active. They follow the breath you just set: the wave speed and intensity encode the phase cadence. 4-7-8 biases the nervous system toward parasympathetic mode — observe the shift in your body while orbiting the model.</p>`;
+    markDone('breath');
+    beep(660, 0.2);
+  }
+
+  function stop() {
+    running = false;
+    clearTimeout(tout); clearInterval(ival);
+    setCore(false);
+    arc.style.transition = 'none'; arc.style.strokeDashoffset = CIRC;
+    phaseEl.textContent = 'Stopped'; countEl.textContent = '—';
+    startB.style.display = 'inline-flex'; stopB.style.display = 'none';
+    window.soma?.setResult('breath', { phase: 0 });
+  }
+
+  startB.addEventListener('click', () => {
+    running = true;
+    doneEl.style.display = 'none';
+    startB.style.display = 'none'; stopB.style.display = 'inline-flex';
+    runCycle(0);
+  });
+  stopB.addEventListener('click', stop);
+  cleanup = () => { running = false; clearTimeout(tout); clearInterval(ival); };
+}
+
+/* ============================================================
+   03 · BMI — live needle + chromatic band on body
+   ============================================================ */
+function renderBMI(body, sub) {
+  sub.textContent = 'Enter measurements. The colour band appears on the abdomen at the correct anatomical height.';
+  body.innerHTML = `
+    <div style="display:flex;justify-content:flex-end;margin-bottom:-4px;">
+      <div class="units" id="bmi-u">
+        <button class="on" data-u="metric">Metric</button>
+        <button data-u="imperial">Imperial</button>
       </div>
     </div>
-    <div class="trials" id="r-trials">
-      ${[1,2,3,4,5].map(n => `<div class="trial-dot" id="r-dot-${n-1}">${n}</div>`).join('')}
+    <div class="fields" id="bmi-metric">
+      <div class="field"><label for="bmi-h">Height (cm)</label><input id="bmi-h" type="number" placeholder="175" min="80" max="250" inputmode="decimal"/></div>
+      <div class="field"><label for="bmi-w">Weight (kg)</label><input id="bmi-w" type="number" placeholder="70" min="20" max="300" inputmode="decimal"/></div>
     </div>
-    <div id="r-result" style="display:none;"></div>
-  `;
+    <div class="fields" id="bmi-imp" style="display:none;">
+      <div class="field"><label for="bmi-ft">Height (ft)</label><input id="bmi-ft" type="number" placeholder="5" min="3" max="8" inputmode="decimal"/></div>
+      <div class="field"><label for="bmi-in">Inches</label><input id="bmi-in" type="number" placeholder="9" min="0" max="11" inputmode="decimal"/></div>
+      <div class="field"><label for="bmi-lb">Weight (lb)</label><input id="bmi-lb" type="number" placeholder="155" min="50" max="600" inputmode="decimal"/></div>
+    </div>
+    <div class="stats">
+      <div><div class="stat__lbl">BMI</div><div class="stat__val scan" id="bmi-val">—</div></div>
+      <div><div class="stat__lbl">Band</div><div class="stat__val" id="bmi-band" style="font-size:22px;padding-top:12px;">—</div></div>
+    </div>
+    <div>
+      <div class="bmi-scale"><span></span><span></span><span></span><span></span></div>
+      <div class="bmi-needle-row"><div class="bmi-needle" id="bmi-ndl" style="left:0%"></div></div>
+      <div class="bmi-labels"><span>Under</span><span>18.5–25</span><span>25–30</span><span>30+</span></div>
+    </div>
+    <div class="note">
+      <div class="note__lbl">Context</div>
+      <p>BMI was designed to study <strong>populations</strong>, not individuals — it cannot distinguish fat from muscle, and gives misleading numbers for athletes, elderly adults, and many ethnic groups. The body band is a visual reference, not a health verdict.</p>
+    </div>`;
 
-  const stage = body.querySelector('#r-stage');
-  const content = body.querySelector('#r-content');
-  const result = body.querySelector('#r-result');
-  const dots = body.querySelectorAll('.trial-dot');
+  const $ = s => body.querySelector(s);
+  const valEl   = $('#bmi-val'), bandEl = $('#bmi-band'), ndlEl = $('#bmi-ndl');
+  const metricF = $('#bmi-metric'), impF = $('#bmi-imp');
+  let unit = 'metric';
 
-  let state = 'idle';  // idle, wait, ready, done
-  let trial = 0;
-  let times = [];
-  let goAt = 0;
-  let timer = null;
+  function compute() {
+    let h, w;
+    if (unit === 'metric') {
+      h = parseFloat($('#bmi-h').value); w = parseFloat($('#bmi-w').value);
+      if (!h || !w) return reset();
+      h /= 100;
+    } else {
+      const ft = parseFloat($('#bmi-ft').value) || 0;
+      const ins = parseFloat($('#bmi-in').value) || 0;
+      const lb  = parseFloat($('#bmi-lb').value);
+      if ((!ft && !ins) || !lb) return reset();
+      h = (ft * 12 + ins) * 0.0254; w = lb * 0.453592;
+    }
+    const bmi = w / (h * h);
+    if (!isFinite(bmi) || bmi < 5) return reset();
 
-  function setStage(cls, html) {
-    stage.className = `reaction-stage reaction-stage--${cls}`;
-    if (html != null) content.innerHTML = html;
+    // Display
+    countUp(valEl, 0, +bmi.toFixed(1), 800);
+
+    const bands = [
+      { max: 18.5, name: 'Under',   color: 'var(--arc)' },
+      { max: 25,   name: 'Typical', color: 'var(--bio)' },
+      { max: 30,   name: 'Over',    color: 'var(--band)' },
+      { max: 999,  name: 'Obese',   color: 'var(--ember)' },
+    ];
+    const b = bands.find(x => bmi < x.max);
+    bandEl.innerHTML = `<span style="color:${b.color}">●</span> ${b.name}`;
+
+    // Needle: map bmi 13–40 → 0–100%
+    const pct = Math.max(0, Math.min(100, ((bmi - 13) / 27) * 100));
+    ndlEl.style.left = pct + '%';
+
+    // Normalized for shader: -1 (under) .. 0 (typical 22) .. +1 (obese 35+)
+    const norm = ((bmi - 22) / 10);
+    window.soma?.setResult('bmi', { normalized: Math.max(-1, Math.min(1, norm)) });
+    markDone('bmi');
+  }
+
+  function reset() {
+    valEl.textContent = '—'; bandEl.textContent = '—'; ndlEl.style.left = '0%';
+    window.soma?.setResult('bmi', { normalized: 0, bmiSet: false });
+  }
+
+  body.querySelectorAll('input').forEach(i => i.addEventListener('input', compute));
+  $('#bmi-u').querySelectorAll('button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      $('#bmi-u').querySelectorAll('button').forEach(x => x.classList.remove('on'));
+      btn.classList.add('on');
+      unit = btn.dataset.u;
+      metricF.style.display = unit === 'metric' ? 'grid' : 'none';
+      impF.style.display    = unit === 'imperial' ? 'grid' : 'none';
+      reset();
+    });
+  });
+}
+
+/* ============================================================
+   04 · REACTION — 5 trials, arc speed driven by median
+   ============================================================ */
+function renderReaction(body, sub) {
+  sub.textContent = 'Wait for the field to turn green. Click as fast as you can. Five trials.';
+  body.innerHTML = `
+    <div class="rxn-stage wait" id="rxn">
+      <div id="rxn-in" style="text-align:center;">
+        <div class="rxn-h">Ready</div>
+        <div class="rxn-p">Click anywhere to start</div>
+      </div>
+    </div>
+    <div class="trials" id="rxn-trials">
+      ${[0,1,2,3,4].map(i=>`<div class="tdot" id="td-${i}">${i+1}</div>`).join('')}
+    </div>
+    <div id="rxn-result"></div>`;
+
+  const stageEl   = body.querySelector('#rxn');
+  const innerEl   = body.querySelector('#rxn-in');
+  const resultEl  = body.querySelector('#rxn-result');
+  const dots      = [0,1,2,3,4].map(i => body.querySelector(`#td-${i}`));
+
+  let state = 'idle', goAt = 0, trial = 0, times = [], timer = null;
+
+  function set(cls, html) {
+    stageEl.className = `rxn-stage ${cls}`;
+    if (html !== undefined) innerEl.innerHTML = html;
   }
 
   function startTrial() {
     state = 'wait';
-    setStage('wait', `<h3>Wait…</h3><p>Trial ${trial + 1} of 5</p>`);
-    const delay = 900 + Math.random() * 2400;
+    set('wait', `<div class="rxn-h" style="opacity:.6">Wait…</div><div class="rxn-p">Trial ${trial + 1} of 5</div>`);
     timer = setTimeout(() => {
-      state = 'ready';
-      goAt = performance.now();
-      setStage('go', `<h3>NOW</h3><p>Click!</p>`);
-      tone(660, 0.06);
-    }, delay);
+      state = 'ready'; goAt = performance.now();
+      set('go', `<div class="rxn-h">NOW</div><div class="rxn-p">Click!</div>`);
+      beep(660, 0.06);
+    }, 900 + Math.random() * 2600);
   }
 
-  function recordTrial(ms) {
+  function record(ms) {
     times.push(ms);
     const dot = dots[trial];
     dot.classList.add('done');
-    dot.textContent = `${Math.round(ms)}`;
+    dot.textContent = ms < 1000 ? Math.round(ms) : '—';
     dot.style.fontSize = '8px';
     trial++;
     if (trial >= 5) { finish(); return; }
-    setStage('result', `<div style="text-align:center;"><div class="ms">${Math.round(ms)}<span style="font-size:24px; color:var(--ink-3);"> ms</span></div><p style="color:var(--ink-3);">Click for next trial</p></div>`);
+    set('result', `
+      <div style="text-align:center;">
+        <div class="rxn-ms" id="rxn-ms-val">—</div>
+        <div class="rxn-p" style="color:var(--ink3)">Click to continue</div>
+      </div>`);
+    countUp(body.querySelector('#rxn-ms-val'), 0, Math.round(ms), 700, ' ms');
+    state = 'idle';
   }
 
-  function falseStart() {
+  function falseFire() {
     clearTimeout(timer);
-    setStage('early', `<h3>Too early</h3><p>Wait for the sage colour, then click</p>`);
-    tone(150, 0.2, 'sawtooth', 0.05);
-    const dot = dots[trial];
-    dot.classList.add('fail');
-    dot.textContent = '—';
+    set('early', `<div class="rxn-h">Too early</div><div class="rxn-p">Wait for green</div>`);
+    beep(120, 0.22, 'sawtooth');
+    dots[trial].classList.add('miss'); dots[trial].textContent = '—';
     trial++;
     if (trial >= 5) { finish(); return; }
     state = 'cooldown';
-    setTimeout(() => setStage('result', `<div style="text-align:center;"><h3 style="font-size:24px;">Click to continue</h3></div>`), 1200);
+    setTimeout(() => set('idle', `<div class="rxn-h" style="font-size:28px;">Click to continue</div>`), 1400);
   }
 
   function finish() {
     state = 'done';
-    const valid = times.filter(t => t > 0).sort((a, b) => a - b);
-    const median = valid.length ? valid[Math.floor(valid.length / 2)] : null;
-    const best = valid.length ? valid[0] : null;
-    result.style.display = 'block';
-    setStage('result', `<div style="text-align:center;"><div class="ms">${median ? Math.round(median) : '—'}<span style="font-size:24px; color:var(--ink-3);"> ms</span></div><p style="color:var(--ink-3);">Median</p></div>`);
-    result.innerHTML = `
-      <div class="stats-row" style="margin-bottom: 20px;">
-        <div class="stat"><span class="stat__label">Median</span><span class="stat__value">${median ? Math.round(median) : '—'}<span style="font-size:18px; color:var(--ink-3);"> ms</span></span></div>
-        <div class="stat"><span class="stat__label">Best</span><span class="stat__value"><em>${best ? Math.round(best) : '—'}</em><span style="font-size:18px; color:var(--ink-3);"> ms</span></span></div>
-        <div class="stat"><span class="stat__label">Trials</span><span class="stat__value">${valid.length}/5</span></div>
+    const valid  = times.filter(t => t > 0).sort((a, b) => a - b);
+    const median = valid[Math.floor(valid.length / 2)] ?? null;
+    const best   = valid[0] ?? null;
+    const norm   = median ? Math.max(0, Math.min(1, 1 - (median - 150) / 350)) : 0.5;
+    window.soma?.setResult('reaction', { normalized: norm });
+    markDone('reaction');
+
+    set('result', `
+      <div style="text-align:center;">
+        <div class="rxn-ms" id="rxn-fin-ms">—</div>
+        <div class="rxn-p" style="color:var(--ink3)">Median</div>
+      </div>`);
+    if (median) countUp(body.querySelector('#rxn-fin-ms'), 0, Math.round(median), 900, ' ms');
+
+    resultEl.innerHTML = `
+      <div class="stats" style="margin-top:12px;">
+        <div><div class="stat__lbl">Median</div><div class="stat__val scan" id="r-med">—</div></div>
+        <div><div class="stat__lbl">Best</div><div class="stat__val" id="r-best"><em>—</em></div></div>
+        <div><div class="stat__lbl">Trials</div><div class="stat__val">${valid.length}/5</div></div>
       </div>
-      <div class="result-block">
-        <h4>What this is and isn't</h4>
-        <p>Simple visual reaction times typically fall between 200 and 300 ms — but they vary with caffeine, sleep, screen latency, mouse vs touch, and whether you're warmed up. This number tells you almost nothing in isolation. Repeated over weeks at the same time of day, it can become a rough self-marker.</p>
+      <div class="note">
+        <div class="note__lbl">What drives the arc speed on the model</div>
+        <p>A faster median compresses the lightning arc's transit time — you'll see it fire down the arm more rapidly. Typical simple visual RT: <strong>200–300 ms</strong>. Results vary with caffeine, fatigue, and display latency.</p>
       </div>
-      <div class="actions" style="margin-top: 16px;">
-        <button class="btn" id="r-again">Run again</button>
-      </div>
-    `;
-    body.querySelector('#r-again').addEventListener('click', () => renderReaction(body, subEl));
+      <div class="actions" style="margin-top:14px;">
+        <button class="btn btn--primary" id="rxn-again">Run again</button>
+      </div>`;
+    if (median) countUp(resultEl.querySelector('#r-med'), 0, Math.round(median), 800, ' ms');
+    if (best)   countUp(resultEl.querySelector('#r-best em'), 0, Math.round(best), 700, ' ms');
+    resultEl.querySelector('#rxn-again').addEventListener('click', () => renderReaction(body, sub));
   }
 
-  function onClick() {
-    if (state === 'idle' || state === 'cooldown') {
-      if (trial >= 5) return;
-      startTrial();
-    } else if (state === 'wait') {
-      falseStart();
-    } else if (state === 'ready') {
-      const ms = performance.now() - goAt;
-      tone(880, 0.1);
-      recordTrial(ms);
-      state = 'idle';
-    }
-  }
-  stage.addEventListener('click', onClick);
+  stageEl.addEventListener('click', () => {
+    if      (state === 'idle' || state === 'cooldown') { if (trial < 5) startTrial(); }
+    else if (state === 'wait')   falseFire();
+    else if (state === 'ready') { beep(880, 0.08); record(performance.now() - goAt); state = 'idle'; }
+  });
 
   cleanup = () => { clearTimeout(timer); };
 }
 
 /* ============================================================
-   03 · BREATH  — 4-7-8 pacer with phase ring
+   05 · STILLNESS — hold cursor inside ring for 30s
+   Crystal growth fraction sent live to shader
    ============================================================ */
-function renderBreath(body, subEl) {
-  subEl.textContent = 'Inhale four, hold seven, exhale eight. Four cycles. Sit, soften the jaw, follow the ring.';
+function renderStillness(body, sub) {
+  sub.textContent = 'Move your cursor inside the ring. Hold it still for 30 seconds. Watch the crystal grow upward on the model.';
+  const DUR = 30000;
   body.innerHTML = `
-    <div class="pacer">
-      <div class="pacer__stage">
-        <svg viewBox="0 0 260 260" style="position:absolute; inset:0;">
-          <defs>
-            <radialGradient id="petal" cx="50%" cy="50%">
-              <stop offset="0%" stop-color="#5A7B6A" stop-opacity="0.18"/>
-              <stop offset="60%" stop-color="#5A7B6A" stop-opacity="0.08"/>
-              <stop offset="100%" stop-color="#5A7B6A" stop-opacity="0"/>
-            </radialGradient>
-          </defs>
-          <circle id="bp-ring-out" cx="130" cy="130" r="120" fill="url(#petal)" stroke="#B8AE99" stroke-width="0.6" stroke-dasharray="2 4" style="transform-origin:center; transition: transform 4s cubic-bezier(0.4,0,0.2,1);"/>
-          <circle id="bp-ring-mid" cx="130" cy="130" r="100" fill="none" stroke="#5A7B6A" stroke-width="1" opacity="0.5" style="transform-origin:center; transition: transform 4s cubic-bezier(0.4,0,0.2,1);"/>
-          <circle id="bp-ring-in" cx="130" cy="130" r="70" fill="#3F5A4D" opacity="0.92" style="transform-origin:center; transition: transform 4s cubic-bezier(0.4,0,0.2,1), opacity 1s;"/>
-          <circle id="bp-progress" cx="130" cy="130" r="118" fill="none" stroke="#1A1A1A" stroke-width="1.2" stroke-dasharray="741" stroke-dashoffset="741" transform="rotate(-90 130 130)" style="transition: stroke-dashoffset 1s linear;"/>
-        </svg>
-        <div class="pacer__text" style="color: var(--surface);">
-          <div class="pacer__phase" id="bp-phase">Breathe</div>
-          <div class="pacer__count" id="bp-count" style="color: var(--surface);">—</div>
-        </div>
-      </div>
-      <div class="pacer__cycle" id="bp-cycle">Press start to begin</div>
-      <div class="actions">
-        <button class="btn" id="bp-start">Start</button>
-        <button class="btn btn--ghost" id="bp-stop" style="display:none;">Stop</button>
-      </div>
-      <div id="bp-done" class="result-block" style="display:none;"></div>
-    </div>
-  `;
-
-  const phaseEl = body.querySelector('#bp-phase');
-  const countEl = body.querySelector('#bp-count');
-  const cycleEl = body.querySelector('#bp-cycle');
-  const ringOut = body.querySelector('#bp-ring-out');
-  const ringMid = body.querySelector('#bp-ring-mid');
-  const ringIn = body.querySelector('#bp-ring-in');
-  const progress = body.querySelector('#bp-progress');
-  const startBtn = body.querySelector('#bp-start');
-  const stopBtn = body.querySelector('#bp-stop');
-  const doneEl = body.querySelector('#bp-done');
-
-  // 4-7-8 phases
-  const phases = [
-    { name: 'Inhale',  secs: 4, scale: 1.0, freq: 330 },
-    { name: 'Hold',    secs: 7, scale: 1.0, freq: 0   },
-    { name: 'Exhale',  secs: 8, scale: 0.55, freq: 220 },
-    { name: 'Rest',    secs: 1, scale: 0.55, freq: 0   },
-  ];
-  const TOTAL_CYCLES = 4;
-
-  let running = false;
-  let interval = null;
-  let timeout = null;
-
-  function setScale(s) {
-    ringOut.style.transform = `scale(${s})`;
-    ringMid.style.transform = `scale(${s})`;
-    ringIn.style.transform = `scale(${s})`;
-    ringIn.style.opacity = s > 0.7 ? 0.92 : 0.7;
-  }
-
-  function runCycle(cycleIdx) {
-    if (!running) return;
-    if (cycleIdx >= TOTAL_CYCLES) { complete(); return; }
-    cycleEl.textContent = `Cycle ${cycleIdx + 1} of ${TOTAL_CYCLES}`;
-    runPhase(0, cycleIdx);
-  }
-
-  function runPhase(pIdx, cycleIdx) {
-    if (!running) return;
-    if (pIdx >= phases.length) { runCycle(cycleIdx + 1); return; }
-    const p = phases[pIdx];
-    phaseEl.textContent = p.name;
-    setScale(p.scale);
-    if (p.freq) tone(p.freq, 0.15, 'sine', 0.03);
-
-    // Reset and animate the progress ring
-    const totalSecs = p.secs;
-    const CIRC = 741;
-    progress.style.transition = 'none';
-    progress.style.strokeDashoffset = CIRC;
-    requestAnimationFrame(() => {
-      progress.style.transition = `stroke-dashoffset ${totalSecs}s linear`;
-      progress.style.strokeDashoffset = '0';
-    });
-
-    let remaining = p.secs;
-    countEl.textContent = remaining;
-    clearInterval(interval);
-    interval = setInterval(() => {
-      remaining--;
-      countEl.textContent = remaining > 0 ? remaining : 0;
-    }, 1000);
-
-    timeout = setTimeout(() => {
-      clearInterval(interval);
-      runPhase(pIdx + 1, cycleIdx);
-    }, p.secs * 1000);
-  }
-
-  function complete() {
-    running = false;
-    setScale(0.7);
-    phaseEl.textContent = 'Done';
-    countEl.textContent = '';
-    cycleEl.textContent = 'Sit a moment longer if you like';
-    progress.style.strokeDashoffset = 741;
-    startBtn.style.display = 'inline-flex';
-    startBtn.textContent = 'Run again';
-    stopBtn.style.display = 'none';
-    doneEl.style.display = 'block';
-    doneEl.innerHTML = `
-      <h4>Four cycles · 80 seconds</h4>
-      <p>The 4-7-8 pattern, popularised by Andrew Weil, biases the breath toward the parasympathetic side — slower exhale than inhale. It's not a cure for anything. It's a small physical cue that says: pause. Useful before sleep, before a difficult conversation, before refreshing a price chart for the seventh time.</p>
-    `;
-  }
-
-  function stop() {
-    running = false;
-    clearTimeout(timeout); clearInterval(interval);
-    setScale(0.7);
-    phaseEl.textContent = 'Breathe';
-    countEl.textContent = '—';
-    cycleEl.textContent = 'Stopped';
-    progress.style.transition = 'none';
-    progress.style.strokeDashoffset = 741;
-    startBtn.style.display = 'inline-flex';
-    stopBtn.style.display = 'none';
-  }
-
-  startBtn.addEventListener('click', () => {
-    running = true;
-    doneEl.style.display = 'none';
-    startBtn.style.display = 'none';
-    stopBtn.style.display = 'inline-flex';
-    runCycle(0);
-  });
-  stopBtn.addEventListener('click', stop);
-
-  cleanup = () => { running = false; clearTimeout(timeout); clearInterval(interval); };
-}
-
-/* ============================================================
-   04 · COMPOSITION  — BMI with proper context
-   ============================================================ */
-function renderBMI(body, subEl) {
-  subEl.textContent = 'Enter your height and weight. BMI is a screening number, not a diagnosis — read the note.';
-  body.innerHTML = `
-    <div style="display:flex; justify-content:flex-end; margin-bottom: -8px;">
-      <div class="unit-toggle" id="bmi-units">
-        <button class="on" data-u="metric">Metric</button>
-        <button data-u="imperial">Imperial</button>
-      </div>
-    </div>
-    <div class="field-row" id="bmi-metric">
-      <div class="field">
-        <label for="bmi-h">Height (cm)</label>
-        <input id="bmi-h" type="number" inputmode="decimal" placeholder="175" min="80" max="250"/>
-      </div>
-      <div class="field">
-        <label for="bmi-w">Weight (kg)</label>
-        <input id="bmi-w" type="number" inputmode="decimal" placeholder="70" min="20" max="300"/>
-      </div>
-    </div>
-    <div class="field-row" id="bmi-imperial" style="display:none;">
-      <div class="field" style="grid-column: span 2; display:grid; grid-template-columns: 1fr 1fr; gap: 16px;">
-        <div class="field">
-          <label for="bmi-ft">Height (ft)</label>
-          <input id="bmi-ft" type="number" inputmode="decimal" placeholder="5" min="3" max="8"/>
-        </div>
-        <div class="field">
-          <label for="bmi-in">(in)</label>
-          <input id="bmi-in" type="number" inputmode="decimal" placeholder="9" min="0" max="11"/>
-        </div>
-      </div>
-      <div class="field">
-        <label for="bmi-lb">Weight (lb)</label>
-        <input id="bmi-lb" type="number" inputmode="decimal" placeholder="155" min="50" max="600"/>
-      </div>
-    </div>
-
-    <div class="stats-row" style="margin-top: 8px;">
-      <div class="stat"><span class="stat__label">BMI</span><span class="stat__value" id="bmi-value">—</span></div>
-      <div class="stat"><span class="stat__label">Band</span><span class="stat__value" id="bmi-band" style="font-size:24px; padding-top:8px;">—</span></div>
-    </div>
-
-    <div>
-      <div class="bmi-scale">
-        <span title="Under 18.5"></span>
-        <span title="18.5 – 24.9"></span>
-        <span title="25 – 29.9"></span>
-        <span title="30+"></span>
-      </div>
-      <div class="bmi-marker"><div class="bmi-marker__needle" id="bmi-needle" style="left: 0%;"></div></div>
-      <div class="bmi-scale-labels">
-        <span>Under</span><span>18.5–25</span><span>25–30</span><span>30+</span>
-      </div>
-    </div>
-
-    <div class="result-block">
-      <h4>What BMI actually measures</h4>
-      <p>BMI is mass divided by height squared. It was designed in the 19th century to study <strong>populations</strong>, not individuals. It can't tell muscle from fat, doesn't account for frame size or ethnicity, and gives bad readings for athletes, pregnant people, and most adults over sixty-five. Treat the number as one rough signal among many — waist measurement, energy levels, and how clothes fit will tell you more.</p>
-    </div>
-  `;
-
-  const $ = (s) => body.querySelector(s);
-  const valueEl = $('#bmi-value');
-  const bandEl = $('#bmi-band');
-  const needle = $('#bmi-needle');
-  const metric = $('#bmi-metric');
-  const imperial = $('#bmi-imperial');
-  const toggle = $('#bmi-units');
-  let unit = 'metric';
-
-  function bandFor(bmi) {
-    if (bmi < 18.5) return { name: 'Under', color: '#B5C8DB' };
-    if (bmi < 25)   return { name: 'Typical', color: 'var(--sage-2)' };
-    if (bmi < 30)   return { name: 'Over', color: 'var(--amber)' };
-    return            { name: 'Obese', color: 'var(--clay)' };
-  }
-
-  function compute() {
-    let h, w;
-    if (unit === 'metric') {
-      h = parseFloat($('#bmi-h').value);
-      w = parseFloat($('#bmi-w').value);
-      if (!h || !w) return reset();
-      h = h / 100;
-    } else {
-      const ft = parseFloat($('#bmi-ft').value) || 0;
-      const ins = parseFloat($('#bmi-in').value) || 0;
-      const lb = parseFloat($('#bmi-lb').value);
-      if ((!ft && !ins) || !lb) return reset();
-      h = (ft * 12 + ins) * 0.0254;
-      w = lb * 0.45359237;
-    }
-    const bmi = w / (h * h);
-    if (!isFinite(bmi) || bmi <= 0) return reset();
-    const band = bandFor(bmi);
-    valueEl.innerHTML = `${bmi.toFixed(1)}`;
-    bandEl.innerHTML = `<span style="color:${band.color}">●</span> ${band.name}`;
-    // map bmi 12..40 → 0..100%
-    const pct = Math.max(0, Math.min(100, ((bmi - 12) / (40 - 12)) * 100));
-    needle.style.left = pct + '%';
-  }
-  function reset() {
-    valueEl.textContent = '—';
-    bandEl.textContent = '—';
-    needle.style.left = '0%';
-  }
-
-  body.querySelectorAll('input').forEach(i => i.addEventListener('input', compute));
-  toggle.querySelectorAll('button').forEach(b => {
-    b.addEventListener('click', () => {
-      toggle.querySelectorAll('button').forEach(x => x.classList.remove('on'));
-      b.classList.add('on');
-      unit = b.dataset.u;
-      metric.style.display = unit === 'metric' ? 'grid' : 'none';
-      imperial.style.display = unit === 'imperial' ? 'grid' : 'none';
-      reset();
-    });
-  });
-
-  cleanup = () => {};
-}
-
-/* ============================================================
-   05 · STILLNESS  — Hold pointer in target for 30s
-   ============================================================ */
-function renderStillness(body, subEl) {
-  subEl.textContent = 'Move your cursor (or fingertip) inside the ring. Hold it there, perfectly still, for 30 seconds.';
-  body.innerHTML = `
-    <div class="still-stage" id="s-stage">
-      <div class="still-target" id="s-target"></div>
+    <div class="still-stage" id="ss">
+      <div class="still-target" id="st"></div>
       <div class="still-info">
-        <div class="ms" id="s-time">30.0</div>
-        <div class="label" id="s-label">Move cursor into the ring</div>
+        <div class="still-t" id="ss-t">30.0</div>
+        <div class="still-lbl" id="ss-lbl">Move cursor into the ring</div>
       </div>
-      <div class="still-progress" id="s-progress" style="width:0%;"></div>
+      <div class="still-bar" id="ss-bar" style="width:0%"></div>
     </div>
-    <div id="s-result" style="display:none;"></div>
-    <div class="actions" id="s-actions" style="display:none;">
-      <button class="btn" id="s-retry">Run again</button>
-    </div>
-  `;
+    <div id="ss-result"></div>
+    <div class="actions" id="ss-actions" style="display:none;">
+      <button class="btn btn--primary" id="ss-retry">Run again</button>
+    </div>`;
 
-  const stage = body.querySelector('#s-stage');
-  const target = body.querySelector('#s-target');
-  const timeEl = body.querySelector('#s-time');
-  const labelEl = body.querySelector('#s-label');
-  const progress = body.querySelector('#s-progress');
-  const result = body.querySelector('#s-result');
-  const actions = body.querySelector('#s-actions');
+  const stage   = body.querySelector('#ss');
+  const target  = body.querySelector('#st');
+  const timeEl  = body.querySelector('#ss-t');
+  const lblEl   = body.querySelector('#ss-lbl');
+  const barEl   = body.querySelector('#ss-bar');
+  const resultEl= body.querySelector('#ss-result');
+  const actEl   = body.querySelector('#ss-actions');
 
-  const DURATION = 30000; // ms
-  let inside = false;
-  let startAt = 0;
-  let elapsed = 0;
-  let drift = 0;
+  let inside = false, startAt = 0, elapsed = 0, raf = null, done = false, drift = 0;
   let lastX = null, lastY = null;
-  let rafId = null;
-  let done = false;
 
-  function isInsideTarget(x, y) {
-    const rect = target.getBoundingClientRect();
-    const cx = rect.left + rect.width / 2;
-    const cy = rect.top + rect.height / 2;
-    const r = rect.width / 2;
-    return Math.hypot(x - cx, y - cy) < r;
+  function inRing(x, y) {
+    const r = target.getBoundingClientRect();
+    return Math.hypot(x - (r.left + r.width/2), y - (r.top + r.height/2)) < r.width / 2;
   }
 
-  function loop(t) {
+  function loop(ts) {
     if (done) return;
     if (inside) {
-      elapsed = t - startAt;
-      const pct = Math.min(100, (elapsed / DURATION) * 100);
-      progress.style.width = pct + '%';
-      const remaining = Math.max(0, (DURATION - elapsed) / 1000);
-      timeEl.textContent = remaining.toFixed(1);
-      if (elapsed >= DURATION) { finish(true); return; }
+      elapsed = ts - startAt;
+      const f = Math.min(1, elapsed / DUR);
+      const remain = Math.max(0, (DUR - elapsed) / 1000);
+      barEl.style.width = (f * 100) + '%';
+      timeEl.textContent = remain.toFixed(1);
+      // Push crystal growth live to shader
+      window.soma?.setResult('stillness', { fraction: f });
+      if (elapsed >= DUR) { succeed(); return; }
     }
-    rafId = requestAnimationFrame(loop);
+    raf = requestAnimationFrame(loop);
   }
 
-  function finish(success) {
+  function succeed() {
     done = true;
-    cancelAnimationFrame(rafId);
-    stage.style.cursor = 'default';
-    actions.style.display = 'flex';
-    result.style.display = 'block';
-    if (success) {
-      labelEl.textContent = 'Complete';
-      timeEl.textContent = '00.0';
-      tone(880, 0.2);
-      result.innerHTML = `
-        <div class="result-block">
-          <h4>Held the line</h4>
-          <p>Thirty seconds of held attention, with a body that doesn't want to be still. Steadiness is a skill — not a personality trait. Useful in shooting, painting, surgery, and watching a chart open without doing anything about it. Total drift recorded: <strong>${drift.toFixed(0)} px</strong>.</p>
-        </div>
-      `;
-    } else {
-      labelEl.textContent = 'Broke contact';
-      tone(180, 0.3, 'sawtooth', 0.04);
-      result.innerHTML = `
-        <div class="result-block">
-          <h4>Lasted ${(elapsed / 1000).toFixed(1)} seconds</h4>
-          <p>The cursor left the ring before the timer finished. Most people fail the first attempt — small jitters compound. Try again with shoulders down, elbow resting, breath slow.</p>
-        </div>
-      `;
-    }
+    lblEl.textContent = 'Complete';
+    timeEl.textContent = '00.0';
+    barEl.style.boxShadow = '0 0 12px var(--bio)';
+    window.soma?.setResult('stillness', { fraction: 1 });
+    markDone('stillness');
+    beep(880, 0.22);
+    actEl.style.display = 'flex';
+    resultEl.innerHTML = `<div class="note">
+      <div class="note__lbl">Crystal growth complete · Drift: ${drift.toFixed(0)} px</div>
+      <p>The full crystalline pattern now climbs the model's legs — the height and density you just unlocked. Stillness is a trainable skill. Athletes, surgeons, and bartenders on a busy service all learn to separate intention from micro-tremor.</p></div>`;
+  }
+
+  function fail() {
+    done = true;
+    cancelAnimationFrame(raf);
+    target.className = 'still-target out';
+    barEl.classList.add('broken');
+    lblEl.textContent = 'Broke contact';
+    window.soma?.setResult('stillness', { fraction: elapsed / DUR });
+    beep(160, 0.25, 'sawtooth', 0.03);
+    actEl.style.display = 'flex';
+    resultEl.innerHTML = `<div class="note">
+      <div class="note__lbl">Held for ${(elapsed/1000).toFixed(1)} seconds</div>
+      <p>The crystals stopped growing when you left the ring. Shoulders down, elbow rested, slow breath — try again.</p></div>`;
   }
 
   function onMove(e) {
@@ -693,46 +648,32 @@ function renderStillness(body, subEl) {
     const x = e.clientX ?? e.touches?.[0]?.clientX;
     const y = e.clientY ?? e.touches?.[0]?.clientY;
     if (x == null) return;
-    const within = isInsideTarget(x, y);
 
-    if (within) {
-      target.classList.remove('still-target--out');
-      target.classList.add('still-target--in');
-      labelEl.textContent = 'Holding';
+    if (lastX != null) drift += Math.hypot(x - lastX, y - lastY);
+    lastX = x; lastY = y;
+
+    if (inRing(x, y)) {
+      target.className = 'still-target in';
+      lblEl.textContent = 'Holding';
       if (!inside) {
         inside = true;
         startAt = performance.now() - elapsed;
-        progress.classList.remove('broken');
-        rafId = requestAnimationFrame(loop);
+        barEl.classList.remove('broken');
+        raf = requestAnimationFrame(loop);
       }
-      if (lastX != null) drift += Math.hypot(x - lastX, y - lastY);
-      lastX = x; lastY = y;
     } else {
-      if (inside) {
-        // broke contact
-        inside = false;
-        cancelAnimationFrame(rafId);
-        target.classList.remove('still-target--in');
-        target.classList.add('still-target--out');
-        progress.classList.add('broken');
-        finish(false);
-      } else {
-        target.classList.remove('still-target--in', 'still-target--out');
-      }
+      if (inside) { inside = false; cancelAnimationFrame(raf); fail(); }
+      else { target.className = 'still-target'; }
     }
   }
+
   stage.addEventListener('mousemove', onMove);
   stage.addEventListener('touchmove', onMove, { passive: true });
-  stage.addEventListener('mouseleave', () => {
-    if (inside && !done) { inside = false; finish(false); }
-  });
+  stage.addEventListener('mouseleave', () => { if (inside && !done) { inside = false; fail(); } });
+  body.querySelector('#ss-retry')?.addEventListener('click', () => renderStillness(body, sub));
 
-  body.querySelector('#s-retry').addEventListener('click', () => renderStillness(body, subEl));
-
-  cleanup = () => { cancelAnimationFrame(rafId); done = true; };
+  cleanup = () => { done = true; cancelAnimationFrame(raf); };
 }
 
-/* ============================================================
-   INITIAL RENDER
-   ============================================================ */
-renderWelcome();
+/* ---- Boot ---- */
+renderHome();
